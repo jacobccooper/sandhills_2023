@@ -1,5 +1,5 @@
 ---
-title: "Appendix 1: An update to the Birds of the Nebraska National Forest"
+title: "Appendix 1: Code for 'An update to the Birds of the Nebraska National Forest'"
 output: github_document
 ---
 
@@ -25,18 +25,6 @@ gbif$species[which(gbif$species=="Junco hyemalis"&
 gbif$species[which(gbif$species=="Setophaga coronata"&
         gbif$infraspecificEpithet=="")] <- "Setophaga coronata/auduboni"
 
-# split some taxa for better resolution
-ssp_rename <- function(genus,from,to){
-  index <- which(gbif$infraspecificEpithet==from&
-                   gbif$species%like%genus)
-  if(length(index)<1){
-    print(paste0("No matches for ",from))
-  }else{
-    gbif$species[index] <- to
-    print(paste0(from," changed to ",to))
-  }
-}
-
 sp_list <-  c("Junco","hyemalis","Junco hyemalis",
              "Junco","oreganus","Junco oreganus",
              "Junco","aikeni","Junco aikeni",
@@ -56,9 +44,8 @@ renamer <- matrix(data=sp_list,
 colnames(renamer) <- c("genus","from","to")
 
 for(i in 1:nrow(renamer)){
-  ssp_rename(genus = renamer$genus[i],
-             from = renamer$from[i],
-             to = renamer$to[i])
+  index=which(gbif$infraspecificEpithet==renamer$from[i])
+  gbif$species[index]=renamer$to[i]
 }
 
 # reduce to relevant columns
@@ -80,7 +67,6 @@ missing <- gbif$species[which(is.na(gbif$order))]%>%unique()%>%
   as.data.frame
 # write as file, then put new names
 # write_csv(missing,paste0(filepath,"missing.csv"))
-
 
 # rename missing taxa... there's several of them!
 
@@ -107,14 +93,8 @@ for(i in 1:nrow(missing)){
   gbif <- rename_taxon(gbif=gbif,right=right,wrong=wrong,keep=keep)
 }
 
-# reapply order
-gbif <- gbif%>%
-  select(-order,-english)%>%
-  full_join(taxo_order,by="species")
-
-gbif <- gbif[order(gbif$order),]
-
-gbif <- gbif[-which(gbif$species==""),]
+# gbif <- gbif[-which(gbif$species==""),]
+gbif$species[which(gbif$species%like%"villosus")] <- "Leuconotopicus villosus"
 
 write_csv(gbif,paste0(filepath,"reduced_gbif.csv"))
 ```
@@ -132,29 +112,26 @@ ebird <- read.delim(paste0(filepath,
 
 # remove unknowns
 `%notlike%` <- Negate(`%like%`)
-ebird <- ebird[which(ebird$SCIENTIFIC.NAME%notlike%"sp."),]
+ebird <- ebird[which(ebird$CATEGORY%notlike%"slash"&
+                       ebird$CATEGORY%notlike%"domestic"&
+                       ebird$CATEGORY%notlike%"spuh"),]
 
 # split some taxa for better resolution
-ssp_rename <- function(from,to){
-  index <- which(ebird$SUBSPECIES.SCIENTIFIC.NAME==from)
-  if(length(index)<1){
-    print(paste0("No matches for ",from))
-  }else{
-    ebird$SCIENTIFIC.NAME[index] <- to
-    print(paste0(from," changed to ",to))
-  }
-}
+# code has errors...
+#ssp_rename <- function(from,to){
+#  index <- which(ebird$SUBSPECIES.SCIENTIFIC.NAME==from)
+#  if(length(index)<1){
+#    print(paste0("No matches for ",from))
+#  }else{
+#    ebird$SCIENTIFIC.NAME[index] <- to
+#    print(paste0(from," changed to ",to))
+#  }
+#}
 
 # remove unclassifiable
-ebird$SCIENTIFIC.NAME[which(ebird$SCIENTIFIC.NAME=="Junco hyemalis"&
-        ebird$SUBSPECIES.SCIENTIFIC.NAME=="")] <- "Junco sp."
-
-index <- which(ebird$SCIENTIFIC.NAME=="Setophaga coronata"&
-        ebird$SUBSPECIES.SCIENTIFIC.NAME=="")
-
-ebird$SCIENTIFIC.NAME[index] <- "Setophaga coronata/auduboni"
-
-sp_list <-  c("Junco hyemalis hyemalis/carolinensis","Junco hyemalis",
+sp_list <-  c("Setophaga coronata coronata","Setophaga coronata",
+              "Setophaga coronata auduboni","Setophaga auduboni",
+              "Junco hyemalis hyemalis/carolinensis","Junco hyemalis",
              "Junco hyemalis [oreganus Group]","Junco oreganus",
              "Junco hyemalis aikeni","Junco aikeni",
              "Junco hyemalis mearnsi","Junco mearnsi",
@@ -177,8 +154,8 @@ renamer <- matrix(data=sp_list,
 colnames(renamer) <- c("from","to")
 
 for(i in 1:nrow(renamer)){
-  ssp_rename(from = renamer$from[i],
-             to = renamer$to[i])
+  index=which(ebird$SUBSPECIES.SCIENTIFIC.NAME==renamer$from[i])
+  ebird$SCIENTIFIC.NAME[index]=renamer$to[i]
 }
 
 # reduce to relevant columns
@@ -189,11 +166,12 @@ ebird <- ebird[order(ebird$TAXONOMIC.ORDER),]
 ebird <- ebird%>%
   select(SCIENTIFIC.NAME, OBSERVATION.COUNT,
          LONGITUDE, LATITUDE, OBSERVATION.DATE) %>%
-  unique()%>%
   rename("species" = SCIENTIFIC.NAME,
          "individualCount" = OBSERVATION.COUNT, "decimalLongitude" = LONGITUDE,
          "decimalLatitude" = LATITUDE, "eventDate" = OBSERVATION.DATE)%>%
   unique()
+
+ebird$species[which(ebird$species%like%"villosus")] <- "Leuconotopicus villosus"
 
 write_csv(ebird,paste0(filepath,"reduced_ebird.csv"))
 ```
@@ -352,9 +330,9 @@ Many thanks to Dr. Brett Benz, Dr. Ben Winger, and Dr. Kristof Zykowski for the 
 
 I'm including *Sialia* in the study for now - hoping to confirm.
 
-# 1993 to 2023
+# Species through time
 
-We can also combine the lists from 1993 and 2023 to understand what has changed.
+We can compare our lists through time to see how things have changed.
 
 ```{r,echo=F}
 rm(list=ls())
@@ -362,11 +340,15 @@ filepath <- "~/Dropbox/Manuscripts/sandhills_2023/"
 ```
 
 ```{r}
-bray <- read_csv(paste0(filepath,"Bray_Sandhills_Species.csv"))
-
-bray$Species <- as.factor(bray$Species)
-bray$SciName <- as.factor(bray$SciName)
-bray$Bray <- as.factor(bray$Bray)
+zimmer <- read_csv(paste0(filepath,"zimmer_1913_species.csv")) %>%
+  select(-Species) %>%
+  rename("Zimmer_1913" = List)
+ford <- read_csv(paste0(filepath,"ford_1957_species.csv")) %>%
+  select(-Species)%>%
+  rename("Ford_1957" = List)
+bray <- read_csv(paste0(filepath,"Bray_Sandhills_Species.csv"))%>%
+  rename("Bray_1993" = Bray) %>%
+  select(-Species,-Notes)
 
 ne_nf_gbif <- read_csv(paste0(filepath,"ne_natl_forest_birds.csv")) %>%
   filter(district == "Bessey") %>%
@@ -374,36 +356,79 @@ ne_nf_gbif <- read_csv(paste0(filepath,"ne_natl_forest_birds.csv")) %>%
   rename("SciName" = species) %>%
   unique()
 
-ne_nf_gbif$GBIF <- "GBIF"
-
-ne_nf_gbif$SciName <- as.factor(ne_nf_gbif$SciName)
-ne_nf_gbif$GBIF <- as.factor(ne_nf_gbif$GBIF)
-
-# length(unique(bray$Species))
-# length(unique(ne_nf_gbif$species))
+ne_nf_gbif$GBIF_2023 <- "GBIF"
 ```
 
-The length of the list derived from Bray is `r length(unique(bray$Species))` spp., whereas the list derived from GBIF is `r length(unique(ne_nf_gbif$species))` spp.
+We have `r nrow(zimmer)` taxa from 1913, `r nrow(bray)` taxa, and `r nrow(ne_nf_gbif)` taxa from 2023.
 
 ```{r}
-comp_years <- bray %>%
+comp_years <- zimmer %>%
+  full_join(ford,by = "SciName") %>%
+  full_join(bray,by = "SciName") %>%
   full_join(ne_nf_gbif,by = "SciName")
 ```
 
-```{r}
-# species recorded by Bray not in GBIF
+```{r,eval=F}
+# species recorded by GBIF
+# debugging step
+index <- which(!is.na(comp_years$GBIF_2023))
 
-index <- which(is.na(comp_years$GBIF))
-
-comp_years[index,c("Species","SciName")]
+write_csv(comp_years[index,],paste0(filepath,"missing_gbif.csv"))
 ```
 
-Most of these species are water birds. Many species were missing from the direct GBIF download, for reasons that are unknown. These include *Astur cooperii*.
+We can save this file as an appendix of species' occurrence.
 
 ```{r}
-# species recorded by GBIF not in Bray
-
-index <- which(is.na(comp_years$Bray))
-
-comp_years[index,c("Species","SciName")]
+write_csv(comp_years,paste0(filepath,"compare_lists.csv"))
 ```
+
+We can also compare all sites, and see what is in the other districts but not in Bessey yet.
+
+```{r}
+zimmer <- read_csv(paste0(filepath,"zimmer_1913_species.csv")) %>%
+  select(-Species) %>%
+  rename("Zimmer_1913" = List)
+ford <- read_csv(paste0(filepath,"ford_1957_species.csv")) %>%
+  select(-Species)%>%
+  rename("Ford_1957" = List)
+bray <- read_csv(paste0(filepath,"Bray_Sandhills_Species.csv"))%>%
+  rename("Bray_1993" = Bray) %>%
+  select(-Species,-Notes)
+
+ne_nf_gbif <- read_csv(paste0(filepath,"ne_natl_forest_birds.csv")) %>%
+  rename("SciName" = species)
+# split by district
+pr_og <- ne_nf_gbif %>% 
+  select(SciName,district) %>%
+  filter(district == "Pine Ridge / Oglala")%>%
+  rename("Pine_Ridge" = district) %>%
+  unique()
+
+pr_og$Pine_Ridge[which(!is.na(pr_og$Pine_Ridge))] <- "Confirmed"
+
+bessey <- ne_nf_gbif %>% 
+  select(SciName,district) %>%
+  filter(district == "Bessey")%>%
+  rename("Bessey" = district) %>%
+  unique()
+
+bessey$Bessey[which(!is.na(bessey$Bessey))] <- "Confirmed"
+
+mackelvie <- ne_nf_gbif %>% 
+  select(SciName,district) %>%
+  filter(district == "MacKelvie")%>%
+  rename("MacKelvie" = district) %>%
+  unique()
+
+mackelvie$MacKelvie[which(!is.na(mackelvie$MacKelvie))] <- "Confirmed"
+
+comp_years <- zimmer %>%
+  full_join(ford,by = "SciName") %>%
+  full_join(bray,by = "SciName") %>%
+  full_join(bessey,by = "SciName")%>%
+  full_join(mackelvie,by = "SciName")%>%
+  full_join(pr_og,by = "SciName")
+
+write_csv(comp_years,paste0(filepath,"all_sites_compare.csv"))
+```
+
