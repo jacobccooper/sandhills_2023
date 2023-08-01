@@ -56,6 +56,49 @@ library(data.table)
 ``` r
 gbif <- read.delim(paste0(filepath,"0104629-230530130749713.csv"),sep = "\t")
 
+# remove unclassifiable
+gbif$species[which(gbif$species=="Junco hyemalis"&
+        gbif$infraspecificEpithet=="")] <- "Junco sp."
+
+gbif$species[which(gbif$species=="Setophaga coronata"&
+        gbif$infraspecificEpithet=="")] <- "Setophaga coronata/auduboni"
+
+# split some taxa for better resolution
+ssp_rename <- function(genus,from,to){
+  index <- which(gbif$infraspecificEpithet==from&
+                   gbif$species%like%genus)
+  if(length(index)<1){
+    print(paste0("No matches for ",from))
+  }else{
+    gbif$species[index] <- to
+    print(paste0(from," changed to ",to))
+  }
+}
+
+sp_list <-  c("Junco","hyemalis","Junco hyemalis",
+             "Junco","oreganus","Junco oreganus",
+             "Junco","aikeni","Junco aikeni",
+             "Junco","mearnsi","Junco mearnsi",
+             "Junco","cismontanus","Junco cismontanus",
+             "Junco","caniceps","Junco caniceps",
+             "Junco","shufeldti",
+                    "Junco oreganus",
+             "Junco","montanus",
+                    "Junco oreganus",
+             "Setophaga","coronata","Setophaga coronata",
+             "Setophaga","","Setophaga coronata/auduboni")
+
+renamer <- matrix(data=sp_list,
+       nrow=(length(sp_list)/3),ncol=3,
+       byrow = T) %>% as.data.frame()
+colnames(renamer) <- c("genus","from","to")
+
+for(i in 1:nrow(renamer)){
+  ssp_rename(genus = renamer$genus[i],
+             from = renamer$from[i],
+             to = renamer$to[i])
+}
+
 # reduce to relevant columns
 # all have coords??
 
@@ -114,29 +157,103 @@ gbif <- gbif[-which(gbif$species==""),]
 write_csv(gbif,paste0(filepath,"reduced_gbif.csv"))
 ```
 
-``` r
-# note some longitudes are wrong; remove anything over 0
+We are also going to import and reformat eBird data. Note that for
+*Junco*, we are only using populations predesignated to subspecies since
+roughly 57% of western *Junco* are *hyemalis* in Nebraska; thus, we
+can’t make broad assumptions. To contrast, 98% in eastern Nebraska are
+*hyemalis*.
 
-gbif <- read_csv(paste0(filepath,"reduced_gbif.csv"))%>%
-  filter(decimalLongitude < 0)
+``` r
+# reformat eBird data
+# add to ensure nothing is missing in GBIF!
+# first run revealed some data lacking
+
+ebird <- read.delim(paste0(filepath,
+                           "ebd_US-NE_relJun-2023/ebd_US-NE_relJun-2023.txt"),
+                    sep = "\t",quote="")
+
+# remove unknowns
+`%notlike%` <- Negate(`%like%`)
+ebird <- ebird[which(ebird$SCIENTIFIC.NAME%notlike%"sp."),]
+
+# split some taxa for better resolution
+ssp_rename <- function(from,to){
+  index <- which(ebird$SUBSPECIES.SCIENTIFIC.NAME==from)
+  if(length(index)<1){
+    print(paste0("No matches for ",from))
+  }else{
+    ebird$SCIENTIFIC.NAME[index] <- to
+    print(paste0(from," changed to ",to))
+  }
+}
+
+# remove unclassifiable
+ebird$SCIENTIFIC.NAME[which(ebird$SCIENTIFIC.NAME=="Junco hyemalis"&
+        ebird$SUBSPECIES.SCIENTIFIC.NAME=="")] <- "Junco sp."
+
+index <- which(ebird$SCIENTIFIC.NAME=="Setophaga coronata"&
+        ebird$SUBSPECIES.SCIENTIFIC.NAME=="")
+
+ebird$SCIENTIFIC.NAME[index] <- "Setophaga coronata/auduboni"
+
+sp_list <-  c("Junco hyemalis hyemalis/carolinensis","Junco hyemalis",
+             "Junco hyemalis [oreganus Group]","Junco oreganus",
+             "Junco hyemalis aikeni","Junco aikeni",
+             "Junco hyemalis mearnsi","Junco mearnsi",
+             "Junco hyemalis cismontanus","Junco cismontanus",
+             "Junco hyemalis caniceps","Junco caniceps",
+             "Junco hyemalis hyemalis/carolinensis/cismontanus",
+                    "Junco hyemalis/cismontanus",
+             "Junco hyemalis oreganus x mearnsi",
+                    "Junco hyemalis oreganus x mearnsi",
+             "Junco hyemalis mearnsi x aikeni",
+                    "Junco hyemalis mearnsi x aikeni",
+             "Setophaga coronata coronata","Setophaga coronata",
+             "Setophaga coronata auduboni","Setophaga auduboni",
+             "Setophaga coronata coronata x auduboni",
+                    "Setophaga coronata coronata x auduboni")
+
+renamer <- matrix(data=sp_list,
+       nrow=(length(sp_list)/2),ncol=2,
+       byrow = T) %>% as.data.frame()
+colnames(renamer) <- c("from","to")
+
+for(i in 1:nrow(renamer)){
+  ssp_rename(from = renamer$from[i],
+             to = renamer$to[i])
+}
+
+# reduce to relevant columns
+# all have coords??
+
+ebird <- ebird[order(ebird$TAXONOMIC.ORDER),]
+
+ebird <- ebird%>%
+  select(SCIENTIFIC.NAME, OBSERVATION.COUNT,
+         LONGITUDE, LATITUDE, OBSERVATION.DATE) %>%
+  unique()%>%
+  rename("species" = SCIENTIFIC.NAME,
+         "individualCount" = OBSERVATION.COUNT, "decimalLongitude" = LONGITUDE,
+         "decimalLatitude" = LATITUDE, "eventDate" = OBSERVATION.DATE)%>%
+  unique()
+
+write_csv(ebird,paste0(filepath,"reduced_ebird.csv"))
 ```
 
-    ## Warning: One or more parsing issues, call `problems()` on your data frame for details,
-    ## e.g.:
-    ##   dat <- vroom(...)
-    ##   problems(dat)
-
-    ## Rows: 2694333 Columns: 8
-    ## ── Column specification ────────────────────────────────────────────────────────
-    ## Delimiter: ","
-    ## chr  (3): species, locality, english
-    ## dbl  (4): individualCount, decimalLongitude, decimalLatitude, order
-    ## dttm (1): eventDate
-    ## 
-    ## ℹ Use `spec()` to retrieve the full column specification for this data.
-    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
-
 ``` r
+# note some longitudes are wrong; remove anything over 0
+# locality columns causing problems for ebird
+
+gbif <- read_csv(paste0(filepath,"reduced_gbif.csv"))%>%
+  filter(decimalLongitude < 0) %>%
+  select(-order,-english,-locality)
+
+ebird <- read_csv(paste0(filepath,"reduced_ebird.csv"),quote="")
+
+gbif <- rbind(ebird,gbif) %>%
+  unique()
+
+rm(ebird)
 # load shapefile
 
 nf <- vect(paste0(filepath,"S_USA.AdministrativeForest/S_USA.AdministrativeForest.shp"))
@@ -183,19 +300,18 @@ write_csv(ne_nf_gbif,paste0(filepath,"ne_natl_forest_birds.csv"))
 ne_nf_gbif <- read_csv(paste0(filepath,"ne_natl_forest_birds.csv"))
 ```
 
-    ## Rows: 29707 Columns: 9
+    ## Rows: 64305 Columns: 6
     ## ── Column specification ────────────────────────────────────────────────────────
     ## Delimiter: ","
-    ## chr  (4): species, locality, english, district
-    ## dbl  (4): individualCount, decimalLongitude, decimalLatitude, order
-    ## dttm (1): eventDate
+    ## chr  (3): species, individualCount, district
+    ## dbl  (2): decimalLongitude, decimalLatitude
+    ## date (1): eventDate
     ## 
     ## ℹ Use `spec()` to retrieve the full column specification for this data.
     ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 
 ``` r
 ne_nf_gbif$species <- as.factor(ne_nf_gbif$species)
-ne_nf_gbif$locality <- as.factor(ne_nf_gbif$locality)
 ne_nf_gbif$eventDate <- as.Date(ne_nf_gbif$eventDate)
 ne_nf_gbif$district <- as.factor(ne_nf_gbif$district)
 ```
@@ -230,161 +346,183 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "Bessey")
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Anser albifrons   :1   Min.   :2004  
+    ##  Anser albifrons   :3   Min.   :2004  
     ##  Acanthis flammea  :0   1st Qu.:2004  
     ##  Accipiter cooperii:0   Median :2004  
-    ##  Accipiter gentilis:0   Mean   :2004  
-    ##  Accipiter striatus:0   3rd Qu.:2004  
-    ##  Actitis macularius:0   Max.   :2004  
+    ##  Accipiter gentilis:0   Mean   :2010  
+    ##  Accipiter striatus:0   3rd Qu.:2014  
+    ##  Actitis macularius:0   Max.   :2023  
     ##  (Other)           :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-2.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Branta hutchinsii :2   Min.   :2016  
-    ##  Acanthis flammea  :0   1st Qu.:2017  
+    ##  Branta hutchinsii :4   Min.   :2016  
+    ##  Acanthis flammea  :0   1st Qu.:2016  
     ##  Accipiter cooperii:0   Median :2018  
     ##  Accipiter gentilis:0   Mean   :2018  
-    ##  Accipiter striatus:0   3rd Qu.:2020  
+    ##  Accipiter striatus:0   3rd Qu.:2021  
     ##  Actitis macularius:0   Max.   :2021  
     ##  (Other)           :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-3.png)<!-- -->
 
-    ##                species     eventDate   
-    ##  Branta canadensis :53   Min.   :2002  
-    ##  Acanthis flammea  : 0   1st Qu.:2011  
-    ##  Accipiter cooperii: 0   Median :2016  
-    ##  Accipiter gentilis: 0   Mean   :2015  
-    ##  Accipiter striatus: 0   3rd Qu.:2018  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
+    ##                species      eventDate   
+    ##  Branta canadensis :126   Min.   :2002  
+    ##  Acanthis flammea  :  0   1st Qu.:2012  
+    ##  Accipiter cooperii:  0   Median :2017  
+    ##  Accipiter gentilis:  0   Mean   :2016  
+    ##  Accipiter striatus:  0   3rd Qu.:2021  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-4.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Cygnus buccinator :1   Min.   :2021  
+    ##  Cygnus buccinator :3   Min.   :2021  
     ##  Acanthis flammea  :0   1st Qu.:2021  
     ##  Accipiter cooperii:0   Median :2021  
     ##  Accipiter gentilis:0   Mean   :2021  
-    ##  Accipiter striatus:0   3rd Qu.:2021  
-    ##  Actitis macularius:0   Max.   :2021  
+    ##  Accipiter striatus:0   3rd Qu.:2022  
+    ##  Actitis macularius:0   Max.   :2022  
     ##  (Other)           :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-5.png)<!-- -->
 
-    ##                species     eventDate   
-    ##  Aix sponsa        :15   Min.   :1990  
-    ##  Acanthis flammea  : 0   1st Qu.:2008  
-    ##  Accipiter cooperii: 0   Median :2011  
-    ##  Accipiter gentilis: 0   Mean   :2009  
-    ##  Accipiter striatus: 0   3rd Qu.:2012  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
+    ##                           species    eventDate   
+    ##  Cygnus buccinator/columbianus:1   Min.   :2022  
+    ##  Acanthis flammea             :0   1st Qu.:2022  
+    ##  Accipiter cooperii           :0   Median :2022  
+    ##  Accipiter gentilis           :0   Mean   :2022  
+    ##  Accipiter striatus           :0   3rd Qu.:2022  
+    ##  Actitis macularius           :0   Max.   :2022  
+    ##  (Other)                      :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-6.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Spatula discors   :26   Min.   :1986  
+    ##  Spatula discors   :59   Min.   :1986  
     ##  Acanthis flammea  : 0   1st Qu.:2010  
     ##  Accipiter cooperii: 0   Median :2012  
-    ##  Accipiter gentilis: 0   Mean   :2011  
-    ##  Accipiter striatus: 0   3rd Qu.:2016  
-    ##  Actitis macularius: 0   Max.   :2021  
+    ##  Accipiter gentilis: 0   Mean   :2012  
+    ##  Accipiter striatus: 0   3rd Qu.:2018  
+    ##  Actitis macularius: 0   Max.   :2023  
     ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-7.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Spatula clypeata  :8   Min.   :2011  
-    ##  Acanthis flammea  :0   1st Qu.:2012  
-    ##  Accipiter cooperii:0   Median :2014  
-    ##  Accipiter gentilis:0   Mean   :2015  
-    ##  Accipiter striatus:0   3rd Qu.:2016  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
+    ##                        species    eventDate   
+    ##  Spatula discors/cyanoptera:2   Min.   :2018  
+    ##  Acanthis flammea          :0   1st Qu.:2019  
+    ##  Accipiter cooperii        :0   Median :2020  
+    ##  Accipiter gentilis        :0   Mean   :2020  
+    ##  Accipiter striatus        :0   3rd Qu.:2021  
+    ##  Actitis macularius        :0   Max.   :2022  
+    ##  (Other)                   :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-8.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Mareca strepera   :4   Min.   :2000  
-    ##  Acanthis flammea  :0   1st Qu.:2008  
-    ##  Accipiter cooperii:0   Median :2014  
-    ##  Accipiter gentilis:0   Mean   :2012  
-    ##  Accipiter striatus:0   3rd Qu.:2018  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
+    ##                species     eventDate   
+    ##  Spatula clypeata  :19   Min.   :2011  
+    ##  Acanthis flammea  : 0   1st Qu.:2012  
+    ##  Accipiter cooperii: 0   Median :2014  
+    ##  Accipiter gentilis: 0   Mean   :2016  
+    ##  Accipiter striatus: 0   3rd Qu.:2019  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-9.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Mareca americana  :4   Min.   :2012  
-    ##  Acanthis flammea  :0   1st Qu.:2014  
-    ##  Accipiter cooperii:0   Median :2015  
-    ##  Accipiter gentilis:0   Mean   :2016  
-    ##  Accipiter striatus:0   3rd Qu.:2017  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
+    ##                species     eventDate   
+    ##  Mareca strepera   :12   Min.   :2000  
+    ##  Acanthis flammea  : 0   1st Qu.:2010  
+    ##  Accipiter cooperii: 0   Median :2019  
+    ##  Accipiter gentilis: 0   Mean   :2016  
+    ##  Accipiter striatus: 0   3rd Qu.:2022  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-10.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Anas platyrhynchos:33   Min.   :1985  
-    ##  Acanthis flammea  : 0   1st Qu.:2009  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2011  
-    ##  Accipiter striatus: 0   3rd Qu.:2018  
-    ##  Actitis macularius: 0   Max.   :2021  
+    ##  Mareca americana  :11   Min.   :2012  
+    ##  Acanthis flammea  : 0   1st Qu.:2014  
+    ##  Accipiter cooperii: 0   Median :2016  
+    ##  Accipiter gentilis: 0   Mean   :2018  
+    ##  Accipiter striatus: 0   3rd Qu.:2022  
+    ##  Actitis macularius: 0   Max.   :2023  
     ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-11.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Anas acuta        :2   Min.   :2000  
-    ##  Acanthis flammea  :0   1st Qu.:2005  
-    ##  Accipiter cooperii:0   Median :2010  
-    ##  Accipiter gentilis:0   Mean   :2010  
-    ##  Accipiter striatus:0   3rd Qu.:2016  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
+    ##                species     eventDate   
+    ##  Anas platyrhynchos:72   Min.   :1985  
+    ##  Acanthis flammea  : 0   1st Qu.:2010  
+    ##  Accipiter cooperii: 0   Median :2016  
+    ##  Accipiter gentilis: 0   Mean   :2012  
+    ##  Accipiter striatus: 0   3rd Qu.:2019  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-12.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Anas crecca       :6   Min.   :2000  
-    ##  Acanthis flammea  :0   1st Qu.:2008  
-    ##  Accipiter cooperii:0   Median :2014  
-    ##  Accipiter gentilis:0   Mean   :2012  
-    ##  Accipiter striatus:0   3rd Qu.:2017  
+    ##  Anas acuta        :4   Min.   :2000  
+    ##  Acanthis flammea  :0   1st Qu.:2000  
+    ##  Accipiter cooperii:0   Median :2010  
+    ##  Accipiter gentilis:0   Mean   :2010  
+    ##  Accipiter striatus:0   3rd Qu.:2021  
     ##  Actitis macularius:0   Max.   :2021  
     ##  (Other)           :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-13.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Aythya americana  :3   Min.   :2014  
-    ##  Acanthis flammea  :0   1st Qu.:2015  
-    ##  Accipiter cooperii:0   Median :2016  
-    ##  Accipiter gentilis:0   Mean   :2017  
-    ##  Accipiter striatus:0   3rd Qu.:2018  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
+    ##                species     eventDate   
+    ##  Anas crecca       :15   Min.   :2000  
+    ##  Acanthis flammea  : 0   1st Qu.:2009  
+    ##  Accipiter cooperii: 0   Median :2017  
+    ##  Accipiter gentilis: 0   Mean   :2014  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-14.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Aythya collaris   :6   Min.   :2000  
-    ##  Acanthis flammea  :0   1st Qu.:2012  
-    ##  Accipiter cooperii:0   Median :2013  
-    ##  Accipiter gentilis:0   Mean   :2012  
-    ##  Accipiter striatus:0   3rd Qu.:2016  
-    ##  Actitis macularius:0   Max.   :2017  
+    ##  Aythya valisineria:2   Min.   :2022  
+    ##  Acanthis flammea  :0   1st Qu.:2022  
+    ##  Accipiter cooperii:0   Median :2022  
+    ##  Accipiter gentilis:0   Mean   :2022  
+    ##  Accipiter striatus:0   3rd Qu.:2023  
+    ##  Actitis macularius:0   Max.   :2023  
     ##  (Other)           :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-15.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Aythya marila     :1   Min.   :2000  
+    ##  Aythya americana  :9   Min.   :2014  
+    ##  Acanthis flammea  :0   1st Qu.:2016  
+    ##  Accipiter cooperii:0   Median :2021  
+    ##  Accipiter gentilis:0   Mean   :2019  
+    ##  Accipiter striatus:0   3rd Qu.:2022  
+    ##  Actitis macularius:0   Max.   :2023  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-16.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Aythya collaris   :17   Min.   :2000  
+    ##  Acanthis flammea  : 0   1st Qu.:2012  
+    ##  Accipiter cooperii: 0   Median :2016  
+    ##  Accipiter gentilis: 0   Mean   :2015  
+    ##  Accipiter striatus: 0   3rd Qu.:2022  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-17.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Aythya marila     :2   Min.   :2000  
     ##  Acanthis flammea  :0   1st Qu.:2000  
     ##  Accipiter cooperii:0   Median :2000  
     ##  Accipiter gentilis:0   Mean   :2000  
@@ -392,241 +530,241 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "Bessey")
     ##  Actitis macularius:0   Max.   :2000  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-16.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Aythya affinis    :3   Min.   :2005  
-    ##  Acanthis flammea  :0   1st Qu.:2008  
-    ##  Accipiter cooperii:0   Median :2010  
-    ##  Accipiter gentilis:0   Mean   :2009  
-    ##  Accipiter striatus:0   3rd Qu.:2010  
-    ##  Actitis macularius:0   Max.   :2011  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-17.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Bucephala albeola :1   Min.   :2016  
-    ##  Acanthis flammea  :0   1st Qu.:2016  
-    ##  Accipiter cooperii:0   Median :2016  
-    ##  Accipiter gentilis:0   Mean   :2016  
-    ##  Accipiter striatus:0   3rd Qu.:2016  
-    ##  Actitis macularius:0   Max.   :2016  
-    ##  (Other)           :0
-
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-18.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Bucephala clangula:1   Min.   :2001  
-    ##  Acanthis flammea  :0   1st Qu.:2001  
-    ##  Accipiter cooperii:0   Median :2001  
-    ##  Accipiter gentilis:0   Mean   :2001  
-    ##  Accipiter striatus:0   3rd Qu.:2001  
-    ##  Actitis macularius:0   Max.   :2001  
-    ##  (Other)           :0
+    ##                species     eventDate   
+    ##  Aythya affinis    :12   Min.   :2005  
+    ##  Acanthis flammea  : 0   1st Qu.:2010  
+    ##  Accipiter cooperii: 0   Median :2016  
+    ##  Accipiter gentilis: 0   Mean   :2016  
+    ##  Accipiter striatus: 0   3rd Qu.:2023  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-19.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Mergus merganser  :3   Min.   :2009  
-    ##  Acanthis flammea  :0   1st Qu.:2012  
-    ##  Accipiter cooperii:0   Median :2014  
-    ##  Accipiter gentilis:0   Mean   :2013  
-    ##  Accipiter striatus:0   3rd Qu.:2015  
-    ##  Actitis macularius:0   Max.   :2016  
+    ##  Bucephala albeola :4   Min.   :2016  
+    ##  Acanthis flammea  :0   1st Qu.:2016  
+    ##  Accipiter cooperii:0   Median :2019  
+    ##  Accipiter gentilis:0   Mean   :2019  
+    ##  Accipiter striatus:0   3rd Qu.:2022  
+    ##  Actitis macularius:0   Max.   :2023  
     ##  (Other)           :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-20.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Oxyura jamaicensis:3   Min.   :2010  
-    ##  Acanthis flammea  :0   1st Qu.:2011  
+    ##  Bucephala clangula:4   Min.   :2001  
+    ##  Acanthis flammea  :0   1st Qu.:2001  
     ##  Accipiter cooperii:0   Median :2012  
-    ##  Accipiter gentilis:0   Mean   :2013  
-    ##  Accipiter striatus:0   3rd Qu.:2014  
-    ##  Actitis macularius:0   Max.   :2016  
+    ##  Accipiter gentilis:0   Mean   :2012  
+    ##  Accipiter striatus:0   3rd Qu.:2023  
+    ##  Actitis macularius:0   Max.   :2023  
     ##  (Other)           :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-21.png)<!-- -->
 
-    ##                 species     eventDate   
-    ##  Colinus virginianus:20   Min.   :2002  
-    ##  Acanthis flammea   : 0   1st Qu.:2017  
-    ##  Accipiter cooperii : 0   Median :2018  
-    ##  Accipiter gentilis : 0   Mean   :2017  
-    ##  Accipiter striatus : 0   3rd Qu.:2019  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
+    ##                species    eventDate   
+    ##  Mergus merganser  :6   Min.   :2009  
+    ##  Acanthis flammea  :0   1st Qu.:2010  
+    ##  Accipiter cooperii:0   Median :2014  
+    ##  Accipiter gentilis:0   Mean   :2013  
+    ##  Accipiter striatus:0   3rd Qu.:2016  
+    ##  Actitis macularius:0   Max.   :2016  
+    ##  (Other)           :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-22.png)<!-- -->
 
-    ##                 species     eventDate   
-    ##  Meleagris gallopavo:43   Min.   :2000  
-    ##  Acanthis flammea   : 0   1st Qu.:2012  
-    ##  Accipiter cooperii : 0   Median :2015  
-    ##  Accipiter gentilis : 0   Mean   :2015  
-    ##  Accipiter striatus : 0   3rd Qu.:2020  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
+    ##                species    eventDate   
+    ##  Oxyura jamaicensis:7   Min.   :2010  
+    ##  Acanthis flammea  :0   1st Qu.:2011  
+    ##  Accipiter cooperii:0   Median :2012  
+    ##  Accipiter gentilis:0   Mean   :2014  
+    ##  Accipiter striatus:0   3rd Qu.:2016  
+    ##  Actitis macularius:0   Max.   :2023  
+    ##  (Other)           :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-23.png)<!-- -->
 
-    ##                      species     eventDate   
-    ##  Tympanuchus phasianellus:47   Min.   :1957  
-    ##  Acanthis flammea        : 0   1st Qu.:2000  
-    ##  Accipiter cooperii      : 0   Median :2011  
-    ##  Accipiter gentilis      : 0   Mean   :2006  
-    ##  Accipiter striatus      : 0   3rd Qu.:2017  
-    ##  Actitis macularius      : 0   Max.   :2021  
-    ##  (Other)                 : 0
+    ##                 species     eventDate   
+    ##  Colinus virginianus:41   Min.   :2002  
+    ##  Acanthis flammea   : 0   1st Qu.:2017  
+    ##  Accipiter cooperii : 0   Median :2019  
+    ##  Accipiter gentilis : 0   Mean   :2017  
+    ##  Accipiter striatus : 0   3rd Qu.:2020  
+    ##  Actitis macularius : 0   Max.   :2022  
+    ##  (Other)            : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-24.png)<!-- -->
 
-    ##                species     eventDate   
-    ##  Tympanuchus cupido:20   Min.   :1986  
-    ##  Acanthis flammea  : 0   1st Qu.:1999  
-    ##  Accipiter cooperii: 0   Median :2004  
-    ##  Accipiter gentilis: 0   Mean   :2005  
-    ##  Accipiter striatus: 0   3rd Qu.:2017  
-    ##  Actitis macularius: 0   Max.   :2020  
-    ##  (Other)           : 0
+    ##                 species     eventDate   
+    ##  Meleagris gallopavo:94   Min.   :2000  
+    ##  Acanthis flammea   : 0   1st Qu.:2012  
+    ##  Accipiter cooperii : 0   Median :2016  
+    ##  Accipiter gentilis : 0   Mean   :2016  
+    ##  Accipiter striatus : 0   3rd Qu.:2020  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-25.png)<!-- -->
 
+    ##                      species     eventDate   
+    ##  Tympanuchus phasianellus:85   Min.   :1957  
+    ##  Acanthis flammea        : 0   1st Qu.:2003  
+    ##  Accipiter cooperii      : 0   Median :2015  
+    ##  Accipiter gentilis      : 0   Mean   :2009  
+    ##  Accipiter striatus      : 0   3rd Qu.:2020  
+    ##  Actitis macularius      : 0   Max.   :2023  
+    ##  (Other)                 : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-26.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Tympanuchus cupido:38   Min.   :1986  
+    ##  Acanthis flammea  : 0   1st Qu.:1999  
+    ##  Accipiter cooperii: 0   Median :2007  
+    ##  Accipiter gentilis: 0   Mean   :2007  
+    ##  Accipiter striatus: 0   3rd Qu.:2017  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-27.png)<!-- -->
+
     ##                 species     eventDate   
-    ##  Phasianus colchicus:14   Min.   :1986  
+    ##  Phasianus colchicus:30   Min.   :1986  
     ##  Acanthis flammea   : 0   1st Qu.:2004  
-    ##  Accipiter cooperii : 0   Median :2008  
-    ##  Accipiter gentilis : 0   Mean   :2008  
+    ##  Accipiter cooperii : 0   Median :2009  
+    ##  Accipiter gentilis : 0   Mean   :2009  
+    ##  Accipiter striatus : 0   3rd Qu.:2017  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-28.png)<!-- -->
+
+    ##                 species     eventDate   
+    ##  Podilymbus podiceps:15   Min.   :1987  
+    ##  Acanthis flammea   : 0   1st Qu.:2012  
+    ##  Accipiter cooperii : 0   Median :2015  
+    ##  Accipiter gentilis : 0   Mean   :2012  
     ##  Accipiter striatus : 0   3rd Qu.:2017  
     ##  Actitis macularius : 0   Max.   :2021  
     ##  (Other)            : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-26.png)<!-- -->
-
-    ##                 species    eventDate   
-    ##  Podilymbus podiceps:8   Min.   :1987  
-    ##  Acanthis flammea   :0   1st Qu.:2013  
-    ##  Accipiter cooperii :0   Median :2015  
-    ##  Accipiter gentilis :0   Mean   :2013  
-    ##  Accipiter striatus :0   3rd Qu.:2018  
-    ##  Actitis macularius :0   Max.   :2021  
-    ##  (Other)            :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-27.png)<!-- -->
-
-    ##                  species    eventDate   
-    ##  Podiceps nigricollis:1   Min.   :2007  
-    ##  Acanthis flammea    :0   1st Qu.:2007  
-    ##  Accipiter cooperii  :0   Median :2007  
-    ##  Accipiter gentilis  :0   Mean   :2007  
-    ##  Accipiter striatus  :0   3rd Qu.:2007  
-    ##  Actitis macularius  :0   Max.   :2007  
-    ##  (Other)             :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-28.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Columba livia     :7   Min.   :1994  
-    ##  Acanthis flammea  :0   1st Qu.:2003  
-    ##  Accipiter cooperii:0   Median :2007  
-    ##  Accipiter gentilis:0   Mean   :2008  
-    ##  Accipiter striatus:0   3rd Qu.:2013  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
-
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-29.png)<!-- -->
 
-    ##                   species     eventDate   
-    ##  Streptopelia decaocto:46   Min.   :2007  
-    ##  Acanthis flammea     : 0   1st Qu.:2014  
-    ##  Accipiter cooperii   : 0   Median :2015  
-    ##  Accipiter gentilis   : 0   Mean   :2016  
-    ##  Accipiter striatus   : 0   3rd Qu.:2018  
-    ##  Actitis macularius   : 0   Max.   :2021  
-    ##  (Other)              : 0
+    ##                  species    eventDate   
+    ##  Podiceps nigricollis:3   Min.   :2007  
+    ##  Acanthis flammea    :0   1st Qu.:2007  
+    ##  Accipiter cooperii  :0   Median :2007  
+    ##  Accipiter gentilis  :0   Mean   :2012  
+    ##  Accipiter striatus  :0   3rd Qu.:2015  
+    ##  Actitis macularius  :0   Max.   :2023  
+    ##  (Other)             :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-30.png)<!-- -->
 
-    ##                species      eventDate   
-    ##  Zenaida macroura  :138   Min.   :1985  
-    ##  Acanthis flammea  :  0   1st Qu.:2012  
-    ##  Accipiter cooperii:  0   Median :2016  
-    ##  Accipiter gentilis:  0   Mean   :2014  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2021  
-    ##  (Other)           :  0
+    ##                species     eventDate   
+    ##  Columba livia     :14   Min.   :1994  
+    ##  Acanthis flammea  : 0   1st Qu.:2002  
+    ##  Accipiter cooperii: 0   Median :2007  
+    ##  Accipiter gentilis: 0   Mean   :2008  
+    ##  Accipiter striatus: 0   3rd Qu.:2014  
+    ##  Actitis macularius: 0   Max.   :2021  
+    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-31.png)<!-- -->
 
-    ##                 species     eventDate   
-    ##  Coccyzus americanus:15   Min.   :2007  
-    ##  Acanthis flammea   : 0   1st Qu.:2015  
-    ##  Accipiter cooperii : 0   Median :2017  
-    ##  Accipiter gentilis : 0   Mean   :2016  
-    ##  Accipiter striatus : 0   3rd Qu.:2018  
-    ##  Actitis macularius : 0   Max.   :2020  
-    ##  (Other)            : 0
+    ##                   species      eventDate   
+    ##  Streptopelia decaocto:101   Min.   :2007  
+    ##  Acanthis flammea     :  0   1st Qu.:2014  
+    ##  Accipiter cooperii   :  0   Median :2016  
+    ##  Accipiter gentilis   :  0   Mean   :2017  
+    ##  Accipiter striatus   :  0   3rd Qu.:2020  
+    ##  Actitis macularius   :  0   Max.   :2023  
+    ##  (Other)              :  0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-32.png)<!-- -->
 
-    ##                      species    eventDate   
-    ##  Coccyzus erythropthalmus:3   Min.   :1957  
-    ##  Acanthis flammea        :0   1st Qu.:1986  
-    ##  Accipiter cooperii      :0   Median :2014  
-    ##  Accipiter gentilis      :0   Mean   :1995  
-    ##  Accipiter striatus      :0   3rd Qu.:2014  
-    ##  Actitis macularius      :0   Max.   :2014  
-    ##  (Other)                 :0
+    ##                species      eventDate   
+    ##  Zenaida macroura  :307   Min.   :1985  
+    ##  Acanthis flammea  :  0   1st Qu.:2012  
+    ##  Accipiter cooperii:  0   Median :2017  
+    ##  Accipiter gentilis:  0   Mean   :2014  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-33.png)<!-- -->
 
+    ##                 species     eventDate   
+    ##  Coccyzus americanus:36   Min.   :2007  
+    ##  Acanthis flammea   : 0   1st Qu.:2015  
+    ##  Accipiter cooperii : 0   Median :2018  
+    ##  Accipiter gentilis : 0   Mean   :2017  
+    ##  Accipiter striatus : 0   3rd Qu.:2019  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-34.png)<!-- -->
+
+    ##                      species    eventDate   
+    ##  Coccyzus erythropthalmus:6   Min.   :1957  
+    ##  Acanthis flammea        :0   1st Qu.:2014  
+    ##  Accipiter cooperii      :0   Median :2014  
+    ##  Accipiter gentilis      :0   Mean   :2006  
+    ##  Accipiter striatus      :0   3rd Qu.:2014  
+    ##  Actitis macularius      :0   Max.   :2022  
+    ##  (Other)                 :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-35.png)<!-- -->
+
     ##                species     eventDate   
-    ##  Chordeiles minor  :19   Min.   :1986  
+    ##  Chordeiles minor  :39   Min.   :1986  
     ##  Acanthis flammea  : 0   1st Qu.:2011  
     ##  Accipiter cooperii: 0   Median :2017  
     ##  Accipiter gentilis: 0   Mean   :2012  
     ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
+    ##  Actitis macularius: 0   Max.   :2022  
     ##  (Other)           : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-34.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-36.png)<!-- -->
 
     ##                      species     eventDate   
-    ##  Phalaenoptilus nuttallii:13   Min.   :1957  
+    ##  Phalaenoptilus nuttallii:25   Min.   :1957  
     ##  Acanthis flammea        : 0   1st Qu.:1995  
     ##  Accipiter cooperii      : 0   Median :2009  
-    ##  Accipiter gentilis      : 0   Mean   :2004  
+    ##  Accipiter gentilis      : 0   Mean   :2006  
     ##  Accipiter striatus      : 0   3rd Qu.:2018  
     ##  Actitis macularius      : 0   Max.   :2020  
     ##  (Other)                 : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-35.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-37.png)<!-- -->
 
     ##                   species    eventDate   
-    ##  Antrostomus vociferus:3   Min.   :2009  
-    ##  Acanthis flammea     :0   1st Qu.:2012  
+    ##  Antrostomus vociferus:6   Min.   :2009  
+    ##  Acanthis flammea     :0   1st Qu.:2010  
     ##  Accipiter cooperii   :0   Median :2015  
     ##  Accipiter gentilis   :0   Mean   :2013  
     ##  Accipiter striatus   :0   3rd Qu.:2016  
     ##  Actitis macularius   :0   Max.   :2016  
     ##  (Other)              :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-36.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-38.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Chaetura pelagica :19   Min.   :1986  
-    ##  Acanthis flammea  : 0   1st Qu.:2010  
+    ##  Chaetura pelagica :44   Min.   :1986  
+    ##  Acanthis flammea  : 0   1st Qu.:2011  
     ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2011  
-    ##  Accipiter striatus: 0   3rd Qu.:2017  
-    ##  Actitis macularius: 0   Max.   :2021  
+    ##  Accipiter gentilis: 0   Mean   :2013  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2023  
     ##  (Other)           : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-37.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-39.png)<!-- -->
 
     ##                  species    eventDate   
-    ##  Archilochus colubris:1   Min.   :1990  
+    ##  Archilochus colubris:2   Min.   :1990  
     ##  Acanthis flammea    :0   1st Qu.:1990  
     ##  Accipiter cooperii  :0   Median :1990  
     ##  Accipiter gentilis  :0   Mean   :1990  
@@ -634,21 +772,10 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "Bessey")
     ##  Actitis macularius  :0   Max.   :1990  
     ##  (Other)             :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-38.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-40.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Rallus limicola   :1   Min.   :1957  
-    ##  Acanthis flammea  :0   1st Qu.:1957  
-    ##  Accipiter cooperii:0   Median :1957  
-    ##  Accipiter gentilis:0   Mean   :1957  
-    ##  Accipiter striatus:0   3rd Qu.:1957  
-    ##  Actitis macularius:0   Max.   :1957  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-39.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Porzana carolina  :1   Min.   :2009  
+    ##  Porzana carolina  :2   Min.   :2009  
     ##  Acanthis flammea  :0   1st Qu.:2009  
     ##  Accipiter cooperii:0   Median :2009  
     ##  Accipiter gentilis:0   Mean   :2009  
@@ -656,32 +783,32 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "Bessey")
     ##  Actitis macularius:0   Max.   :2009  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-40.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Fulica americana  :4   Min.   :2000  
-    ##  Acanthis flammea  :0   1st Qu.:2009  
-    ##  Accipiter cooperii:0   Median :2012  
-    ##  Accipiter gentilis:0   Mean   :2012  
-    ##  Accipiter striatus:0   3rd Qu.:2015  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
-
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-41.png)<!-- -->
 
-    ##                 species    eventDate   
-    ##  Antigone canadensis:7   Min.   :2000  
-    ##  Acanthis flammea   :0   1st Qu.:2011  
-    ##  Accipiter cooperii :0   Median :2017  
-    ##  Accipiter gentilis :0   Mean   :2014  
-    ##  Accipiter striatus :0   3rd Qu.:2020  
-    ##  Actitis macularius :0   Max.   :2021  
-    ##  (Other)            :0
+    ##                species     eventDate   
+    ##  Fulica americana  :11   Min.   :2000  
+    ##  Acanthis flammea  : 0   1st Qu.:2012  
+    ##  Accipiter cooperii: 0   Median :2013  
+    ##  Accipiter gentilis: 0   Mean   :2014  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-42.png)<!-- -->
 
+    ##                 species     eventDate   
+    ##  Antigone canadensis:14   Min.   :2000  
+    ##  Acanthis flammea   : 0   1st Qu.:2011  
+    ##  Accipiter cooperii : 0   Median :2017  
+    ##  Accipiter gentilis : 0   Mean   :2014  
+    ##  Accipiter striatus : 0   3rd Qu.:2021  
+    ##  Actitis macularius : 0   Max.   :2021  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-43.png)<!-- -->
+
     ##                     species    eventDate   
-    ##  Recurvirostra americana:1   Min.   :1986  
+    ##  Recurvirostra americana:2   Min.   :1986  
     ##  Acanthis flammea       :0   1st Qu.:1986  
     ##  Accipiter cooperii     :0   Median :1986  
     ##  Accipiter gentilis     :0   Mean   :1986  
@@ -689,10 +816,10 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "Bessey")
     ##  Actitis macularius     :0   Max.   :1986  
     ##  (Other)                :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-43.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-44.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Pluvialis dominica:1   Min.   :2018  
+    ##  Pluvialis dominica:2   Min.   :2018  
     ##  Acanthis flammea  :0   1st Qu.:2018  
     ##  Accipiter cooperii:0   Median :2018  
     ##  Accipiter gentilis:0   Mean   :2018  
@@ -700,43 +827,43 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "Bessey")
     ##  Actitis macularius:0   Max.   :2018  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-44.png)<!-- -->
-
-    ##                  species     eventDate   
-    ##  Charadrius vociferus:43   Min.   :1978  
-    ##  Acanthis flammea    : 0   1st Qu.:2006  
-    ##  Accipiter cooperii  : 0   Median :2015  
-    ##  Accipiter gentilis  : 0   Mean   :2011  
-    ##  Accipiter striatus  : 0   3rd Qu.:2018  
-    ##  Actitis macularius  : 0   Max.   :2021  
-    ##  (Other)             : 0
-
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-45.png)<!-- -->
 
-    ##                  species    eventDate   
-    ##  Bartramia longicauda:8   Min.   :1986  
-    ##  Acanthis flammea    :0   1st Qu.:2009  
-    ##  Accipiter cooperii  :0   Median :2016  
-    ##  Accipiter gentilis  :0   Mean   :2011  
-    ##  Accipiter striatus  :0   3rd Qu.:2017  
-    ##  Actitis macularius  :0   Max.   :2021  
-    ##  (Other)             :0
+    ##                  species     eventDate   
+    ##  Charadrius vociferus:92   Min.   :1978  
+    ##  Acanthis flammea    : 0   1st Qu.:2007  
+    ##  Accipiter cooperii  : 0   Median :2015  
+    ##  Accipiter gentilis  : 0   Mean   :2012  
+    ##  Accipiter striatus  : 0   3rd Qu.:2019  
+    ##  Actitis macularius  : 0   Max.   :2023  
+    ##  (Other)             : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-46.png)<!-- -->
 
-    ##                 species    eventDate   
-    ##  Numenius americanus:8   Min.   :2005  
-    ##  Acanthis flammea   :0   1st Qu.:2006  
-    ##  Accipiter cooperii :0   Median :2010  
-    ##  Accipiter gentilis :0   Mean   :2011  
-    ##  Accipiter striatus :0   3rd Qu.:2016  
-    ##  Actitis macularius :0   Max.   :2018  
-    ##  (Other)            :0
+    ##                  species     eventDate   
+    ##  Bartramia longicauda:18   Min.   :1986  
+    ##  Acanthis flammea    : 0   1st Qu.:2010  
+    ##  Accipiter cooperii  : 0   Median :2017  
+    ##  Accipiter gentilis  : 0   Mean   :2012  
+    ##  Accipiter striatus  : 0   3rd Qu.:2017  
+    ##  Actitis macularius  : 0   Max.   :2023  
+    ##  (Other)             : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-47.png)<!-- -->
 
+    ##                 species     eventDate   
+    ##  Numenius americanus:20   Min.   :2005  
+    ##  Acanthis flammea   : 0   1st Qu.:2007  
+    ##  Accipiter cooperii : 0   Median :2013  
+    ##  Accipiter gentilis : 0   Mean   :2013  
+    ##  Accipiter striatus : 0   3rd Qu.:2018  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-48.png)<!-- -->
+
     ##                species    eventDate   
-    ##  Calidris minutilla:1   Min.   :2009  
+    ##  Calidris minutilla:2   Min.   :2009  
     ##  Acanthis flammea  :0   1st Qu.:2009  
     ##  Accipiter cooperii:0   Median :2009  
     ##  Accipiter gentilis:0   Mean   :2009  
@@ -744,57 +871,46 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "Bessey")
     ##  Actitis macularius:0   Max.   :2009  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-48.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-49.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Gallinago delicata:3   Min.   :1989  
-    ##  Acanthis flammea  :0   1st Qu.:1997  
+    ##  Gallinago delicata:6   Min.   :1989  
+    ##  Acanthis flammea  :0   1st Qu.:1993  
     ##  Accipiter cooperii:0   Median :2005  
     ##  Accipiter gentilis:0   Mean   :2003  
-    ##  Accipiter striatus:0   3rd Qu.:2010  
+    ##  Accipiter striatus:0   3rd Qu.:2012  
     ##  Actitis macularius:0   Max.   :2015  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-49.png)<!-- -->
-
-    ##                  species     eventDate   
-    ##  Actitis macularius  :10   Min.   :1986  
-    ##  Acanthis flammea    : 0   1st Qu.:2008  
-    ##  Accipiter cooperii  : 0   Median :2012  
-    ##  Accipiter gentilis  : 0   Mean   :2010  
-    ##  Accipiter striatus  : 0   3rd Qu.:2016  
-    ##  Aechmophorus clarkii: 0   Max.   :2021  
-    ##  (Other)             : 0
-
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-50.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Tringa melanoleuca:2   Min.   :1986  
-    ##  Acanthis flammea  :0   1st Qu.:1990  
-    ##  Accipiter cooperii:0   Median :1993  
-    ##  Accipiter gentilis:0   Mean   :1993  
-    ##  Accipiter striatus:0   3rd Qu.:1996  
-    ##  Actitis macularius:0   Max.   :2000  
-    ##  (Other)           :0
+    ##                  species     eventDate   
+    ##  Actitis macularius  :21   Min.   :1986  
+    ##  Acanthis flammea    : 0   1st Qu.:2007  
+    ##  Accipiter cooperii  : 0   Median :2014  
+    ##  Accipiter gentilis  : 0   Mean   :2011  
+    ##  Accipiter striatus  : 0   3rd Qu.:2017  
+    ##  Aechmophorus clarkii: 0   Max.   :2022  
+    ##  (Other)             : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-51.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Larus delawarensis:2   Min.   :2011  
-    ##  Acanthis flammea  :0   1st Qu.:2014  
-    ##  Accipiter cooperii:0   Median :2016  
-    ##  Accipiter gentilis:0   Mean   :2016  
-    ##  Accipiter striatus:0   3rd Qu.:2018  
-    ##  Actitis macularius:0   Max.   :2021  
+    ##  Tringa melanoleuca:5   Min.   :1986  
+    ##  Acanthis flammea  :0   1st Qu.:1986  
+    ##  Accipiter cooperii:0   Median :2000  
+    ##  Accipiter gentilis:0   Mean   :1999  
+    ##  Accipiter striatus:0   3rd Qu.:2000  
+    ##  Actitis macularius:0   Max.   :2023  
     ##  (Other)           :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-52.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Chlidonias niger  :1   Min.   :2021  
-    ##  Acanthis flammea  :0   1st Qu.:2021  
-    ##  Accipiter cooperii:0   Median :2021  
-    ##  Accipiter gentilis:0   Mean   :2021  
+    ##  Larus delawarensis:4   Min.   :2011  
+    ##  Acanthis flammea  :0   1st Qu.:2011  
+    ##  Accipiter cooperii:0   Median :2016  
+    ##  Accipiter gentilis:0   Mean   :2016  
     ##  Accipiter striatus:0   3rd Qu.:2021  
     ##  Actitis macularius:0   Max.   :2021  
     ##  (Other)           :0
@@ -802,194 +918,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "Bessey")
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-53.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Sterna forsteri   :1   Min.   :2018  
-    ##  Acanthis flammea  :0   1st Qu.:2018  
-    ##  Accipiter cooperii:0   Median :2018  
-    ##  Accipiter gentilis:0   Mean   :2018  
-    ##  Accipiter striatus:0   3rd Qu.:2018  
-    ##  Actitis macularius:0   Max.   :2018  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-54.png)<!-- -->
-
-    ##                 species     eventDate   
-    ##  Nannopterum auritum:11   Min.   :1986  
-    ##  Acanthis flammea   : 0   1st Qu.:1991  
-    ##  Accipiter cooperii : 0   Median :2007  
-    ##  Accipiter gentilis : 0   Mean   :2004  
-    ##  Accipiter striatus : 0   3rd Qu.:2015  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-55.png)<!-- -->
-
-    ##                       species    eventDate   
-    ##  Pelecanus erythrorhynchos:2   Min.   :1995  
-    ##  Acanthis flammea         :0   1st Qu.:2002  
-    ##  Accipiter cooperii       :0   Median :2008  
-    ##  Accipiter gentilis       :0   Mean   :2008  
-    ##  Accipiter striatus       :0   3rd Qu.:2014  
-    ##  Actitis macularius       :0   Max.   :2021  
-    ##  (Other)                  :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-56.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Ardea herodias    :15   Min.   :1905  
-    ##  Acanthis flammea  : 0   1st Qu.:1998  
-    ##  Accipiter cooperii: 0   Median :2007  
-    ##  Accipiter gentilis: 0   Mean   :1999  
-    ##  Accipiter striatus: 0   3rd Qu.:2012  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-57.png)<!-- -->
-
-    ##                 species    eventDate   
-    ##  Butorides virescens:1   Min.   :2007  
-    ##  Acanthis flammea   :0   1st Qu.:2007  
-    ##  Accipiter cooperii :0   Median :2007  
-    ##  Accipiter gentilis :0   Mean   :2007  
-    ##  Accipiter striatus :0   3rd Qu.:2007  
-    ##  Actitis macularius :0   Max.   :2007  
-    ##  (Other)            :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-58.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Plegadis chihi    :2   Min.   :2013  
-    ##  Acanthis flammea  :0   1st Qu.:2014  
-    ##  Accipiter cooperii:0   Median :2015  
-    ##  Accipiter gentilis:0   Mean   :2015  
-    ##  Accipiter striatus:0   3rd Qu.:2016  
-    ##  Actitis macularius:0   Max.   :2017  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-59.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Cathartes aura    :91   Min.   :1986  
-    ##  Acanthis flammea  : 0   1st Qu.:2012  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2013  
-    ##  Accipiter striatus: 0   3rd Qu.:2019  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-60.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Pandion haliaetus :5   Min.   :1986  
-    ##  Acanthis flammea  :0   1st Qu.:2002  
-    ##  Accipiter cooperii:0   Median :2017  
-    ##  Accipiter gentilis:0   Mean   :2008  
-    ##  Accipiter striatus:0   3rd Qu.:2017  
-    ##  Actitis macularius:0   Max.   :2020  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-61.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Aquila chrysaetos :3   Min.   :1987  
-    ##  Acanthis flammea  :0   1st Qu.:1988  
-    ##  Accipiter cooperii:0   Median :1989  
-    ##  Accipiter gentilis:0   Mean   :1999  
-    ##  Accipiter striatus:0   3rd Qu.:2005  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-62.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Circus hudsonius  :23   Min.   :1986  
-    ##  Acanthis flammea  : 0   1st Qu.:1997  
-    ##  Accipiter cooperii: 0   Median :2009  
-    ##  Accipiter gentilis: 0   Mean   :2006  
-    ##  Accipiter striatus: 0   3rd Qu.:2014  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-63.png)<!-- -->
-
-    ##                  species    eventDate   
-    ##  Accipiter striatus  :7   Min.   :1985  
-    ##  Acanthis flammea    :0   1st Qu.:1990  
-    ##  Accipiter cooperii  :0   Median :1995  
-    ##  Accipiter gentilis  :0   Mean   :2001  
-    ##  Actitis macularius  :0   3rd Qu.:2012  
-    ##  Aechmophorus clarkii:0   Max.   :2021  
-    ##  (Other)             :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-64.png)<!-- -->
-
-    ##                  species     eventDate   
-    ##  Accipiter cooperii  :10   Min.   :1990  
-    ##  Acanthis flammea    : 0   1st Qu.:2010  
-    ##  Accipiter gentilis  : 0   Median :2016  
-    ##  Accipiter striatus  : 0   Mean   :2013  
-    ##  Actitis macularius  : 0   3rd Qu.:2020  
-    ##  Aechmophorus clarkii: 0   Max.   :2021  
-    ##  (Other)             : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-65.png)<!-- -->
-
-    ##                      species     eventDate   
-    ##  Haliaeetus leucocephalus:12   Min.   :1978  
-    ##  Acanthis flammea        : 0   1st Qu.:2014  
-    ##  Accipiter cooperii      : 0   Median :2017  
-    ##  Accipiter gentilis      : 0   Mean   :2014  
-    ##  Accipiter striatus      : 0   3rd Qu.:2020  
-    ##  Actitis macularius      : 0   Max.   :2021  
-    ##  (Other)                 : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-66.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Buteo platypterus :2   Min.   :2015  
-    ##  Acanthis flammea  :0   1st Qu.:2016  
-    ##  Accipiter cooperii:0   Median :2016  
-    ##  Accipiter gentilis:0   Mean   :2016  
-    ##  Accipiter striatus:0   3rd Qu.:2016  
-    ##  Actitis macularius:0   Max.   :2017  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-67.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Buteo swainsoni   :11   Min.   :1986  
-    ##  Acanthis flammea  : 0   1st Qu.:2004  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2010  
-    ##  Accipiter striatus: 0   3rd Qu.:2018  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-68.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Buteo jamaicensis :66   Min.   :1978  
-    ##  Acanthis flammea  : 0   1st Qu.:2004  
-    ##  Accipiter cooperii: 0   Median :2012  
-    ##  Accipiter gentilis: 0   Mean   :2009  
-    ##  Accipiter striatus: 0   3rd Qu.:2017  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-69.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Buteo lagopus     :4   Min.   :2001  
-    ##  Acanthis flammea  :0   1st Qu.:2004  
-    ##  Accipiter cooperii:0   Median :2005  
-    ##  Accipiter gentilis:0   Mean   :2008  
-    ##  Accipiter striatus:0   3rd Qu.:2009  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-70.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Buteo regalis     :1   Min.   :2021  
+    ##  Chlidonias niger  :2   Min.   :2021  
     ##  Acanthis flammea  :0   1st Qu.:2021  
     ##  Accipiter cooperii:0   Median :2021  
     ##  Accipiter gentilis:0   Mean   :2021  
@@ -997,208 +926,10 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "Bessey")
     ##  Actitis macularius:0   Max.   :2021  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-71.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-54.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Tyto alba         :1   Min.   :1987  
-    ##  Acanthis flammea  :0   1st Qu.:1987  
-    ##  Accipiter cooperii:0   Median :1987  
-    ##  Accipiter gentilis:0   Mean   :1987  
-    ##  Accipiter striatus:0   3rd Qu.:1987  
-    ##  Actitis macularius:0   Max.   :1987  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-72.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Megascops asio    :9   Min.   :1983  
-    ##  Acanthis flammea  :0   1st Qu.:1999  
-    ##  Accipiter cooperii:0   Median :2007  
-    ##  Accipiter gentilis:0   Mean   :2004  
-    ##  Accipiter striatus:0   3rd Qu.:2012  
-    ##  Actitis macularius:0   Max.   :2015  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-73.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Bubo virginianus  :21   Min.   :1978  
-    ##  Acanthis flammea  : 0   1st Qu.:2000  
-    ##  Accipiter cooperii: 0   Median :2010  
-    ##  Accipiter gentilis: 0   Mean   :2008  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-74.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Athene cunicularia:1   Min.   :2005  
-    ##  Acanthis flammea  :0   1st Qu.:2005  
-    ##  Accipiter cooperii:0   Median :2005  
-    ##  Accipiter gentilis:0   Mean   :2005  
-    ##  Accipiter striatus:0   3rd Qu.:2005  
-    ##  Actitis macularius:0   Max.   :2005  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-75.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Asio otus         :2   Min.   :2009  
-    ##  Acanthis flammea  :0   1st Qu.:2011  
-    ##  Accipiter cooperii:0   Median :2014  
-    ##  Accipiter gentilis:0   Mean   :2014  
-    ##  Accipiter striatus:0   3rd Qu.:2016  
-    ##  Actitis macularius:0   Max.   :2018  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-76.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Aegolius acadicus :2   Min.   :2016  
-    ##  Acanthis flammea  :0   1st Qu.:2016  
-    ##  Accipiter cooperii:0   Median :2017  
-    ##  Accipiter gentilis:0   Mean   :2017  
-    ##  Accipiter striatus:0   3rd Qu.:2018  
-    ##  Actitis macularius:0   Max.   :2018  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-77.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Megaceryle alcyon :29   Min.   :1985  
-    ##  Acanthis flammea  : 0   1st Qu.:2002  
-    ##  Accipiter cooperii: 0   Median :2014  
-    ##  Accipiter gentilis: 0   Mean   :2007  
-    ##  Accipiter striatus: 0   3rd Qu.:2015  
-    ##  Actitis macularius: 0   Max.   :2020  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-78.png)<!-- -->
-
-    ##                        species     eventDate   
-    ##  Melanerpes erythrocephalus:53   Min.   :1986  
-    ##  Acanthis flammea          : 0   1st Qu.:2014  
-    ##  Accipiter cooperii        : 0   Median :2017  
-    ##  Accipiter gentilis        : 0   Mean   :2014  
-    ##  Accipiter striatus        : 0   3rd Qu.:2020  
-    ##  Actitis macularius        : 0   Max.   :2021  
-    ##  (Other)                   : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-79.png)<!-- -->
-
-    ##                  species     eventDate   
-    ##  Melanerpes carolinus:10   Min.   :1990  
-    ##  Acanthis flammea    : 0   1st Qu.:2006  
-    ##  Accipiter cooperii  : 0   Median :2016  
-    ##  Accipiter gentilis  : 0   Mean   :2012  
-    ##  Accipiter striatus  : 0   3rd Qu.:2020  
-    ##  Actitis macularius  : 0   Max.   :2021  
-    ##  (Other)             : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-80.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Sphyrapicus varius:5   Min.   :1984  
-    ##  Acanthis flammea  :0   1st Qu.:1989  
-    ##  Accipiter cooperii:0   Median :2004  
-    ##  Accipiter gentilis:0   Mean   :2002  
-    ##  Accipiter striatus:0   3rd Qu.:2011  
-    ##  Actitis macularius:0   Max.   :2020  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-81.png)<!-- -->
-
-    ##                 species     eventDate   
-    ##  Dryobates pubescens:81   Min.   :1985  
-    ##  Acanthis flammea   : 0   1st Qu.:2004  
-    ##  Accipiter cooperii : 0   Median :2014  
-    ##  Accipiter gentilis : 0   Mean   :2010  
-    ##  Accipiter striatus : 0   3rd Qu.:2017  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-82.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Dryobates villosus:42   Min.   :1986  
-    ##  Acanthis flammea  : 0   1st Qu.:2003  
-    ##  Accipiter cooperii: 0   Median :2012  
-    ##  Accipiter gentilis: 0   Mean   :2008  
-    ##  Accipiter striatus: 0   3rd Qu.:2015  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-83.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Colaptes auratus  :110   Min.   :1986  
-    ##  Acanthis flammea  :  0   1st Qu.:2007  
-    ##  Accipiter cooperii:  0   Median :2014  
-    ##  Accipiter gentilis:  0   Mean   :2011  
-    ##  Accipiter striatus:  0   3rd Qu.:2018  
-    ##  Actitis macularius:  0   Max.   :2021  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-84.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Falco sparverius  :45   Min.   :1986  
-    ##  Acanthis flammea  : 0   1st Qu.:2004  
-    ##  Accipiter cooperii: 0   Median :2010  
-    ##  Accipiter gentilis: 0   Mean   :2009  
-    ##  Accipiter striatus: 0   3rd Qu.:2015  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-85.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Falco columbarius :4   Min.   :1983  
-    ##  Acanthis flammea  :0   1st Qu.:2005  
-    ##  Accipiter cooperii:0   Median :2016  
-    ##  Accipiter gentilis:0   Mean   :2009  
-    ##  Accipiter striatus:0   3rd Qu.:2020  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-86.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Falco mexicanus   :2   Min.   :1990  
-    ##  Acanthis flammea  :0   1st Qu.:1997  
-    ##  Accipiter cooperii:0   Median :2004  
-    ##  Accipiter gentilis:0   Mean   :2004  
-    ##  Accipiter striatus:0   3rd Qu.:2011  
-    ##  Actitis macularius:0   Max.   :2018  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-87.png)<!-- -->
-
-    ##                 species    eventDate   
-    ##  Contopus sordidulus:7   Min.   :2010  
-    ##  Acanthis flammea   :0   1st Qu.:2014  
-    ##  Accipiter cooperii :0   Median :2014  
-    ##  Accipiter gentilis :0   Mean   :2014  
-    ##  Accipiter striatus :0   3rd Qu.:2014  
-    ##  Actitis macularius :0   Max.   :2015  
-    ##  (Other)            :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-88.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Contopus virens   :9   Min.   :2014  
-    ##  Acanthis flammea  :0   1st Qu.:2017  
-    ##  Accipiter cooperii:0   Median :2019  
-    ##  Accipiter gentilis:0   Mean   :2018  
-    ##  Accipiter striatus:0   3rd Qu.:2020  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-89.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Empidonax alnorum :1   Min.   :2018  
+    ##  Sterna forsteri   :2   Min.   :2018  
     ##  Acanthis flammea  :0   1st Qu.:2018  
     ##  Accipiter cooperii:0   Median :2018  
     ##  Accipiter gentilis:0   Mean   :2018  
@@ -1206,43 +937,461 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "Bessey")
     ##  Actitis macularius:0   Max.   :2018  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-90.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-55.png)<!-- -->
+
+    ##                 species     eventDate   
+    ##  Nannopterum auritum:23   Min.   :1986  
+    ##  Acanthis flammea   : 0   1st Qu.:1991  
+    ##  Accipiter cooperii : 0   Median :2007  
+    ##  Accipiter gentilis : 0   Mean   :2005  
+    ##  Accipiter striatus : 0   3rd Qu.:2018  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-56.png)<!-- -->
+
+    ##                       species    eventDate   
+    ##  Pelecanus erythrorhynchos:4   Min.   :1995  
+    ##  Acanthis flammea         :0   1st Qu.:1995  
+    ##  Accipiter cooperii       :0   Median :2008  
+    ##  Accipiter gentilis       :0   Mean   :2008  
+    ##  Accipiter striatus       :0   3rd Qu.:2021  
+    ##  Actitis macularius       :0   Max.   :2021  
+    ##  (Other)                  :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-57.png)<!-- -->
+
+    ##                   species    eventDate   
+    ##  Botaurus lentiginosus:1   Min.   :2023  
+    ##  Acanthis flammea     :0   1st Qu.:2023  
+    ##  Accipiter cooperii   :0   Median :2023  
+    ##  Accipiter gentilis   :0   Mean   :2023  
+    ##  Accipiter striatus   :0   3rd Qu.:2023  
+    ##  Actitis macularius   :0   Max.   :2023  
+    ##  (Other)              :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-58.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Ardea herodias    :33   Min.   :1905  
+    ##  Acanthis flammea  : 0   1st Qu.:2000  
+    ##  Accipiter cooperii: 0   Median :2009  
+    ##  Accipiter gentilis: 0   Mean   :2005  
+    ##  Accipiter striatus: 0   3rd Qu.:2017  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-59.png)<!-- -->
+
+    ##                 species    eventDate   
+    ##  Butorides virescens:3   Min.   :2007  
+    ##  Acanthis flammea   :0   1st Qu.:2007  
+    ##  Accipiter cooperii :0   Median :2007  
+    ##  Accipiter gentilis :0   Mean   :2012  
+    ##  Accipiter striatus :0   3rd Qu.:2014  
+    ##  Actitis macularius :0   Max.   :2022  
+    ##  (Other)            :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-60.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Empidonax traillii:4   Min.   :2008  
-    ##  Acanthis flammea  :0   1st Qu.:2012  
-    ##  Accipiter cooperii:0   Median :2016  
+    ##  Plegadis chihi    :4   Min.   :2013  
+    ##  Acanthis flammea  :0   1st Qu.:2013  
+    ##  Accipiter cooperii:0   Median :2015  
     ##  Accipiter gentilis:0   Mean   :2015  
-    ##  Accipiter striatus:0   3rd Qu.:2018  
-    ##  Actitis macularius:0   Max.   :2020  
+    ##  Accipiter striatus:0   3rd Qu.:2017  
+    ##  Actitis macularius:0   Max.   :2017  
     ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-61.png)<!-- -->
+
+    ##                        species    eventDate   
+    ##  Plegadis falcinellus/chihi:1   Min.   :2017  
+    ##  Acanthis flammea          :0   1st Qu.:2017  
+    ##  Accipiter cooperii        :0   Median :2017  
+    ##  Accipiter gentilis        :0   Mean   :2017  
+    ##  Accipiter striatus        :0   3rd Qu.:2017  
+    ##  Actitis macularius        :0   Max.   :2017  
+    ##  (Other)                   :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-62.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Cathartes aura    :207   Min.   :1986  
+    ##  Acanthis flammea  :  0   1st Qu.:2012  
+    ##  Accipiter cooperii:  0   Median :2016  
+    ##  Accipiter gentilis:  0   Mean   :2015  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-63.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Pandion haliaetus :11   Min.   :1986  
+    ##  Acanthis flammea  : 0   1st Qu.:2002  
+    ##  Accipiter cooperii: 0   Median :2017  
+    ##  Accipiter gentilis: 0   Mean   :2010  
+    ##  Accipiter striatus: 0   3rd Qu.:2018  
+    ##  Actitis macularius: 0   Max.   :2022  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-64.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Aquila chrysaetos :6   Min.   :1987  
+    ##  Acanthis flammea  :0   1st Qu.:1988  
+    ##  Accipiter cooperii:0   Median :1989  
+    ##  Accipiter gentilis:0   Mean   :1999  
+    ##  Accipiter striatus:0   3rd Qu.:2013  
+    ##  Actitis macularius:0   Max.   :2021  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-65.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Circus hudsonius  :51   Min.   :1986  
+    ##  Acanthis flammea  : 0   1st Qu.:2000  
+    ##  Accipiter cooperii: 0   Median :2011  
+    ##  Accipiter gentilis: 0   Mean   :2008  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-66.png)<!-- -->
+
+    ##                  species     eventDate   
+    ##  Accipiter striatus  :14   Min.   :1985  
+    ##  Acanthis flammea    : 0   1st Qu.:1989  
+    ##  Accipiter cooperii  : 0   Median :1995  
+    ##  Accipiter gentilis  : 0   Mean   :2001  
+    ##  Actitis macularius  : 0   3rd Qu.:2013  
+    ##  Aechmophorus clarkii: 0   Max.   :2021  
+    ##  (Other)             : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-67.png)<!-- -->
+
+    ##                  species     eventDate   
+    ##  Accipiter cooperii  :21   Min.   :1990  
+    ##  Acanthis flammea    : 0   1st Qu.:2009  
+    ##  Accipiter gentilis  : 0   Median :2018  
+    ##  Accipiter striatus  : 0   Mean   :2014  
+    ##  Actitis macularius  : 0   3rd Qu.:2020  
+    ##  Aechmophorus clarkii: 0   Max.   :2022  
+    ##  (Other)             : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-68.png)<!-- -->
+
+    ##                      species     eventDate   
+    ##  Haliaeetus leucocephalus:30   Min.   :1978  
+    ##  Acanthis flammea        : 0   1st Qu.:2014  
+    ##  Accipiter cooperii      : 0   Median :2018  
+    ##  Accipiter gentilis      : 0   Mean   :2015  
+    ##  Accipiter striatus      : 0   3rd Qu.:2021  
+    ##  Actitis macularius      : 0   Max.   :2023  
+    ##  (Other)                 : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-69.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Buteo platypterus :6   Min.   :2015  
+    ##  Acanthis flammea  :0   1st Qu.:2016  
+    ##  Accipiter cooperii:0   Median :2017  
+    ##  Accipiter gentilis:0   Mean   :2018  
+    ##  Accipiter striatus:0   3rd Qu.:2021  
+    ##  Actitis macularius:0   Max.   :2023  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-70.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Buteo swainsoni   :22   Min.   :1986  
+    ##  Acanthis flammea  : 0   1st Qu.:2003  
+    ##  Accipiter cooperii: 0   Median :2015  
+    ##  Accipiter gentilis: 0   Mean   :2010  
+    ##  Accipiter striatus: 0   3rd Qu.:2018  
+    ##  Actitis macularius: 0   Max.   :2021  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-71.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Buteo jamaicensis :147   Min.   :1978  
+    ##  Acanthis flammea  :  0   1st Qu.:2005  
+    ##  Accipiter cooperii:  0   Median :2014  
+    ##  Accipiter gentilis:  0   Mean   :2010  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-72.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Buteo lagopus     :8   Min.   :2001  
+    ##  Acanthis flammea  :0   1st Qu.:2004  
+    ##  Accipiter cooperii:0   Median :2005  
+    ##  Accipiter gentilis:0   Mean   :2008  
+    ##  Accipiter striatus:0   3rd Qu.:2009  
+    ##  Actitis macularius:0   Max.   :2021  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-73.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Buteo regalis     :2   Min.   :2021  
+    ##  Acanthis flammea  :0   1st Qu.:2021  
+    ##  Accipiter cooperii:0   Median :2021  
+    ##  Accipiter gentilis:0   Mean   :2021  
+    ##  Accipiter striatus:0   3rd Qu.:2021  
+    ##  Actitis macularius:0   Max.   :2021  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-74.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Tyto alba         :2   Min.   :1987  
+    ##  Acanthis flammea  :0   1st Qu.:1987  
+    ##  Accipiter cooperii:0   Median :1987  
+    ##  Accipiter gentilis:0   Mean   :1987  
+    ##  Accipiter striatus:0   3rd Qu.:1987  
+    ##  Actitis macularius:0   Max.   :1987  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-75.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Megascops asio    :20   Min.   :1983  
+    ##  Acanthis flammea  : 0   1st Qu.:1999  
+    ##  Accipiter cooperii: 0   Median :2008  
+    ##  Accipiter gentilis: 0   Mean   :2005  
+    ##  Accipiter striatus: 0   3rd Qu.:2012  
+    ##  Actitis macularius: 0   Max.   :2022  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-76.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Bubo virginianus  :45   Min.   :1978  
+    ##  Acanthis flammea  : 0   1st Qu.:2000  
+    ##  Accipiter cooperii: 0   Median :2014  
+    ##  Accipiter gentilis: 0   Mean   :2009  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2022  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-77.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Athene cunicularia:3   Min.   :2005  
+    ##  Acanthis flammea  :0   1st Qu.:2005  
+    ##  Accipiter cooperii:0   Median :2005  
+    ##  Accipiter gentilis:0   Mean   :2011  
+    ##  Accipiter striatus:0   3rd Qu.:2014  
+    ##  Actitis macularius:0   Max.   :2023  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-78.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Aegolius acadicus :4   Min.   :2016  
+    ##  Acanthis flammea  :0   1st Qu.:2016  
+    ##  Accipiter cooperii:0   Median :2017  
+    ##  Accipiter gentilis:0   Mean   :2017  
+    ##  Accipiter striatus:0   3rd Qu.:2018  
+    ##  Actitis macularius:0   Max.   :2018  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-79.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Megaceryle alcyon :62   Min.   :1985  
+    ##  Acanthis flammea  : 0   1st Qu.:2002  
+    ##  Accipiter cooperii: 0   Median :2014  
+    ##  Accipiter gentilis: 0   Mean   :2008  
+    ##  Accipiter striatus: 0   3rd Qu.:2017  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-80.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Sphyrapicus varius:11   Min.   :1984  
+    ##  Acanthis flammea  : 0   1st Qu.:1989  
+    ##  Accipiter cooperii: 0   Median :2004  
+    ##  Accipiter gentilis: 0   Mean   :2003  
+    ##  Accipiter striatus: 0   3rd Qu.:2016  
+    ##  Actitis macularius: 0   Max.   :2022  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-81.png)<!-- -->
+
+    ##                        species      eventDate   
+    ##  Melanerpes erythrocephalus:116   Min.   :1986  
+    ##  Acanthis flammea          :  0   1st Qu.:2014  
+    ##  Accipiter cooperii        :  0   Median :2018  
+    ##  Accipiter gentilis        :  0   Mean   :2015  
+    ##  Accipiter striatus        :  0   3rd Qu.:2020  
+    ##  Actitis macularius        :  0   Max.   :2023  
+    ##  (Other)                   :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-82.png)<!-- -->
+
+    ##                  species     eventDate   
+    ##  Melanerpes carolinus:21   Min.   :1990  
+    ##  Acanthis flammea    : 0   1st Qu.:2006  
+    ##  Accipiter cooperii  : 0   Median :2017  
+    ##  Accipiter gentilis  : 0   Mean   :2012  
+    ##  Accipiter striatus  : 0   3rd Qu.:2020  
+    ##  Actitis macularius  : 0   Max.   :2023  
+    ##  (Other)             : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-83.png)<!-- -->
+
+    ##                 species      eventDate   
+    ##  Dryobates pubescens:171   Min.   :1985  
+    ##  Acanthis flammea   :  0   1st Qu.:2005  
+    ##  Accipiter cooperii :  0   Median :2014  
+    ##  Accipiter gentilis :  0   Mean   :2011  
+    ##  Accipiter striatus :  0   3rd Qu.:2018  
+    ##  Actitis macularius :  0   Max.   :2023  
+    ##  (Other)            :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-84.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Dryobates villosus:87   Min.   :1986  
+    ##  Acanthis flammea  : 0   1st Qu.:2005  
+    ##  Accipiter cooperii: 0   Median :2012  
+    ##  Accipiter gentilis: 0   Mean   :2009  
+    ##  Accipiter striatus: 0   3rd Qu.:2016  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-85.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Colaptes auratus  :244   Min.   :1986  
+    ##  Acanthis flammea  :  0   1st Qu.:2009  
+    ##  Accipiter cooperii:  0   Median :2015  
+    ##  Accipiter gentilis:  0   Mean   :2012  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-86.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Falco columbarius :8   Min.   :1983  
+    ##  Acanthis flammea  :0   1st Qu.:2005  
+    ##  Accipiter cooperii:0   Median :2016  
+    ##  Accipiter gentilis:0   Mean   :2009  
+    ##  Accipiter striatus:0   3rd Qu.:2020  
+    ##  Actitis macularius:0   Max.   :2021  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-87.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Falco mexicanus   :4   Min.   :1990  
+    ##  Acanthis flammea  :0   1st Qu.:1990  
+    ##  Accipiter cooperii:0   Median :2004  
+    ##  Accipiter gentilis:0   Mean   :2004  
+    ##  Accipiter striatus:0   3rd Qu.:2018  
+    ##  Actitis macularius:0   Max.   :2018  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-88.png)<!-- -->
+
+    ##                 species     eventDate   
+    ##  Contopus sordidulus:14   Min.   :2010  
+    ##  Acanthis flammea   : 0   1st Qu.:2014  
+    ##  Accipiter cooperii : 0   Median :2014  
+    ##  Accipiter gentilis : 0   Mean   :2017  
+    ##  Accipiter striatus : 0   3rd Qu.:2023  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-89.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Contopus virens   :19   Min.   :2014  
+    ##  Acanthis flammea  : 0   1st Qu.:2018  
+    ##  Accipiter cooperii: 0   Median :2020  
+    ##  Accipiter gentilis: 0   Mean   :2019  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-90.png)<!-- -->
+
+    ##                        species    eventDate   
+    ##  Contopus sordidulus/virens:1   Min.   :2014  
+    ##  Acanthis flammea          :0   1st Qu.:2014  
+    ##  Accipiter cooperii        :0   Median :2014  
+    ##  Accipiter gentilis        :0   Mean   :2014  
+    ##  Accipiter striatus        :0   3rd Qu.:2014  
+    ##  Actitis macularius        :0   Max.   :2014  
+    ##  (Other)                   :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-91.png)<!-- -->
 
-    ##                species     eventDate   
-    ##  Empidonax minimus :12   Min.   :1990  
-    ##  Acanthis flammea  : 0   1st Qu.:2012  
-    ##  Accipiter cooperii: 0   Median :2017  
-    ##  Accipiter gentilis: 0   Mean   :2013  
-    ##  Accipiter striatus: 0   3rd Qu.:2017  
-    ##  Actitis macularius: 0   Max.   :2020  
-    ##  (Other)           : 0
+    ##                species    eventDate   
+    ##  Empidonax alnorum :2   Min.   :2018  
+    ##  Acanthis flammea  :0   1st Qu.:2018  
+    ##  Accipiter cooperii:0   Median :2018  
+    ##  Accipiter gentilis:0   Mean   :2018  
+    ##  Accipiter striatus:0   3rd Qu.:2018  
+    ##  Actitis macularius:0   Max.   :2018  
+    ##  (Other)           :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-92.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Sayornis phoebe   :17   Min.   :1994  
+    ##  Empidonax traillii:10   Min.   :2008  
     ##  Acanthis flammea  : 0   1st Qu.:2014  
     ##  Accipiter cooperii: 0   Median :2016  
-    ##  Accipiter gentilis: 0   Mean   :2015  
-    ##  Accipiter striatus: 0   3rd Qu.:2018  
-    ##  Actitis macularius: 0   Max.   :2020  
+    ##  Accipiter gentilis: 0   Mean   :2016  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2023  
     ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-93.png)<!-- -->
 
+    ##                        species    eventDate   
+    ##  Empidonax alnorum/traillii:1   Min.   :2023  
+    ##  Acanthis flammea          :0   1st Qu.:2023  
+    ##  Accipiter cooperii        :0   Median :2023  
+    ##  Accipiter gentilis        :0   Mean   :2023  
+    ##  Accipiter striatus        :0   3rd Qu.:2023  
+    ##  Actitis macularius        :0   Max.   :2023  
+    ##  (Other)                   :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-94.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Empidonax minimus :25   Min.   :1990  
+    ##  Acanthis flammea  : 0   1st Qu.:2012  
+    ##  Accipiter cooperii: 0   Median :2017  
+    ##  Accipiter gentilis: 0   Mean   :2013  
+    ##  Accipiter striatus: 0   3rd Qu.:2017  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-95.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Sayornis phoebe   :42   Min.   :1994  
+    ##  Acanthis flammea  : 0   1st Qu.:2014  
+    ##  Accipiter cooperii: 0   Median :2017  
+    ##  Accipiter gentilis: 0   Mean   :2016  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-96.png)<!-- -->
+
     ##                species    eventDate   
-    ##  Sayornis saya     :1   Min.   :2020  
+    ##  Sayornis saya     :2   Min.   :2020  
     ##  Acanthis flammea  :0   1st Qu.:2020  
     ##  Accipiter cooperii:0   Median :2020  
     ##  Accipiter gentilis:0   Mean   :2020  
@@ -1250,87 +1399,54 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "Bessey")
     ##  Actitis macularius:0   Max.   :2020  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-94.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Myiarchus crinitus:32   Min.   :1990  
-    ##  Acanthis flammea  : 0   1st Qu.:2013  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2014  
-    ##  Accipiter striatus: 0   3rd Qu.:2018  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-95.png)<!-- -->
-
-    ##                 species     eventDate   
-    ##  Tyrannus verticalis:22   Min.   :1994  
-    ##  Acanthis flammea   : 0   1st Qu.:2010  
-    ##  Accipiter cooperii : 0   Median :2014  
-    ##  Accipiter gentilis : 0   Mean   :2013  
-    ##  Accipiter striatus : 0   3rd Qu.:2018  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-96.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Tyrannus tyrannus :50   Min.   :1957  
-    ##  Acanthis flammea  : 0   1st Qu.:2011  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2011  
-    ##  Accipiter striatus: 0   3rd Qu.:2019  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-97.png)<!-- -->
 
-    ##                 species    eventDate   
-    ##  Tyrannus forficatus:1   Min.   :1957  
-    ##  Acanthis flammea   :0   1st Qu.:1957  
-    ##  Accipiter cooperii :0   Median :1957  
-    ##  Accipiter gentilis :0   Mean   :1957  
-    ##  Accipiter striatus :0   3rd Qu.:1957  
-    ##  Actitis macularius :0   Max.   :1957  
-    ##  (Other)            :0
+    ##                species     eventDate   
+    ##  Myiarchus crinitus:72   Min.   :1990  
+    ##  Acanthis flammea  : 0   1st Qu.:2014  
+    ##  Accipiter cooperii: 0   Median :2015  
+    ##  Accipiter gentilis: 0   Mean   :2015  
+    ##  Accipiter striatus: 0   3rd Qu.:2018  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-98.png)<!-- -->
 
-    ##                 species    eventDate   
-    ##  Lanius ludovicianus:5   Min.   :1987  
-    ##  Acanthis flammea   :0   1st Qu.:2000  
-    ##  Accipiter cooperii :0   Median :2004  
-    ##  Accipiter gentilis :0   Mean   :2006  
-    ##  Accipiter striatus :0   3rd Qu.:2016  
-    ##  Actitis macularius :0   Max.   :2021  
-    ##  (Other)            :0
+    ##                 species     eventDate   
+    ##  Tyrannus verticalis:50   Min.   :1994  
+    ##  Acanthis flammea   : 0   1st Qu.:2011  
+    ##  Accipiter cooperii : 0   Median :2015  
+    ##  Accipiter gentilis : 0   Mean   :2014  
+    ##  Accipiter striatus : 0   3rd Qu.:2018  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-99.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Lanius borealis   :3   Min.   :1999  
-    ##  Acanthis flammea  :0   1st Qu.:2002  
-    ##  Accipiter cooperii:0   Median :2004  
-    ##  Accipiter gentilis:0   Mean   :2008  
-    ##  Accipiter striatus:0   3rd Qu.:2012  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
+    ##                species      eventDate   
+    ##  Tyrannus tyrannus :113   Min.   :1957  
+    ##  Acanthis flammea  :  0   1st Qu.:2011  
+    ##  Accipiter cooperii:  0   Median :2015  
+    ##  Accipiter gentilis:  0   Mean   :2013  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-100.png)<!-- -->
 
-    ##                species     eventDate   
-    ##  Vireo bellii      :71   Min.   :1957  
-    ##  Acanthis flammea  : 0   1st Qu.:2012  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2013  
-    ##  Accipiter striatus: 0   3rd Qu.:2019  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
+    ##                species      eventDate   
+    ##  Vireo bellii      :153   Min.   :1957  
+    ##  Acanthis flammea  :  0   1st Qu.:2012  
+    ##  Accipiter cooperii:  0   Median :2015  
+    ##  Accipiter gentilis:  0   Mean   :2014  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-101.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Vireo flavifrons  :2   Min.   :2015  
+    ##  Vireo flavifrons  :4   Min.   :2015  
     ##  Acanthis flammea  :0   1st Qu.:2015  
     ##  Accipiter cooperii:0   Median :2015  
     ##  Accipiter gentilis:0   Mean   :2015  
@@ -1341,7 +1457,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "Bessey")
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-102.png)<!-- -->
 
     ##                  species    eventDate   
-    ##  Vireo philadelphicus:2   Min.   :2015  
+    ##  Vireo philadelphicus:4   Min.   :2015  
     ##  Acanthis flammea    :0   1st Qu.:2015  
     ##  Accipiter cooperii  :0   Median :2015  
     ##  Accipiter gentilis  :0   Mean   :2015  
@@ -1352,304 +1468,359 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "Bessey")
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-103.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Vireo gilvus      :17   Min.   :1990  
+    ##  Vireo gilvus      :40   Min.   :1990  
     ##  Acanthis flammea  : 0   1st Qu.:2012  
     ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2011  
-    ##  Accipiter striatus: 0   3rd Qu.:2015  
-    ##  Actitis macularius: 0   Max.   :2020  
+    ##  Accipiter gentilis: 0   Mean   :2013  
+    ##  Accipiter striatus: 0   3rd Qu.:2017  
+    ##  Actitis macularius: 0   Max.   :2023  
     ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-104.png)<!-- -->
 
-    ##                species     eventDate   
-    ##  Vireo olivaceus   :51   Min.   :1957  
-    ##  Acanthis flammea  : 0   1st Qu.:2014  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2012  
-    ##  Accipiter striatus: 0   3rd Qu.:2019  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
+    ##                species      eventDate   
+    ##  Vireo olivaceus   :117   Min.   :1957  
+    ##  Acanthis flammea  :  0   1st Qu.:2014  
+    ##  Accipiter cooperii:  0   Median :2016  
+    ##  Accipiter gentilis:  0   Mean   :2015  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-105.png)<!-- -->
 
-    ##                 species      eventDate   
-    ##  Cyanocitta cristata:103   Min.   :1985  
-    ##  Acanthis flammea   :  0   1st Qu.:2008  
-    ##  Accipiter cooperii :  0   Median :2015  
-    ##  Accipiter gentilis :  0   Mean   :2012  
-    ##  Accipiter striatus :  0   3rd Qu.:2020  
-    ##  Actitis macularius :  0   Max.   :2021  
-    ##  (Other)            :  0
+    ##                 species     eventDate   
+    ##  Lanius ludovicianus:13   Min.   :1987  
+    ##  Acanthis flammea   : 0   1st Qu.:2000  
+    ##  Accipiter cooperii : 0   Median :2016  
+    ##  Accipiter gentilis : 0   Mean   :2010  
+    ##  Accipiter striatus : 0   3rd Qu.:2021  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-106.png)<!-- -->
 
-    ##                species     eventDate   
-    ##  Pica hudsonia     :10   Min.   :1978  
-    ##  Acanthis flammea  : 0   1st Qu.:1986  
-    ##  Accipiter cooperii: 0   Median :1988  
-    ##  Accipiter gentilis: 0   Mean   :1990  
-    ##  Accipiter striatus: 0   3rd Qu.:1993  
-    ##  Actitis macularius: 0   Max.   :2004  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-107.png)<!-- -->
-
-    ##                   species      eventDate   
-    ##  Corvus brachyrhynchos:131   Min.   :1978  
-    ##  Acanthis flammea     :  0   1st Qu.:2005  
-    ##  Accipiter cooperii   :  0   Median :2015  
-    ##  Accipiter gentilis   :  0   Mean   :2011  
-    ##  Accipiter striatus   :  0   3rd Qu.:2019  
-    ##  Actitis macularius   :  0   Max.   :2021  
-    ##  (Other)              :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-108.png)<!-- -->
-
-    ##                  species     eventDate   
-    ##  Eremophila alpestris:33   Min.   :1978  
-    ##  Acanthis flammea    : 0   1st Qu.:2000  
-    ##  Accipiter cooperii  : 0   Median :2006  
-    ##  Accipiter gentilis  : 0   Mean   :2006  
-    ##  Accipiter striatus  : 0   3rd Qu.:2017  
-    ##  Actitis macularius  : 0   Max.   :2021  
-    ##  (Other)             : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-109.png)<!-- -->
-
     ##                species    eventDate   
-    ##  Riparia riparia   :5   Min.   :1986  
-    ##  Acanthis flammea  :0   1st Qu.:2014  
-    ##  Accipiter cooperii:0   Median :2014  
-    ##  Accipiter gentilis:0   Mean   :2011  
-    ##  Accipiter striatus:0   3rd Qu.:2019  
+    ##  Lanius borealis   :6   Min.   :1999  
+    ##  Acanthis flammea  :0   1st Qu.:2000  
+    ##  Accipiter cooperii:0   Median :2004  
+    ##  Accipiter gentilis:0   Mean   :2008  
+    ##  Accipiter striatus:0   3rd Qu.:2017  
     ##  Actitis macularius:0   Max.   :2021  
     ##  (Other)           :0
 
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-107.png)<!-- -->
+
+    ##                 species      eventDate   
+    ##  Cyanocitta cristata:226   Min.   :1985  
+    ##  Acanthis flammea   :  0   1st Qu.:2010  
+    ##  Accipiter cooperii :  0   Median :2017  
+    ##  Accipiter gentilis :  0   Mean   :2013  
+    ##  Accipiter striatus :  0   3rd Qu.:2021  
+    ##  Actitis macularius :  0   Max.   :2023  
+    ##  (Other)            :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-108.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Pica hudsonia     :20   Min.   :1978  
+    ##  Acanthis flammea  : 0   1st Qu.:1986  
+    ##  Accipiter cooperii: 0   Median :1988  
+    ##  Accipiter gentilis: 0   Mean   :1990  
+    ##  Accipiter striatus: 0   3rd Qu.:1994  
+    ##  Actitis macularius: 0   Max.   :2004  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-109.png)<!-- -->
+
+    ##                   species      eventDate   
+    ##  Corvus brachyrhynchos:284   Min.   :1978  
+    ##  Acanthis flammea     :  0   1st Qu.:2006  
+    ##  Accipiter cooperii   :  0   Median :2015  
+    ##  Accipiter gentilis   :  0   Mean   :2012  
+    ##  Accipiter striatus   :  0   3rd Qu.:2020  
+    ##  Actitis macularius   :  0   Max.   :2023  
+    ##  (Other)              :  0
+
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-110.png)<!-- -->
 
-    ##                 species     eventDate   
-    ##  Tachycineta bicolor:14   Min.   :2009  
-    ##  Acanthis flammea   : 0   1st Qu.:2015  
-    ##  Accipiter cooperii : 0   Median :2016  
-    ##  Accipiter gentilis : 0   Mean   :2016  
-    ##  Accipiter striatus : 0   3rd Qu.:2018  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
+    ##                  species      eventDate   
+    ##  Poecile atricapillus:267   Min.   :1985  
+    ##  Acanthis flammea    :  0   1st Qu.:2009  
+    ##  Accipiter cooperii  :  0   Median :2015  
+    ##  Accipiter gentilis  :  0   Mean   :2012  
+    ##  Accipiter striatus  :  0   3rd Qu.:2020  
+    ##  Actitis macularius  :  0   Max.   :2023  
+    ##  (Other)             :  0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-111.png)<!-- -->
 
-    ##                        species     eventDate   
-    ##  Stelgidopteryx serripennis:13   Min.   :2007  
-    ##  Acanthis flammea          : 0   1st Qu.:2014  
-    ##  Accipiter cooperii        : 0   Median :2017  
-    ##  Accipiter gentilis        : 0   Mean   :2016  
-    ##  Accipiter striatus        : 0   3rd Qu.:2019  
-    ##  Actitis macularius        : 0   Max.   :2021  
-    ##  (Other)                   : 0
+    ##                  species     eventDate   
+    ##  Eremophila alpestris:73   Min.   :1978  
+    ##  Acanthis flammea    : 0   1st Qu.:2002  
+    ##  Accipiter cooperii  : 0   Median :2009  
+    ##  Accipiter gentilis  : 0   Mean   :2008  
+    ##  Accipiter striatus  : 0   3rd Qu.:2021  
+    ##  Actitis macularius  : 0   Max.   :2023  
+    ##  (Other)             : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-112.png)<!-- -->
 
-    ##                species     eventDate   
-    ##  Hirundo rustica   :75   Min.   :1986  
-    ##  Acanthis flammea  : 0   1st Qu.:2011  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2013  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
+    ##                        species     eventDate   
+    ##  Stelgidopteryx serripennis:32   Min.   :2007  
+    ##  Acanthis flammea          : 0   1st Qu.:2015  
+    ##  Accipiter cooperii        : 0   Median :2017  
+    ##  Accipiter gentilis        : 0   Mean   :2017  
+    ##  Accipiter striatus        : 0   3rd Qu.:2021  
+    ##  Actitis macularius        : 0   Max.   :2023  
+    ##  (Other)                   : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-113.png)<!-- -->
 
-    ##                      species     eventDate   
-    ##  Petrochelidon pyrrhonota:49   Min.   :1986  
-    ##  Acanthis flammea        : 0   1st Qu.:2014  
-    ##  Accipiter cooperii      : 0   Median :2016  
-    ##  Accipiter gentilis      : 0   Mean   :2015  
-    ##  Accipiter striatus      : 0   3rd Qu.:2020  
-    ##  Actitis macularius      : 0   Max.   :2021  
-    ##  (Other)                 : 0
+    ##                 species     eventDate   
+    ##  Tachycineta bicolor:32   Min.   :2009  
+    ##  Acanthis flammea   : 0   1st Qu.:2015  
+    ##  Accipiter cooperii : 0   Median :2017  
+    ##  Accipiter gentilis : 0   Mean   :2017  
+    ##  Accipiter striatus : 0   3rd Qu.:2020  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-114.png)<!-- -->
 
-    ##                  species      eventDate   
-    ##  Poecile atricapillus:124   Min.   :1985  
-    ##  Acanthis flammea    :  0   1st Qu.:2008  
-    ##  Accipiter cooperii  :  0   Median :2015  
-    ##  Accipiter gentilis  :  0   Mean   :2011  
-    ##  Accipiter striatus  :  0   3rd Qu.:2019  
-    ##  Actitis macularius  :  0   Max.   :2021  
-    ##  (Other)             :  0
+    ##                species     eventDate   
+    ##  Riparia riparia   :10   Min.   :1986  
+    ##  Acanthis flammea  : 0   1st Qu.:2014  
+    ##  Accipiter cooperii: 0   Median :2014  
+    ##  Accipiter gentilis: 0   Mean   :2011  
+    ##  Accipiter striatus: 0   3rd Qu.:2019  
+    ##  Actitis macularius: 0   Max.   :2021  
+    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-115.png)<!-- -->
 
     ##                species      eventDate   
-    ##  Sitta canadensis  :129   Min.   :1978  
-    ##  Acanthis flammea  :  0   1st Qu.:2007  
-    ##  Accipiter cooperii:  0   Median :2015  
-    ##  Accipiter gentilis:  0   Mean   :2012  
+    ##  Hirundo rustica   :173   Min.   :1986  
+    ##  Acanthis flammea  :  0   1st Qu.:2012  
+    ##  Accipiter cooperii:  0   Median :2017  
+    ##  Accipiter gentilis:  0   Mean   :2014  
     ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2021  
+    ##  Actitis macularius:  0   Max.   :2023  
     ##  (Other)           :  0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-116.png)<!-- -->
 
-    ##                species     eventDate   
-    ##  Sitta carolinensis:51   Min.   :1994  
-    ##  Acanthis flammea  : 0   1st Qu.:2008  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2013  
-    ##  Accipiter striatus: 0   3rd Qu.:2018  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
+    ##                      species      eventDate   
+    ##  Petrochelidon pyrrhonota:110   Min.   :1986  
+    ##  Acanthis flammea        :  0   1st Qu.:2014  
+    ##  Accipiter cooperii      :  0   Median :2017  
+    ##  Accipiter gentilis      :  0   Mean   :2016  
+    ##  Accipiter striatus      :  0   3rd Qu.:2021  
+    ##  Actitis macularius      :  0   Max.   :2023  
+    ##  (Other)                 :  0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-117.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Sitta pygmaea     :6   Min.   :2014  
-    ##  Acanthis flammea  :0   1st Qu.:2015  
-    ##  Accipiter cooperii:0   Median :2018  
-    ##  Accipiter gentilis:0   Mean   :2018  
-    ##  Accipiter striatus:0   3rd Qu.:2020  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
+    ##                 species     eventDate   
+    ##  Corthylio calendula:21   Min.   :1985  
+    ##  Acanthis flammea   : 0   1st Qu.:1987  
+    ##  Accipiter cooperii : 0   Median :2012  
+    ##  Accipiter gentilis : 0   Mean   :2005  
+    ##  Accipiter striatus : 0   3rd Qu.:2015  
+    ##  Actitis macularius : 0   Max.   :2022  
+    ##  (Other)            : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-118.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Certhia americana :3   Min.   :1992  
-    ##  Acanthis flammea  :0   1st Qu.:1998  
-    ##  Accipiter cooperii:0   Median :2004  
-    ##  Accipiter gentilis:0   Mean   :2002  
-    ##  Accipiter striatus:0   3rd Qu.:2006  
-    ##  Actitis macularius:0   Max.   :2009  
-    ##  (Other)           :0
+    ##                species     eventDate   
+    ##  Regulus satrapa   :17   Min.   :1986  
+    ##  Acanthis flammea  : 0   1st Qu.:1986  
+    ##  Accipiter cooperii: 0   Median :1989  
+    ##  Accipiter gentilis: 0   Mean   :1995  
+    ##  Accipiter striatus: 0   3rd Qu.:2004  
+    ##  Actitis macularius: 0   Max.   :2022  
+    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-119.png)<!-- -->
 
-    ##                species     eventDate   
-    ##  Troglodytes aedon :89   Min.   :1985  
-    ##  Acanthis flammea  : 0   1st Qu.:2012  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2013  
-    ##  Accipiter striatus: 0   3rd Qu.:2019  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
+    ##                species      eventDate   
+    ##  Sitta canadensis  :271   Min.   :1978  
+    ##  Acanthis flammea  :  0   1st Qu.:2009  
+    ##  Accipiter cooperii:  0   Median :2016  
+    ##  Accipiter gentilis:  0   Mean   :2012  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-120.png)<!-- -->
 
-    ##                   species    eventDate   
-    ##  Cistothorus stellaris:2   Min.   :2010  
-    ##  Acanthis flammea     :0   1st Qu.:2012  
-    ##  Accipiter cooperii   :0   Median :2014  
-    ##  Accipiter gentilis   :0   Mean   :2014  
-    ##  Accipiter striatus   :0   3rd Qu.:2016  
-    ##  Actitis macularius   :0   Max.   :2018  
-    ##  (Other)              :0
+    ##                species      eventDate   
+    ##  Sitta carolinensis:110   Min.   :1994  
+    ##  Acanthis flammea  :  0   1st Qu.:2011  
+    ##  Accipiter cooperii:  0   Median :2016  
+    ##  Accipiter gentilis:  0   Mean   :2014  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-121.png)<!-- -->
 
+    ##                species     eventDate   
+    ##  Sitta pygmaea     :14   Min.   :2014  
+    ##  Acanthis flammea  : 0   1st Qu.:2017  
+    ##  Accipiter cooperii: 0   Median :2020  
+    ##  Accipiter gentilis: 0   Mean   :2019  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-122.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Certhia americana :6   Min.   :1992  
+    ##  Acanthis flammea  :0   1st Qu.:1995  
+    ##  Accipiter cooperii:0   Median :2004  
+    ##  Accipiter gentilis:0   Mean   :2002  
+    ##  Accipiter striatus:0   3rd Qu.:2008  
+    ##  Actitis macularius:0   Max.   :2009  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-123.png)<!-- -->
+
+    ##                 species    eventDate   
+    ##  Polioptila caerulea:6   Min.   :2009  
+    ##  Acanthis flammea   :0   1st Qu.:2012  
+    ##  Accipiter cooperii :0   Median :2020  
+    ##  Accipiter gentilis :0   Mean   :2017  
+    ##  Accipiter striatus :0   3rd Qu.:2022  
+    ##  Actitis macularius :0   Max.   :2023  
+    ##  (Other)            :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-124.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Troglodytes aedon :205   Min.   :1985  
+    ##  Acanthis flammea  :  0   1st Qu.:2014  
+    ##  Accipiter cooperii:  0   Median :2017  
+    ##  Accipiter gentilis:  0   Mean   :2015  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-125.png)<!-- -->
+
     ##                   species    eventDate   
-    ##  Cistothorus palustris:3   Min.   :2013  
-    ##  Acanthis flammea     :0   1st Qu.:2015  
+    ##  Cistothorus stellaris:4   Min.   :2010  
+    ##  Acanthis flammea     :0   1st Qu.:2010  
+    ##  Accipiter cooperii   :0   Median :2014  
+    ##  Accipiter gentilis   :0   Mean   :2014  
+    ##  Accipiter striatus   :0   3rd Qu.:2018  
+    ##  Actitis macularius   :0   Max.   :2018  
+    ##  (Other)              :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-126.png)<!-- -->
+
+    ##                   species    eventDate   
+    ##  Cistothorus palustris:6   Min.   :2013  
+    ##  Acanthis flammea     :0   1st Qu.:2014  
     ##  Accipiter cooperii   :0   Median :2017  
     ##  Accipiter gentilis   :0   Mean   :2016  
     ##  Accipiter striatus   :0   3rd Qu.:2018  
     ##  Actitis macularius   :0   Max.   :2019  
     ##  (Other)              :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-122.png)<!-- -->
-
-    ##                 species    eventDate   
-    ##  Polioptila caerulea:2   Min.   :2009  
-    ##  Acanthis flammea   :0   1st Qu.:2012  
-    ##  Accipiter cooperii :0   Median :2014  
-    ##  Accipiter gentilis :0   Mean   :2014  
-    ##  Accipiter striatus :0   3rd Qu.:2017  
-    ##  Actitis macularius :0   Max.   :2020  
-    ##  (Other)            :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-123.png)<!-- -->
-
-    ##                 species     eventDate   
-    ##  Corthylio calendula:10   Min.   :1985  
-    ##  Acanthis flammea   : 0   1st Qu.:1989  
-    ##  Accipiter cooperii : 0   Median :2009  
-    ##  Accipiter gentilis : 0   Mean   :2004  
-    ##  Accipiter striatus : 0   3rd Qu.:2015  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-124.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Regulus satrapa   :8   Min.   :1986  
-    ##  Acanthis flammea  :0   1st Qu.:1986  
-    ##  Accipiter cooperii:0   Median :1989  
-    ##  Accipiter gentilis:0   Mean   :1994  
-    ##  Accipiter striatus:0   3rd Qu.:2000  
-    ##  Actitis macularius:0   Max.   :2009  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-125.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Sialia sialis     :64   Min.   :1985  
-    ##  Acanthis flammea  : 0   1st Qu.:2009  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2011  
-    ##  Accipiter striatus: 0   3rd Qu.:2018  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-126.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Sialia currucoides:1   Min.   :1989  
-    ##  Acanthis flammea  :0   1st Qu.:1989  
-    ##  Accipiter cooperii:0   Median :1989  
-    ##  Accipiter gentilis:0   Mean   :1989  
-    ##  Accipiter striatus:0   3rd Qu.:1989  
-    ##  Actitis macularius:0   Max.   :1989  
-    ##  (Other)           :0
-
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-127.png)<!-- -->
 
-    ##                 species     eventDate   
-    ##  Myadestes townsendi:27   Min.   :1985  
-    ##  Acanthis flammea   : 0   1st Qu.:2004  
-    ##  Accipiter cooperii : 0   Median :2012  
-    ##  Accipiter gentilis : 0   Mean   :2009  
-    ##  Accipiter striatus : 0   3rd Qu.:2020  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
+    ##                species     eventDate   
+    ##  Sturnus vulgaris  :79   Min.   :1978  
+    ##  Acanthis flammea  : 0   1st Qu.:2006  
+    ##  Accipiter cooperii: 0   Median :2015  
+    ##  Accipiter gentilis: 0   Mean   :2013  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-128.png)<!-- -->
 
-    ##                species     eventDate   
-    ##  Catharus ustulatus:11   Min.   :1990  
-    ##  Acanthis flammea  : 0   1st Qu.:2004  
-    ##  Accipiter cooperii: 0   Median :2014  
-    ##  Accipiter gentilis: 0   Mean   :2011  
-    ##  Accipiter striatus: 0   3rd Qu.:2018  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
+    ##                    species     eventDate   
+    ##  Dumetella carolinensis:59   Min.   :1990  
+    ##  Acanthis flammea      : 0   1st Qu.:2006  
+    ##  Accipiter cooperii    : 0   Median :2014  
+    ##  Accipiter gentilis    : 0   Mean   :2011  
+    ##  Accipiter striatus    : 0   3rd Qu.:2018  
+    ##  Actitis macularius    : 0   Max.   :2023  
+    ##  (Other)               : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-129.png)<!-- -->
 
+    ##                species      eventDate   
+    ##  Toxostoma rufum   :117   Min.   :1986  
+    ##  Acanthis flammea  :  0   1st Qu.:2009  
+    ##  Accipiter cooperii:  0   Median :2015  
+    ##  Accipiter gentilis:  0   Mean   :2012  
+    ##  Accipiter striatus:  0   3rd Qu.:2018  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-130.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Sialia sialis     :135   Min.   :1985  
+    ##  Acanthis flammea  :  0   1st Qu.:2010  
+    ##  Accipiter cooperii:  0   Median :2015  
+    ##  Accipiter gentilis:  0   Mean   :2011  
+    ##  Accipiter striatus:  0   3rd Qu.:2019  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-131.png)<!-- -->
+
     ##                species    eventDate   
-    ##  Catharus guttatus :3   Min.   :1985  
-    ##  Acanthis flammea  :0   1st Qu.:2001  
+    ##  Sialia currucoides:3   Min.   :1989  
+    ##  Acanthis flammea  :0   1st Qu.:1989  
+    ##  Accipiter cooperii:0   Median :1989  
+    ##  Accipiter gentilis:0   Mean   :2000  
+    ##  Accipiter striatus:0   3rd Qu.:2006  
+    ##  Actitis macularius:0   Max.   :2022  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-132.png)<!-- -->
+
+    ##                 species     eventDate   
+    ##  Myadestes townsendi:62   Min.   :1985  
+    ##  Acanthis flammea   : 0   1st Qu.:2005  
+    ##  Accipiter cooperii : 0   Median :2014  
+    ##  Accipiter gentilis : 0   Mean   :2011  
+    ##  Accipiter striatus : 0   3rd Qu.:2021  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-133.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Catharus ustulatus:26   Min.   :1990  
+    ##  Acanthis flammea  : 0   1st Qu.:2006  
+    ##  Accipiter cooperii: 0   Median :2015  
+    ##  Accipiter gentilis: 0   Mean   :2012  
+    ##  Accipiter striatus: 0   3rd Qu.:2018  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-134.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Catharus guttatus :6   Min.   :1985  
+    ##  Acanthis flammea  :0   1st Qu.:1993  
     ##  Accipiter cooperii:0   Median :2017  
     ##  Accipiter gentilis:0   Mean   :2007  
     ##  Accipiter striatus:0   3rd Qu.:2018  
     ##  Actitis macularius:0   Max.   :2018  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-130.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-135.png)<!-- -->
 
     ##                  species    eventDate   
-    ##  Hylocichla mustelina:1   Min.   :2016  
+    ##  Hylocichla mustelina:2   Min.   :2016  
     ##  Acanthis flammea    :0   1st Qu.:2016  
     ##  Accipiter cooperii  :0   Median :2016  
     ##  Accipiter gentilis  :0   Mean   :2016  
@@ -1657,65 +1828,32 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "Bessey")
     ##  Actitis macularius  :0   Max.   :2016  
     ##  (Other)             :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-131.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Turdus migratorius:198   Min.   :1957  
-    ##  Acanthis flammea  :  0   1st Qu.:2011  
-    ##  Accipiter cooperii:  0   Median :2015  
-    ##  Accipiter gentilis:  0   Mean   :2013  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2021  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-132.png)<!-- -->
-
-    ##                    species     eventDate   
-    ##  Dumetella carolinensis:27   Min.   :1990  
-    ##  Acanthis flammea      : 0   1st Qu.:2005  
-    ##  Accipiter cooperii    : 0   Median :2012  
-    ##  Accipiter gentilis    : 0   Mean   :2010  
-    ##  Accipiter striatus    : 0   3rd Qu.:2017  
-    ##  Actitis macularius    : 0   Max.   :2022  
-    ##  (Other)               : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-133.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Toxostoma rufum   :56   Min.   :1986  
-    ##  Acanthis flammea  : 0   1st Qu.:2009  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2011  
-    ##  Accipiter striatus: 0   3rd Qu.:2017  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-134.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Sturnus vulgaris  :37   Min.   :1978  
-    ##  Acanthis flammea  : 0   1st Qu.:2006  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2012  
-    ##  Accipiter striatus: 0   3rd Qu.:2019  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-135.png)<!-- -->
-
-    ##                 species     eventDate   
-    ##  Bombycilla cedrorum:94   Min.   :1986  
-    ##  Acanthis flammea   : 0   1st Qu.:2009  
-    ##  Accipiter cooperii : 0   Median :2015  
-    ##  Accipiter gentilis : 0   Mean   :2012  
-    ##  Accipiter striatus : 0   3rd Qu.:2018  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
-
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-136.png)<!-- -->
 
+    ##                species      eventDate   
+    ##  Turdus migratorius:450   Min.   :1957  
+    ##  Acanthis flammea  :  0   1st Qu.:2012  
+    ##  Accipiter cooperii:  0   Median :2017  
+    ##  Accipiter gentilis:  0   Mean   :2014  
+    ##  Accipiter striatus:  0   3rd Qu.:2021  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-137.png)<!-- -->
+
+    ##                 species      eventDate   
+    ##  Bombycilla cedrorum:209   Min.   :1986  
+    ##  Acanthis flammea   :  0   1st Qu.:2011  
+    ##  Accipiter cooperii :  0   Median :2015  
+    ##  Accipiter gentilis :  0   Mean   :2013  
+    ##  Accipiter striatus :  0   3rd Qu.:2019  
+    ##  Actitis macularius :  0   Max.   :2023  
+    ##  (Other)            :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-138.png)<!-- -->
+
     ##                species     eventDate   
-    ##  Passer domesticus :18   Min.   :1987  
+    ##  Passer domesticus :36   Min.   :1987  
     ##  Acanthis flammea  : 0   1st Qu.:2004  
     ##  Accipiter cooperii: 0   Median :2015  
     ##  Accipiter gentilis: 0   Mean   :2010  
@@ -1723,10 +1861,10 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "Bessey")
     ##  Actitis macularius: 0   Max.   :2021  
     ##  (Other)           : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-137.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-139.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Anthus rubescens  :1   Min.   :1987  
+    ##  Anthus rubescens  :2   Min.   :1987  
     ##  Acanthis flammea  :0   1st Qu.:1987  
     ##  Accipiter cooperii:0   Median :1987  
     ##  Accipiter gentilis:0   Mean   :1987  
@@ -1734,7 +1872,733 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "Bessey")
     ##  Actitis macularius:0   Max.   :1987  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-138.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-140.png)<!-- -->
+
+    ##                  species      eventDate   
+    ##  Haemorhous mexicanus:191   Min.   :1985  
+    ##  Acanthis flammea    :  0   1st Qu.:2012  
+    ##  Accipiter cooperii  :  0   Median :2015  
+    ##  Accipiter gentilis  :  0   Mean   :2015  
+    ##  Accipiter striatus  :  0   3rd Qu.:2020  
+    ##  Actitis macularius  :  0   Max.   :2023  
+    ##  (Other)             :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-141.png)<!-- -->
+
+    ##                  species    eventDate   
+    ##  Haemorhous purpureus:8   Min.   :1996  
+    ##  Acanthis flammea    :0   1st Qu.:2002  
+    ##  Accipiter cooperii  :0   Median :2012  
+    ##  Accipiter gentilis  :0   Mean   :2010  
+    ##  Accipiter striatus  :0   3rd Qu.:2020  
+    ##  Actitis macularius  :0   Max.   :2021  
+    ##  (Other)             :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-142.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Loxia curvirostra :51   Min.   :1987  
+    ##  Acanthis flammea  : 0   1st Qu.:2012  
+    ##  Accipiter cooperii: 0   Median :2019  
+    ##  Accipiter gentilis: 0   Mean   :2013  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-143.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Spinus pinus      :75   Min.   :1985  
+    ##  Acanthis flammea  : 0   1st Qu.:2000  
+    ##  Accipiter cooperii: 0   Median :2012  
+    ##  Accipiter gentilis: 0   Mean   :2008  
+    ##  Accipiter striatus: 0   3rd Qu.:2016  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-144.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Spinus tristis    :384   Min.   :1957  
+    ##  Acanthis flammea  :  0   1st Qu.:2014  
+    ##  Accipiter cooperii:  0   Median :2017  
+    ##  Accipiter gentilis:  0   Mean   :2015  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-145.png)<!-- -->
+
+    ##                  species    eventDate   
+    ##  Calcarius lapponicus:2   Min.   :2020  
+    ##  Acanthis flammea    :0   1st Qu.:2020  
+    ##  Accipiter cooperii  :0   Median :2020  
+    ##  Accipiter gentilis  :0   Mean   :2020  
+    ##  Accipiter striatus  :0   3rd Qu.:2020  
+    ##  Actitis macularius  :0   Max.   :2020  
+    ##  (Other)             :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-146.png)<!-- -->
+
+    ##                   species     eventDate   
+    ##  Ammodramus savannarum:81   Min.   :1907  
+    ##  Acanthis flammea     : 0   1st Qu.:2010  
+    ##  Accipiter cooperii   : 0   Median :2017  
+    ##  Accipiter gentilis   : 0   Mean   :2013  
+    ##  Accipiter striatus   : 0   3rd Qu.:2020  
+    ##  Actitis macularius   : 0   Max.   :2023  
+    ##  (Other)              : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-147.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Spizella passerina:324   Min.   :1986  
+    ##  Acanthis flammea  :  0   1st Qu.:2011  
+    ##  Accipiter cooperii:  0   Median :2015  
+    ##  Accipiter gentilis:  0   Mean   :2014  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-148.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Spizella pallida  :68   Min.   :1987  
+    ##  Acanthis flammea  : 0   1st Qu.:2006  
+    ##  Accipiter cooperii: 0   Median :2015  
+    ##  Accipiter gentilis: 0   Mean   :2012  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-149.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Spizella pusilla  :205   Min.   :1957  
+    ##  Acanthis flammea  :  0   1st Qu.:2010  
+    ##  Accipiter cooperii:  0   Median :2015  
+    ##  Accipiter gentilis:  0   Mean   :2013  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-150.png)<!-- -->
+
+    ##                  species      eventDate   
+    ##  Chondestes grammacus:182   Min.   :1957  
+    ##  Acanthis flammea    :  0   1st Qu.:2014  
+    ##  Accipiter cooperii  :  0   Median :2017  
+    ##  Accipiter gentilis  :  0   Mean   :2015  
+    ##  Accipiter striatus  :  0   3rd Qu.:2021  
+    ##  Actitis macularius  :  0   Max.   :2023  
+    ##  (Other)             :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-151.png)<!-- -->
+
+    ##                  species     eventDate   
+    ##  Spizelloides arborea:28   Min.   :1999  
+    ##  Acanthis flammea    : 0   1st Qu.:2005  
+    ##  Accipiter cooperii  : 0   Median :2013  
+    ##  Accipiter gentilis  : 0   Mean   :2013  
+    ##  Accipiter striatus  : 0   3rd Qu.:2022  
+    ##  Actitis macularius  : 0   Max.   :2023  
+    ##  (Other)             : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-152.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Junco sp.         :102   Min.   :1985  
+    ##  Acanthis flammea  :  0   1st Qu.:2000  
+    ##  Accipiter cooperii:  0   Median :2014  
+    ##  Accipiter gentilis:  0   Mean   :2010  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-153.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Junco hyemalis    :13   Min.   :1985  
+    ##  Acanthis flammea  : 0   1st Qu.:2004  
+    ##  Accipiter cooperii: 0   Median :2020  
+    ##  Accipiter gentilis: 0   Mean   :2011  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2022  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-154.png)<!-- -->
+
+    ##                    species     eventDate   
+    ##  Zonotrichia leucophrys:60   Min.   :1985  
+    ##  Acanthis flammea      : 0   1st Qu.:1989  
+    ##  Accipiter cooperii    : 0   Median :2015  
+    ##  Accipiter gentilis    : 0   Mean   :2008  
+    ##  Accipiter striatus    : 0   3rd Qu.:2021  
+    ##  Actitis macularius    : 0   Max.   :2023  
+    ##  (Other)               : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-155.png)<!-- -->
+
+    ##                 species     eventDate   
+    ##  Zonotrichia querula:46   Min.   :1985  
+    ##  Acanthis flammea   : 0   1st Qu.:1988  
+    ##  Accipiter cooperii : 0   Median :2000  
+    ##  Accipiter gentilis : 0   Mean   :2001  
+    ##  Accipiter striatus : 0   3rd Qu.:2014  
+    ##  Actitis macularius : 0   Max.   :2022  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-156.png)<!-- -->
+
+    ##                    species     eventDate   
+    ##  Zonotrichia albicollis:24   Min.   :1985  
+    ##  Acanthis flammea      : 0   1st Qu.:1987  
+    ##  Accipiter cooperii    : 0   Median :2004  
+    ##  Accipiter gentilis    : 0   Mean   :2004  
+    ##  Accipiter striatus    : 0   3rd Qu.:2018  
+    ##  Actitis macularius    : 0   Max.   :2023  
+    ##  (Other)               : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-157.png)<!-- -->
+
+    ##                 species     eventDate   
+    ##  Pooecetes gramineus:43   Min.   :1987  
+    ##  Acanthis flammea   : 0   1st Qu.:2006  
+    ##  Accipiter cooperii : 0   Median :2014  
+    ##  Accipiter gentilis : 0   Mean   :2011  
+    ##  Accipiter striatus : 0   3rd Qu.:2018  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-158.png)<!-- -->
+
+    ##                       species    eventDate   
+    ##  Passerculus sandwichensis:5   Min.   :1994  
+    ##  Acanthis flammea         :0   1st Qu.:1994  
+    ##  Accipiter cooperii       :0   Median :2015  
+    ##  Accipiter gentilis       :0   Mean   :2008  
+    ##  Accipiter striatus       :0   3rd Qu.:2015  
+    ##  Actitis macularius       :0   Max.   :2022  
+    ##  (Other)                  :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-159.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Pipilo maculatus  :244   Min.   :1957  
+    ##  Acanthis flammea  :  0   1st Qu.:2009  
+    ##  Accipiter cooperii:  0   Median :2015  
+    ##  Accipiter gentilis:  0   Mean   :2012  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-160.png)<!-- -->
+
+    ##                     species    eventDate   
+    ##  Pipilo erythrophthalmus:8   Min.   :1994  
+    ##  Acanthis flammea       :0   1st Qu.:2009  
+    ##  Accipiter cooperii     :0   Median :2016  
+    ##  Accipiter gentilis     :0   Mean   :2012  
+    ##  Accipiter striatus     :0   3rd Qu.:2019  
+    ##  Actitis macularius     :0   Max.   :2020  
+    ##  (Other)                :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-161.png)<!-- -->
+
+    ##                                 species    eventDate   
+    ##  Pipilo maculatus x erythrophthalmus:3   Min.   :2015  
+    ##  Acanthis flammea                   :0   1st Qu.:2016  
+    ##  Accipiter cooperii                 :0   Median :2018  
+    ##  Accipiter gentilis                 :0   Mean   :2018  
+    ##  Accipiter striatus                 :0   3rd Qu.:2020  
+    ##  Actitis macularius                 :0   Max.   :2022  
+    ##  (Other)                            :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-162.png)<!-- -->
+
+    ##                               species     eventDate   
+    ##  Pipilo maculatus/erythrophthalmus:19   Min.   :1987  
+    ##  Acanthis flammea                 : 0   1st Qu.:2010  
+    ##  Accipiter cooperii               : 0   Median :2015  
+    ##  Accipiter gentilis               : 0   Mean   :2012  
+    ##  Accipiter striatus               : 0   3rd Qu.:2019  
+    ##  Actitis macularius               : 0   Max.   :2021  
+    ##  (Other)                          : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-163.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Icteria virens    :32   Min.   :1957  
+    ##  Acanthis flammea  : 0   1st Qu.:2004  
+    ##  Accipiter cooperii: 0   Median :2016  
+    ##  Accipiter gentilis: 0   Mean   :2008  
+    ##  Accipiter striatus: 0   3rd Qu.:2018  
+    ##  Actitis macularius: 0   Max.   :2020  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-164.png)<!-- -->
+
+    ##                           species    eventDate   
+    ##  Xanthocephalus xanthocephalus:9   Min.   :2007  
+    ##  Acanthis flammea             :0   1st Qu.:2015  
+    ##  Accipiter cooperii           :0   Median :2016  
+    ##  Accipiter gentilis           :0   Mean   :2015  
+    ##  Accipiter striatus           :0   3rd Qu.:2018  
+    ##  Actitis macularius           :0   Max.   :2022  
+    ##  (Other)                      :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-165.png)<!-- -->
+
+    ##                   species     eventDate   
+    ##  Dolichonyx oryzivorus:11   Min.   :2017  
+    ##  Acanthis flammea     : 0   1st Qu.:2018  
+    ##  Accipiter cooperii   : 0   Median :2019  
+    ##  Accipiter gentilis   : 0   Mean   :2020  
+    ##  Accipiter striatus   : 0   3rd Qu.:2022  
+    ##  Actitis macularius   : 0   Max.   :2023  
+    ##  (Other)              : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-166.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Sturnella neglecta:191   Min.   :1978  
+    ##  Acanthis flammea  :  0   1st Qu.:2007  
+    ##  Accipiter cooperii:  0   Median :2015  
+    ##  Accipiter gentilis:  0   Mean   :2012  
+    ##  Accipiter striatus:  0   3rd Qu.:2021  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-167.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Sturnella magna   :6   Min.   :2017  
+    ##  Acanthis flammea  :0   1st Qu.:2017  
+    ##  Accipiter cooperii:0   Median :2017  
+    ##  Accipiter gentilis:0   Mean   :2018  
+    ##  Accipiter striatus:0   3rd Qu.:2019  
+    ##  Actitis macularius:0   Max.   :2020  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-168.png)<!-- -->
+
+    ##                      species    eventDate   
+    ##  Sturnella neglecta/magna:9   Min.   :2004  
+    ##  Acanthis flammea        :0   1st Qu.:2012  
+    ##  Accipiter cooperii      :0   Median :2020  
+    ##  Accipiter gentilis      :0   Mean   :2016  
+    ##  Accipiter striatus      :0   3rd Qu.:2021  
+    ##  Actitis macularius      :0   Max.   :2023  
+    ##  (Other)                 :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-169.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Icterus galbula   :64   Min.   :1996  
+    ##  Acanthis flammea  : 0   1st Qu.:2014  
+    ##  Accipiter cooperii: 0   Median :2015  
+    ##  Accipiter gentilis: 0   Mean   :2015  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-170.png)<!-- -->
+
+    ##                         species    eventDate   
+    ##  Icterus bullockii x galbula:1   Min.   :1986  
+    ##  Acanthis flammea           :0   1st Qu.:1986  
+    ##  Accipiter cooperii         :0   Median :1986  
+    ##  Accipiter gentilis         :0   Mean   :1986  
+    ##  Accipiter striatus         :0   3rd Qu.:1986  
+    ##  Actitis macularius         :0   Max.   :1986  
+    ##  (Other)                    :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-171.png)<!-- -->
+
+    ##                 species      eventDate   
+    ##  Agelaius phoeniceus:162   Min.   :1986  
+    ##  Acanthis flammea   :  0   1st Qu.:2012  
+    ##  Accipiter cooperii :  0   Median :2018  
+    ##  Accipiter gentilis :  0   Mean   :2015  
+    ##  Accipiter striatus :  0   3rd Qu.:2021  
+    ##  Actitis macularius :  0   Max.   :2023  
+    ##  (Other)            :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-172.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Molothrus ater    :124   Min.   :1990  
+    ##  Acanthis flammea  :  0   1st Qu.:2012  
+    ##  Accipiter cooperii:  0   Median :2016  
+    ##  Accipiter gentilis:  0   Mean   :2015  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-173.png)<!-- -->
+
+    ##                    species    eventDate   
+    ##  Euphagus cyanocephalus:4   Min.   :2020  
+    ##  Acanthis flammea      :0   1st Qu.:2020  
+    ##  Accipiter cooperii    :0   Median :2020  
+    ##  Accipiter gentilis    :0   Mean   :2020  
+    ##  Accipiter striatus    :0   3rd Qu.:2021  
+    ##  Actitis macularius    :0   Max.   :2021  
+    ##  (Other)               :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-174.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Quiscalus quiscula:121   Min.   :1986  
+    ##  Acanthis flammea  :  0   1st Qu.:2010  
+    ##  Accipiter cooperii:  0   Median :2016  
+    ##  Accipiter gentilis:  0   Mean   :2013  
+    ##  Accipiter striatus:  0   3rd Qu.:2019  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-175.png)<!-- -->
+
+    ##                 species    eventDate   
+    ##  Quiscalus mexicanus:4   Min.   :2009  
+    ##  Acanthis flammea   :0   1st Qu.:2009  
+    ##  Accipiter cooperii :0   Median :2014  
+    ##  Accipiter gentilis :0   Mean   :2014  
+    ##  Accipiter striatus :0   3rd Qu.:2018  
+    ##  Actitis macularius :0   Max.   :2018  
+    ##  (Other)            :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-176.png)<!-- -->
+
+    ##                 species     eventDate   
+    ##  Seiurus aurocapilla:67   Min.   :2002  
+    ##  Acanthis flammea   : 0   1st Qu.:2015  
+    ##  Accipiter cooperii : 0   Median :2017  
+    ##  Accipiter gentilis : 0   Mean   :2016  
+    ##  Accipiter striatus : 0   3rd Qu.:2019  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-177.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Mniotilta varia   :14   Min.   :1957  
+    ##  Acanthis flammea  : 0   1st Qu.:1986  
+    ##  Accipiter cooperii: 0   Median :2018  
+    ##  Accipiter gentilis: 0   Mean   :2001  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2022  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-178.png)<!-- -->
+
+    ##                   species    eventDate   
+    ##  Leiothlypis peregrina:5   Min.   :2015  
+    ##  Acanthis flammea     :0   1st Qu.:2017  
+    ##  Accipiter cooperii   :0   Median :2017  
+    ##  Accipiter gentilis   :0   Mean   :2017  
+    ##  Accipiter striatus   :0   3rd Qu.:2018  
+    ##  Actitis macularius   :0   Max.   :2018  
+    ##  (Other)              :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-179.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Leiothlypis celata:43   Min.   :1985  
+    ##  Acanthis flammea  : 0   1st Qu.:1989  
+    ##  Accipiter cooperii: 0   Median :2009  
+    ##  Accipiter gentilis: 0   Mean   :2005  
+    ##  Accipiter striatus: 0   3rd Qu.:2015  
+    ##  Actitis macularius: 0   Max.   :2022  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-180.png)<!-- -->
+
+    ##                     species    eventDate   
+    ##  Leiothlypis ruficapilla:2   Min.   :1990  
+    ##  Acanthis flammea       :0   1st Qu.:1990  
+    ##  Accipiter cooperii     :0   Median :1990  
+    ##  Accipiter gentilis     :0   Mean   :1990  
+    ##  Accipiter striatus     :0   3rd Qu.:1990  
+    ##  Actitis macularius     :0   Max.   :1990  
+    ##  (Other)                :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-181.png)<!-- -->
+
+    ##                     species    eventDate   
+    ##  Geothlypis philadelphia:2   Min.   :2009  
+    ##  Acanthis flammea       :0   1st Qu.:2009  
+    ##  Accipiter cooperii     :0   Median :2009  
+    ##  Accipiter gentilis     :0   Mean   :2009  
+    ##  Accipiter striatus     :0   3rd Qu.:2009  
+    ##  Actitis macularius     :0   Max.   :2009  
+    ##  (Other)                :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-182.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Geothlypis trichas:107   Min.   :1957  
+    ##  Acanthis flammea  :  0   1st Qu.:2014  
+    ##  Accipiter cooperii:  0   Median :2017  
+    ##  Accipiter gentilis:  0   Mean   :2015  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-183.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Setophaga citrina :4   Min.   :2015  
+    ##  Acanthis flammea  :0   1st Qu.:2015  
+    ##  Accipiter cooperii:0   Median :2015  
+    ##  Accipiter gentilis:0   Mean   :2015  
+    ##  Accipiter striatus:0   3rd Qu.:2015  
+    ##  Actitis macularius:0   Max.   :2015  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-184.png)<!-- -->
+
+    ##                 species     eventDate   
+    ##  Setophaga ruticilla:25   Min.   :1957  
+    ##  Acanthis flammea   : 0   1st Qu.:2015  
+    ##  Accipiter cooperii : 0   Median :2017  
+    ##  Accipiter gentilis : 0   Mean   :2013  
+    ##  Accipiter striatus : 0   3rd Qu.:2020  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-185.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Setophaga castanea:2   Min.   :1985  
+    ##  Acanthis flammea  :0   1st Qu.:1985  
+    ##  Accipiter cooperii:0   Median :1985  
+    ##  Accipiter gentilis:0   Mean   :1985  
+    ##  Accipiter striatus:0   3rd Qu.:1985  
+    ##  Actitis macularius:0   Max.   :1985  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-186.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Setophaga petechia:130   Min.   :1986  
+    ##  Acanthis flammea  :  0   1st Qu.:2014  
+    ##  Accipiter cooperii:  0   Median :2017  
+    ##  Accipiter gentilis:  0   Mean   :2016  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-187.png)<!-- -->
+
+    ##                    species    eventDate   
+    ##  Setophaga pensylvanica:1   Min.   :2015  
+    ##  Acanthis flammea      :0   1st Qu.:2015  
+    ##  Accipiter cooperii    :0   Median :2015  
+    ##  Accipiter gentilis    :0   Mean   :2015  
+    ##  Accipiter striatus    :0   3rd Qu.:2015  
+    ##  Actitis macularius    :0   Max.   :2015  
+    ##  (Other)               :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-188.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Setophaga striata :5   Min.   :2015  
+    ##  Acanthis flammea  :0   1st Qu.:2015  
+    ##  Accipiter cooperii:0   Median :2015  
+    ##  Accipiter gentilis:0   Mean   :2017  
+    ##  Accipiter striatus:0   3rd Qu.:2021  
+    ##  Actitis macularius:0   Max.   :2021  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-189.png)<!-- -->
+
+    ##                         species     eventDate   
+    ##  Setophaga coronata/auduboni:28   Min.   :1985  
+    ##  Acanthis flammea           : 0   1st Qu.:2010  
+    ##  Accipiter cooperii         : 0   Median :2016  
+    ##  Accipiter gentilis         : 0   Mean   :2012  
+    ##  Accipiter striatus         : 0   3rd Qu.:2021  
+    ##  Actitis macularius         : 0   Max.   :2023  
+    ##  (Other)                    : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-190.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Setophaga coronata:48   Min.   :1985  
+    ##  Acanthis flammea  : 0   1st Qu.:2000  
+    ##  Accipiter cooperii: 0   Median :2012  
+    ##  Accipiter gentilis: 0   Mean   :2008  
+    ##  Accipiter striatus: 0   3rd Qu.:2017  
+    ##  Actitis macularius: 0   Max.   :2021  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-191.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Cardellina pusilla:15   Min.   :1985  
+    ##  Acanthis flammea  : 0   1st Qu.:1992  
+    ##  Accipiter cooperii: 0   Median :2006  
+    ##  Accipiter gentilis: 0   Mean   :2003  
+    ##  Accipiter striatus: 0   3rd Qu.:2012  
+    ##  Actitis macularius: 0   Max.   :2022  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-192.png)<!-- -->
+
+    ##                   species      eventDate   
+    ##  Cardinalis cardinalis:252   Min.   :1986  
+    ##  Acanthis flammea     :  0   1st Qu.:2012  
+    ##  Accipiter cooperii   :  0   Median :2017  
+    ##  Accipiter gentilis   :  0   Mean   :2014  
+    ##  Accipiter striatus   :  0   3rd Qu.:2020  
+    ##  Actitis macularius   :  0   Max.   :2023  
+    ##  (Other)              :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-193.png)<!-- -->
+
+    ##                     species     eventDate   
+    ##  Pheucticus ludovicianus:12   Min.   :2002  
+    ##  Acanthis flammea       : 0   1st Qu.:2012  
+    ##  Accipiter cooperii     : 0   Median :2020  
+    ##  Accipiter gentilis     : 0   Mean   :2016  
+    ##  Accipiter striatus     : 0   3rd Qu.:2023  
+    ##  Actitis macularius     : 0   Max.   :2023  
+    ##  (Other)                : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-194.png)<!-- -->
+
+    ##                       species     eventDate   
+    ##  Pheucticus melanocephalus:10   Min.   :1957  
+    ##  Acanthis flammea         : 0   1st Qu.:2012  
+    ##  Accipiter cooperii       : 0   Median :2015  
+    ##  Accipiter gentilis       : 0   Mean   :2004  
+    ##  Accipiter striatus       : 0   3rd Qu.:2017  
+    ##  Actitis macularius       : 0   Max.   :2018  
+    ##  (Other)                  : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-195.png)<!-- -->
+
+    ##                                    species    eventDate   
+    ##  Pheucticus ludovicianus/melanocephalus:1   Min.   :2021  
+    ##  Acanthis flammea                      :0   1st Qu.:2021  
+    ##  Accipiter cooperii                    :0   Median :2021  
+    ##  Accipiter gentilis                    :0   Mean   :2021  
+    ##  Accipiter striatus                    :0   3rd Qu.:2021  
+    ##  Actitis macularius                    :0   Max.   :2021  
+    ##  (Other)                               :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-196.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Passerina caerulea:57   Min.   :2002  
+    ##  Acanthis flammea  : 0   1st Qu.:2014  
+    ##  Accipiter cooperii: 0   Median :2017  
+    ##  Accipiter gentilis: 0   Mean   :2016  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-197.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Passerina amoena  :6   Min.   :2012  
+    ##  Acanthis flammea  :0   1st Qu.:2012  
+    ##  Accipiter cooperii:0   Median :2012  
+    ##  Accipiter gentilis:0   Mean   :2016  
+    ##  Accipiter striatus:0   3rd Qu.:2020  
+    ##  Actitis macularius:0   Max.   :2023  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-198.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Passerina cyanea  :81   Min.   :2002  
+    ##  Acanthis flammea  : 0   1st Qu.:2014  
+    ##  Accipiter cooperii: 0   Median :2015  
+    ##  Accipiter gentilis: 0   Mean   :2016  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-199.png)<!-- -->
+
+    ##                     species    eventDate   
+    ##  Passerina amoena/cyanea:1   Min.   :2014  
+    ##  Acanthis flammea       :0   1st Qu.:2014  
+    ##  Accipiter cooperii     :0   Median :2014  
+    ##  Accipiter gentilis     :0   Mean   :2014  
+    ##  Accipiter striatus     :0   3rd Qu.:2014  
+    ##  Actitis macularius     :0   Max.   :2014  
+    ##  (Other)                :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-200.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Spiza americana   :37   Min.   :2010  
+    ##  Acanthis flammea  : 0   1st Qu.:2014  
+    ##  Accipiter cooperii: 0   Median :2018  
+    ##  Accipiter gentilis: 0   Mean   :2017  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-201.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Aix sponsa        :15   Min.   :1990  
+    ##  Acanthis flammea  : 0   1st Qu.:2008  
+    ##  Accipiter cooperii: 0   Median :2011  
+    ##  Accipiter gentilis: 0   Mean   :2009  
+    ##  Accipiter striatus: 0   3rd Qu.:2012  
+    ##  Actitis macularius: 0   Max.   :2021  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-202.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Rallus limicola   :1   Min.   :1957  
+    ##  Acanthis flammea  :0   1st Qu.:1957  
+    ##  Accipiter cooperii:0   Median :1957  
+    ##  Accipiter gentilis:0   Mean   :1957  
+    ##  Accipiter striatus:0   3rd Qu.:1957  
+    ##  Actitis macularius:0   Max.   :1957  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-203.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Asio otus         :2   Min.   :2009  
+    ##  Acanthis flammea  :0   1st Qu.:2011  
+    ##  Accipiter cooperii:0   Median :2014  
+    ##  Accipiter gentilis:0   Mean   :2014  
+    ##  Accipiter striatus:0   3rd Qu.:2016  
+    ##  Actitis macularius:0   Max.   :2018  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-204.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Falco sparverius  :45   Min.   :1986  
+    ##  Acanthis flammea  : 0   1st Qu.:2004  
+    ##  Accipiter cooperii: 0   Median :2010  
+    ##  Accipiter gentilis: 0   Mean   :2009  
+    ##  Accipiter striatus: 0   3rd Qu.:2015  
+    ##  Actitis macularius: 0   Max.   :2021  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-205.png)<!-- -->
+
+    ##                 species    eventDate   
+    ##  Tyrannus forficatus:1   Min.   :1957  
+    ##  Acanthis flammea   :0   1st Qu.:1957  
+    ##  Accipiter cooperii :0   Median :1957  
+    ##  Accipiter gentilis :0   Mean   :1957  
+    ##  Accipiter striatus :0   3rd Qu.:1957  
+    ##  Actitis macularius :0   Max.   :1957  
+    ##  (Other)            :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-206.png)<!-- -->
 
     ##                        species    eventDate   
     ##  Coccothraustes vespertinus:2   Min.   :1986  
@@ -1745,95 +2609,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "Bessey")
     ##  Actitis macularius        :0   Max.   :2011  
     ##  (Other)                   :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-139.png)<!-- -->
-
-    ##                  species     eventDate   
-    ##  Haemorhous mexicanus:84   Min.   :1985  
-    ##  Acanthis flammea    : 0   1st Qu.:2012  
-    ##  Accipiter cooperii  : 0   Median :2015  
-    ##  Accipiter gentilis  : 0   Mean   :2013  
-    ##  Accipiter striatus  : 0   3rd Qu.:2019  
-    ##  Actitis macularius  : 0   Max.   :2021  
-    ##  (Other)             : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-140.png)<!-- -->
-
-    ##                  species    eventDate   
-    ##  Haemorhous purpureus:4   Min.   :1996  
-    ##  Acanthis flammea    :0   1st Qu.:2002  
-    ##  Accipiter cooperii  :0   Median :2012  
-    ##  Accipiter gentilis  :0   Mean   :2010  
-    ##  Accipiter striatus  :0   3rd Qu.:2020  
-    ##  Actitis macularius  :0   Max.   :2021  
-    ##  (Other)             :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-141.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Loxia curvirostra :23   Min.   :1987  
-    ##  Acanthis flammea  : 0   1st Qu.:2008  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2012  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-142.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Spinus pinus      :35   Min.   :1985  
-    ##  Acanthis flammea  : 0   1st Qu.:2000  
-    ##  Accipiter cooperii: 0   Median :2012  
-    ##  Accipiter gentilis: 0   Mean   :2006  
-    ##  Accipiter striatus: 0   3rd Qu.:2015  
-    ##  Actitis macularius: 0   Max.   :2020  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-143.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Spinus tristis    :172   Min.   :1957  
-    ##  Acanthis flammea  :  0   1st Qu.:2012  
-    ##  Accipiter cooperii:  0   Median :2016  
-    ##  Accipiter gentilis:  0   Mean   :2014  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2021  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-144.png)<!-- -->
-
-    ##                  species    eventDate   
-    ##  Calcarius lapponicus:1   Min.   :2020  
-    ##  Acanthis flammea    :0   1st Qu.:2020  
-    ##  Accipiter cooperii  :0   Median :2020  
-    ##  Accipiter gentilis  :0   Mean   :2020  
-    ##  Accipiter striatus  :0   3rd Qu.:2020  
-    ##  Actitis macularius  :0   Max.   :2020  
-    ##  (Other)             :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-145.png)<!-- -->
-
-    ##                   species     eventDate   
-    ##  Ammodramus savannarum:37   Min.   :1907  
-    ##  Acanthis flammea     : 0   1st Qu.:2010  
-    ##  Accipiter cooperii   : 0   Median :2015  
-    ##  Accipiter gentilis   : 0   Mean   :2011  
-    ##  Accipiter striatus   : 0   3rd Qu.:2020  
-    ##  Actitis macularius   : 0   Max.   :2021  
-    ##  (Other)              : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-146.png)<!-- -->
-
-    ##                  species     eventDate   
-    ##  Chondestes grammacus:79   Min.   :1957  
-    ##  Acanthis flammea    : 0   1st Qu.:2012  
-    ##  Accipiter cooperii  : 0   Median :2016  
-    ##  Accipiter gentilis  : 0   Mean   :2013  
-    ##  Accipiter striatus  : 0   3rd Qu.:2020  
-    ##  Actitis macularius  : 0   Max.   :2021  
-    ##  (Other)             : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-147.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-207.png)<!-- -->
 
     ##                     species    eventDate   
     ##  Calamospiza melanocorys:4   Min.   :1990  
@@ -1844,117 +2620,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "Bessey")
     ##  Actitis macularius     :0   Max.   :2017  
     ##  (Other)                :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-148.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Spizella passerina:150   Min.   :1986  
-    ##  Acanthis flammea  :  0   1st Qu.:2011  
-    ##  Accipiter cooperii:  0   Median :2015  
-    ##  Accipiter gentilis:  0   Mean   :2013  
-    ##  Accipiter striatus:  0   3rd Qu.:2019  
-    ##  Actitis macularius:  0   Max.   :2022  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-149.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Spizella pallida  :32   Min.   :1987  
-    ##  Acanthis flammea  : 0   1st Qu.:2006  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2011  
-    ##  Accipiter striatus: 0   3rd Qu.:2019  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-150.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Spizella pusilla  :95   Min.   :1957  
-    ##  Acanthis flammea  : 0   1st Qu.:2008  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2011  
-    ##  Accipiter striatus: 0   3rd Qu.:2018  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-151.png)<!-- -->
-
-    ##                  species     eventDate   
-    ##  Spizelloides arborea:10   Min.   :1999  
-    ##  Acanthis flammea    : 0   1st Qu.:2004  
-    ##  Accipiter cooperii  : 0   Median :2011  
-    ##  Accipiter gentilis  : 0   Mean   :2010  
-    ##  Accipiter striatus  : 0   3rd Qu.:2014  
-    ##  Actitis macularius  : 0   Max.   :2021  
-    ##  (Other)             : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-152.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Junco hyemalis    :50   Min.   :1985  
-    ##  Acanthis flammea  : 0   1st Qu.:1999  
-    ##  Accipiter cooperii: 0   Median :2012  
-    ##  Accipiter gentilis: 0   Mean   :2008  
-    ##  Accipiter striatus: 0   3rd Qu.:2017  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-153.png)<!-- -->
-
-    ##                    species     eventDate   
-    ##  Zonotrichia leucophrys:28   Min.   :1985  
-    ##  Acanthis flammea      : 0   1st Qu.:1989  
-    ##  Accipiter cooperii    : 0   Median :2012  
-    ##  Accipiter gentilis    : 0   Mean   :2007  
-    ##  Accipiter striatus    : 0   3rd Qu.:2021  
-    ##  Actitis macularius    : 0   Max.   :2021  
-    ##  (Other)               : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-154.png)<!-- -->
-
-    ##                 species     eventDate   
-    ##  Zonotrichia querula:21   Min.   :1985  
-    ##  Acanthis flammea   : 0   1st Qu.:1987  
-    ##  Accipiter cooperii : 0   Median :1996  
-    ##  Accipiter gentilis : 0   Mean   :1999  
-    ##  Accipiter striatus : 0   3rd Qu.:2008  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-155.png)<!-- -->
-
-    ##                    species     eventDate   
-    ##  Zonotrichia albicollis:10   Min.   :1985  
-    ##  Acanthis flammea      : 0   1st Qu.:1987  
-    ##  Accipiter cooperii    : 0   Median :1998  
-    ##  Accipiter gentilis    : 0   Mean   :2000  
-    ##  Accipiter striatus    : 0   3rd Qu.:2010  
-    ##  Actitis macularius    : 0   Max.   :2021  
-    ##  (Other)               : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-156.png)<!-- -->
-
-    ##                 species     eventDate   
-    ##  Pooecetes gramineus:20   Min.   :1987  
-    ##  Acanthis flammea   : 0   1st Qu.:2005  
-    ##  Accipiter cooperii : 0   Median :2014  
-    ##  Accipiter gentilis : 0   Mean   :2010  
-    ##  Accipiter striatus : 0   3rd Qu.:2017  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-157.png)<!-- -->
-
-    ##                       species    eventDate   
-    ##  Passerculus sandwichensis:2   Min.   :1994  
-    ##  Acanthis flammea         :0   1st Qu.:1999  
-    ##  Accipiter cooperii       :0   Median :2004  
-    ##  Accipiter gentilis       :0   Mean   :2004  
-    ##  Accipiter striatus       :0   3rd Qu.:2010  
-    ##  Actitis macularius       :0   Max.   :2015  
-    ##  (Other)                  :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-158.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-208.png)<!-- -->
 
     ##                species     eventDate   
     ##  Melospiza melodia :21   Min.   :1986  
@@ -1965,7 +2631,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "Bessey")
     ##  Actitis macularius: 0   Max.   :2021  
     ##  (Other)           : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-159.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-209.png)<!-- -->
 
     ##                 species     eventDate   
     ##  Melospiza lincolnii:16   Min.   :1985  
@@ -1976,7 +2642,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "Bessey")
     ##  Actitis macularius : 0   Max.   :2021  
     ##  (Other)            : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-160.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-210.png)<!-- -->
 
     ##                 species    eventDate   
     ##  Melospiza georgiana:2   Min.   :1987  
@@ -1987,84 +2653,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "Bessey")
     ##  Actitis macularius :0   Max.   :2021  
     ##  (Other)            :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-161.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Pipilo maculatus  :110   Min.   :1957  
-    ##  Acanthis flammea  :  0   1st Qu.:2008  
-    ##  Accipiter cooperii:  0   Median :2015  
-    ##  Accipiter gentilis:  0   Mean   :2011  
-    ##  Accipiter striatus:  0   3rd Qu.:2018  
-    ##  Actitis macularius:  0   Max.   :2021  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-162.png)<!-- -->
-
-    ##                     species    eventDate   
-    ##  Pipilo erythrophthalmus:4   Min.   :1994  
-    ##  Acanthis flammea       :0   1st Qu.:2009  
-    ##  Accipiter cooperii     :0   Median :2016  
-    ##  Accipiter gentilis     :0   Mean   :2012  
-    ##  Accipiter striatus     :0   3rd Qu.:2019  
-    ##  Actitis macularius     :0   Max.   :2020  
-    ##  (Other)                :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-163.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Icteria virens    :17   Min.   :1957  
-    ##  Acanthis flammea  : 0   1st Qu.:1994  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2005  
-    ##  Accipiter striatus: 0   3rd Qu.:2018  
-    ##  Actitis macularius: 0   Max.   :2020  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-164.png)<!-- -->
-
-    ##                           species    eventDate   
-    ##  Xanthocephalus xanthocephalus:4   Min.   :2007  
-    ##  Acanthis flammea             :0   1st Qu.:2013  
-    ##  Accipiter cooperii           :0   Median :2016  
-    ##  Accipiter gentilis           :0   Mean   :2014  
-    ##  Accipiter striatus           :0   3rd Qu.:2016  
-    ##  Actitis macularius           :0   Max.   :2018  
-    ##  (Other)                      :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-165.png)<!-- -->
-
-    ##                   species    eventDate   
-    ##  Dolichonyx oryzivorus:4   Min.   :2017  
-    ##  Acanthis flammea     :0   1st Qu.:2018  
-    ##  Accipiter cooperii   :0   Median :2018  
-    ##  Accipiter gentilis   :0   Mean   :2019  
-    ##  Accipiter striatus   :0   3rd Qu.:2020  
-    ##  Actitis macularius   :0   Max.   :2021  
-    ##  (Other)              :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-166.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Sturnella magna   :3   Min.   :2017  
-    ##  Acanthis flammea  :0   1st Qu.:2017  
-    ##  Accipiter cooperii:0   Median :2017  
-    ##  Accipiter gentilis:0   Mean   :2018  
-    ##  Accipiter striatus:0   3rd Qu.:2018  
-    ##  Actitis macularius:0   Max.   :2020  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-167.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Sturnella neglecta:83   Min.   :1978  
-    ##  Acanthis flammea  : 0   1st Qu.:2006  
-    ##  Accipiter cooperii: 0   Median :2014  
-    ##  Accipiter gentilis: 0   Mean   :2011  
-    ##  Accipiter striatus: 0   3rd Qu.:2019  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-168.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-211.png)<!-- -->
 
     ##                species     eventDate   
     ##  Icterus spurius   :37   Min.   :1957  
@@ -2075,304 +2664,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "Bessey")
     ##  Actitis macularius: 0   Max.   :2021  
     ##  (Other)           : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-169.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Icterus galbula   :27   Min.   :1996  
-    ##  Acanthis flammea  : 0   1st Qu.:2012  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2014  
-    ##  Accipiter striatus: 0   3rd Qu.:2018  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-170.png)<!-- -->
-
-    ##                 species     eventDate   
-    ##  Agelaius phoeniceus:69   Min.   :1986  
-    ##  Acanthis flammea   : 0   1st Qu.:2011  
-    ##  Accipiter cooperii : 0   Median :2017  
-    ##  Accipiter gentilis : 0   Mean   :2014  
-    ##  Accipiter striatus : 0   3rd Qu.:2020  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-171.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Molothrus ater    :56   Min.   :1990  
-    ##  Acanthis flammea  : 0   1st Qu.:2012  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2014  
-    ##  Accipiter striatus: 0   3rd Qu.:2019  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-172.png)<!-- -->
-
-    ##                    species    eventDate   
-    ##  Euphagus cyanocephalus:2   Min.   :2020  
-    ##  Acanthis flammea      :0   1st Qu.:2020  
-    ##  Accipiter cooperii    :0   Median :2020  
-    ##  Accipiter gentilis    :0   Mean   :2020  
-    ##  Accipiter striatus    :0   3rd Qu.:2021  
-    ##  Actitis macularius    :0   Max.   :2021  
-    ##  (Other)               :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-173.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Quiscalus quiscula:53   Min.   :1986  
-    ##  Acanthis flammea  : 0   1st Qu.:2009  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2012  
-    ##  Accipiter striatus: 0   3rd Qu.:2018  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-174.png)<!-- -->
-
-    ##                 species    eventDate   
-    ##  Quiscalus mexicanus:2   Min.   :2009  
-    ##  Acanthis flammea   :0   1st Qu.:2011  
-    ##  Accipiter cooperii :0   Median :2014  
-    ##  Accipiter gentilis :0   Mean   :2014  
-    ##  Accipiter striatus :0   3rd Qu.:2016  
-    ##  Actitis macularius :0   Max.   :2018  
-    ##  (Other)            :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-175.png)<!-- -->
-
-    ##                 species     eventDate   
-    ##  Seiurus aurocapilla:32   Min.   :2002  
-    ##  Acanthis flammea   : 0   1st Qu.:2015  
-    ##  Accipiter cooperii : 0   Median :2015  
-    ##  Accipiter gentilis : 0   Mean   :2016  
-    ##  Accipiter striatus : 0   3rd Qu.:2018  
-    ##  Actitis macularius : 0   Max.   :2022  
-    ##  (Other)            : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-176.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Mniotilta varia   :8   Min.   :1957  
-    ##  Acanthis flammea  :0   1st Qu.:1957  
-    ##  Accipiter cooperii:0   Median :2002  
-    ##  Accipiter gentilis:0   Mean   :1992  
-    ##  Accipiter striatus:0   3rd Qu.:2019  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-177.png)<!-- -->
-
-    ##                   species    eventDate   
-    ##  Leiothlypis peregrina:2   Min.   :2017  
-    ##  Acanthis flammea     :0   1st Qu.:2017  
-    ##  Accipiter cooperii   :0   Median :2018  
-    ##  Accipiter gentilis   :0   Mean   :2018  
-    ##  Accipiter striatus   :0   3rd Qu.:2018  
-    ##  Actitis macularius   :0   Max.   :2018  
-    ##  (Other)              :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-178.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Leiothlypis celata:21   Min.   :1985  
-    ##  Acanthis flammea  : 0   1st Qu.:1989  
-    ##  Accipiter cooperii: 0   Median :2009  
-    ##  Accipiter gentilis: 0   Mean   :2004  
-    ##  Accipiter striatus: 0   3rd Qu.:2015  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-179.png)<!-- -->
-
-    ##                     species    eventDate   
-    ##  Leiothlypis ruficapilla:1   Min.   :1990  
-    ##  Acanthis flammea       :0   1st Qu.:1990  
-    ##  Accipiter cooperii     :0   Median :1990  
-    ##  Accipiter gentilis     :0   Mean   :1990  
-    ##  Accipiter striatus     :0   3rd Qu.:1990  
-    ##  Actitis macularius     :0   Max.   :1990  
-    ##  (Other)                :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-180.png)<!-- -->
-
-    ##                     species    eventDate   
-    ##  Geothlypis philadelphia:1   Min.   :2009  
-    ##  Acanthis flammea       :0   1st Qu.:2009  
-    ##  Accipiter cooperii     :0   Median :2009  
-    ##  Accipiter gentilis     :0   Mean   :2009  
-    ##  Accipiter striatus     :0   3rd Qu.:2009  
-    ##  Actitis macularius     :0   Max.   :2009  
-    ##  (Other)                :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-181.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Geothlypis trichas:45   Min.   :1957  
-    ##  Acanthis flammea  : 0   1st Qu.:2012  
-    ##  Accipiter cooperii: 0   Median :2016  
-    ##  Accipiter gentilis: 0   Mean   :2012  
-    ##  Accipiter striatus: 0   3rd Qu.:2018  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-182.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Setophaga citrina :2   Min.   :2015  
-    ##  Acanthis flammea  :0   1st Qu.:2015  
-    ##  Accipiter cooperii:0   Median :2015  
-    ##  Accipiter gentilis:0   Mean   :2015  
-    ##  Accipiter striatus:0   3rd Qu.:2015  
-    ##  Actitis macularius:0   Max.   :2015  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-183.png)<!-- -->
-
-    ##                 species     eventDate   
-    ##  Setophaga ruticilla:11   Min.   :1957  
-    ##  Acanthis flammea   : 0   1st Qu.:2014  
-    ##  Accipiter cooperii : 0   Median :2017  
-    ##  Accipiter gentilis : 0   Mean   :2009  
-    ##  Accipiter striatus : 0   3rd Qu.:2018  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-184.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Setophaga castanea:1   Min.   :1985  
-    ##  Acanthis flammea  :0   1st Qu.:1985  
-    ##  Accipiter cooperii:0   Median :1985  
-    ##  Accipiter gentilis:0   Mean   :1985  
-    ##  Accipiter striatus:0   3rd Qu.:1985  
-    ##  Actitis macularius:0   Max.   :1985  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-185.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Setophaga petechia:54   Min.   :1986  
-    ##  Acanthis flammea  : 0   1st Qu.:2014  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2014  
-    ##  Accipiter striatus: 0   3rd Qu.:2018  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-186.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Setophaga striata :2   Min.   :2015  
-    ##  Acanthis flammea  :0   1st Qu.:2016  
-    ##  Accipiter cooperii:0   Median :2018  
-    ##  Accipiter gentilis:0   Mean   :2018  
-    ##  Accipiter striatus:0   3rd Qu.:2020  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-187.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Setophaga coronata:35   Min.   :1985  
-    ##  Acanthis flammea  : 0   1st Qu.:2005  
-    ##  Accipiter cooperii: 0   Median :2013  
-    ##  Accipiter gentilis: 0   Mean   :2009  
-    ##  Accipiter striatus: 0   3rd Qu.:2017  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-188.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Cardellina pusilla:7   Min.   :1985  
-    ##  Acanthis flammea  :0   1st Qu.:1992  
-    ##  Accipiter cooperii:0   Median :2006  
-    ##  Accipiter gentilis:0   Mean   :2001  
-    ##  Accipiter striatus:0   3rd Qu.:2010  
-    ##  Actitis macularius:0   Max.   :2014  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-189.png)<!-- -->
-
-    ##                   species      eventDate   
-    ##  Cardinalis cardinalis:115   Min.   :1986  
-    ##  Acanthis flammea     :  0   1st Qu.:2012  
-    ##  Accipiter cooperii   :  0   Median :2015  
-    ##  Accipiter gentilis   :  0   Mean   :2013  
-    ##  Accipiter striatus   :  0   3rd Qu.:2020  
-    ##  Actitis macularius   :  0   Max.   :2021  
-    ##  (Other)              :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-190.png)<!-- -->
-
-    ##                     species    eventDate   
-    ##  Pheucticus ludovicianus:4   Min.   :2002  
-    ##  Acanthis flammea       :0   1st Qu.:2010  
-    ##  Accipiter cooperii     :0   Median :2015  
-    ##  Accipiter gentilis     :0   Mean   :2013  
-    ##  Accipiter striatus     :0   3rd Qu.:2019  
-    ##  Actitis macularius     :0   Max.   :2021  
-    ##  (Other)                :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-191.png)<!-- -->
-
-    ##                       species    eventDate   
-    ##  Pheucticus melanocephalus:6   Min.   :1957  
-    ##  Acanthis flammea         :0   1st Qu.:1971  
-    ##  Accipiter cooperii       :0   Median :2014  
-    ##  Accipiter gentilis       :0   Mean   :1996  
-    ##  Accipiter striatus       :0   3rd Qu.:2016  
-    ##  Actitis macularius       :0   Max.   :2018  
-    ##  (Other)                  :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-192.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Passerina caerulea:24   Min.   :2002  
-    ##  Acanthis flammea  : 0   1st Qu.:2011  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2014  
-    ##  Accipiter striatus: 0   3rd Qu.:2019  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-193.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Passerina amoena  :2   Min.   :2012  
-    ##  Acanthis flammea  :0   1st Qu.:2012  
-    ##  Accipiter cooperii:0   Median :2012  
-    ##  Accipiter gentilis:0   Mean   :2012  
-    ##  Accipiter striatus:0   3rd Qu.:2012  
-    ##  Actitis macularius:0   Max.   :2012  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-194.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Passerina cyanea  :37   Min.   :2002  
-    ##  Acanthis flammea  : 0   1st Qu.:2014  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2015  
-    ##  Accipiter striatus: 0   3rd Qu.:2018  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-195.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Spiza americana   :18   Min.   :2010  
-    ##  Acanthis flammea  : 0   1st Qu.:2014  
-    ##  Accipiter cooperii: 0   Median :2018  
-    ##  Accipiter gentilis: 0   Mean   :2016  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2020  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-9-196.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-9-212.png)<!-- -->
 
 ## MacKelvie
 
@@ -2383,7 +2675,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "MacKelvie")
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Branta hutchinsii :1   Min.   :2021  
+    ##  Branta hutchinsii :2   Min.   :2021  
     ##  Acanthis flammea  :0   1st Qu.:2021  
     ##  Accipiter cooperii:0   Median :2021  
     ##  Accipiter gentilis:0   Mean   :2021  
@@ -2394,293 +2686,194 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "MacKelvie")
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-2.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Branta canadensis :15   Min.   :2009  
-    ##  Acanthis flammea  : 0   1st Qu.:2016  
-    ##  Accipiter cooperii: 0   Median :2018  
-    ##  Accipiter gentilis: 0   Mean   :2018  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
+    ##  Branta canadensis :41   Min.   :2009  
+    ##  Acanthis flammea  : 0   1st Qu.:2017  
+    ##  Accipiter cooperii: 0   Median :2020  
+    ##  Accipiter gentilis: 0   Mean   :2019  
+    ##  Accipiter striatus: 0   3rd Qu.:2022  
+    ##  Actitis macularius: 0   Max.   :2023  
     ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-3.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Cygnus buccinator :9   Min.   :2009  
-    ##  Acanthis flammea  :0   1st Qu.:2019  
-    ##  Accipiter cooperii:0   Median :2020  
-    ##  Accipiter gentilis:0   Mean   :2018  
-    ##  Accipiter striatus:0   3rd Qu.:2021  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
+    ##                species     eventDate   
+    ##  Cygnus buccinator :19   Min.   :2009  
+    ##  Acanthis flammea  : 0   1st Qu.:2019  
+    ##  Accipiter cooperii: 0   Median :2020  
+    ##  Accipiter gentilis: 0   Mean   :2019  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-4.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Aix sponsa        :10   Min.   :2015  
-    ##  Acanthis flammea  : 0   1st Qu.:2020  
+    ##  Spatula discors   :56   Min.   :2015  
+    ##  Acanthis flammea  : 0   1st Qu.:2018  
     ##  Accipiter cooperii: 0   Median :2020  
-    ##  Accipiter gentilis: 0   Mean   :2020  
+    ##  Accipiter gentilis: 0   Mean   :2019  
     ##  Accipiter striatus: 0   3rd Qu.:2021  
-    ##  Actitis macularius: 0   Max.   :2022  
+    ##  Actitis macularius: 0   Max.   :2023  
     ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-5.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Spatula discors   :26   Min.   :2015  
-    ##  Acanthis flammea  : 0   1st Qu.:2017  
-    ##  Accipiter cooperii: 0   Median :2020  
-    ##  Accipiter gentilis: 0   Mean   :2019  
-    ##  Accipiter striatus: 0   3rd Qu.:2021  
-    ##  Actitis macularius: 0   Max.   :2021  
+    ##  Spatula clypeata  :16   Min.   :2016  
+    ##  Acanthis flammea  : 0   1st Qu.:2020  
+    ##  Accipiter cooperii: 0   Median :2021  
+    ##  Accipiter gentilis: 0   Mean   :2021  
+    ##  Accipiter striatus: 0   3rd Qu.:2022  
+    ##  Actitis macularius: 0   Max.   :2023  
     ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-6.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Spatula clypeata  :7   Min.   :2016  
-    ##  Acanthis flammea  :0   1st Qu.:2020  
-    ##  Accipiter cooperii:0   Median :2021  
-    ##  Accipiter gentilis:0   Mean   :2020  
-    ##  Accipiter striatus:0   3rd Qu.:2021  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
+    ##                species     eventDate   
+    ##  Mareca strepera   :21   Min.   :2015  
+    ##  Acanthis flammea  : 0   1st Qu.:2020  
+    ##  Accipiter cooperii: 0   Median :2021  
+    ##  Accipiter gentilis: 0   Mean   :2020  
+    ##  Accipiter striatus: 0   3rd Qu.:2023  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-7.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Mareca strepera   :8   Min.   :2015  
-    ##  Acanthis flammea  :0   1st Qu.:2019  
-    ##  Accipiter cooperii:0   Median :2021  
-    ##  Accipiter gentilis:0   Mean   :2019  
-    ##  Accipiter striatus:0   3rd Qu.:2021  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
+    ##                species     eventDate   
+    ##  Mareca americana  :10   Min.   :2016  
+    ##  Acanthis flammea  : 0   1st Qu.:2021  
+    ##  Accipiter cooperii: 0   Median :2021  
+    ##  Accipiter gentilis: 0   Mean   :2020  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-8.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Mareca americana  :5   Min.   :2016  
-    ##  Acanthis flammea  :0   1st Qu.:2021  
-    ##  Accipiter cooperii:0   Median :2021  
-    ##  Accipiter gentilis:0   Mean   :2020  
-    ##  Accipiter striatus:0   3rd Qu.:2021  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
+    ##                species     eventDate   
+    ##  Anas platyrhynchos:87   Min.   :2009  
+    ##  Acanthis flammea  : 0   1st Qu.:2018  
+    ##  Accipiter cooperii: 0   Median :2021  
+    ##  Accipiter gentilis: 0   Mean   :2020  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-9.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Anas platyrhynchos:36   Min.   :2009  
-    ##  Acanthis flammea  : 0   1st Qu.:2016  
+    ##  Anas acuta        :15   Min.   :2016  
+    ##  Acanthis flammea  : 0   1st Qu.:2020  
     ##  Accipiter cooperii: 0   Median :2020  
-    ##  Accipiter gentilis: 0   Mean   :2019  
+    ##  Accipiter gentilis: 0   Mean   :2020  
     ##  Accipiter striatus: 0   3rd Qu.:2021  
-    ##  Actitis macularius: 0   Max.   :2021  
+    ##  Actitis macularius: 0   Max.   :2023  
     ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-10.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Anas acuta        :7   Min.   :2016  
-    ##  Acanthis flammea  :0   1st Qu.:2020  
-    ##  Accipiter cooperii:0   Median :2020  
-    ##  Accipiter gentilis:0   Mean   :2020  
-    ##  Accipiter striatus:0   3rd Qu.:2020  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
+    ##                species     eventDate   
+    ##  Anas crecca       :14   Min.   :2016  
+    ##  Acanthis flammea  : 0   1st Qu.:2020  
+    ##  Accipiter cooperii: 0   Median :2021  
+    ##  Accipiter gentilis: 0   Mean   :2021  
+    ##  Accipiter striatus: 0   3rd Qu.:2023  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-11.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Anas crecca       :4   Min.   :2016  
+    ##  Aythya valisineria:5   Min.   :2019  
     ##  Acanthis flammea  :0   1st Qu.:2019  
-    ##  Accipiter cooperii:0   Median :2020  
-    ##  Accipiter gentilis:0   Mean   :2020  
+    ##  Accipiter cooperii:0   Median :2021  
+    ##  Accipiter gentilis:0   Mean   :2021  
     ##  Accipiter striatus:0   3rd Qu.:2021  
-    ##  Actitis macularius:0   Max.   :2021  
+    ##  Actitis macularius:0   Max.   :2023  
     ##  (Other)           :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-12.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Aythya valisineria:2   Min.   :2019  
-    ##  Acanthis flammea  :0   1st Qu.:2020  
-    ##  Accipiter cooperii:0   Median :2020  
-    ##  Accipiter gentilis:0   Mean   :2020  
-    ##  Accipiter striatus:0   3rd Qu.:2020  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
+    ##                species     eventDate   
+    ##  Aythya americana  :11   Min.   :2019  
+    ##  Acanthis flammea  : 0   1st Qu.:2020  
+    ##  Accipiter cooperii: 0   Median :2022  
+    ##  Accipiter gentilis: 0   Mean   :2021  
+    ##  Accipiter striatus: 0   3rd Qu.:2023  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-13.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Aythya americana  :3   Min.   :2019  
-    ##  Acanthis flammea  :0   1st Qu.:2020  
-    ##  Accipiter cooperii:0   Median :2020  
-    ##  Accipiter gentilis:0   Mean   :2020  
-    ##  Accipiter striatus:0   3rd Qu.:2020  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
+    ##                species     eventDate   
+    ##  Aythya collaris   :20   Min.   :2018  
+    ##  Acanthis flammea  : 0   1st Qu.:2019  
+    ##  Accipiter cooperii: 0   Median :2021  
+    ##  Accipiter gentilis: 0   Mean   :2021  
+    ##  Accipiter striatus: 0   3rd Qu.:2023  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-14.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Aythya collaris   :7   Min.   :2018  
-    ##  Acanthis flammea  :0   1st Qu.:2019  
-    ##  Accipiter cooperii:0   Median :2020  
-    ##  Accipiter gentilis:0   Mean   :2020  
-    ##  Accipiter striatus:0   3rd Qu.:2020  
-    ##  Actitis macularius:0   Max.   :2021  
+    ##  Aythya marila     :1   Min.   :2023  
+    ##  Acanthis flammea  :0   1st Qu.:2023  
+    ##  Accipiter cooperii:0   Median :2023  
+    ##  Accipiter gentilis:0   Mean   :2023  
+    ##  Accipiter striatus:0   3rd Qu.:2023  
+    ##  Actitis macularius:0   Max.   :2023  
     ##  (Other)           :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-15.png)<!-- -->
 
-    ##                   species    eventDate   
-    ##  Lophodytes cucullatus:2   Min.   :2012  
-    ##  Acanthis flammea     :0   1st Qu.:2013  
-    ##  Accipiter cooperii   :0   Median :2014  
-    ##  Accipiter gentilis   :0   Mean   :2014  
-    ##  Accipiter striatus   :0   3rd Qu.:2014  
-    ##  Actitis macularius   :0   Max.   :2015  
-    ##  (Other)              :0
+    ##                species    eventDate   
+    ##  Aythya affinis    :4   Min.   :2023  
+    ##  Acanthis flammea  :0   1st Qu.:2023  
+    ##  Accipiter cooperii:0   Median :2023  
+    ##  Accipiter gentilis:0   Mean   :2023  
+    ##  Accipiter striatus:0   3rd Qu.:2023  
+    ##  Actitis macularius:0   Max.   :2023  
+    ##  (Other)           :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-16.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Oxyura jamaicensis:2   Min.   :2021  
-    ##  Acanthis flammea  :0   1st Qu.:2021  
-    ##  Accipiter cooperii:0   Median :2021  
-    ##  Accipiter gentilis:0   Mean   :2021  
-    ##  Accipiter striatus:0   3rd Qu.:2021  
-    ##  Actitis macularius:0   Max.   :2021  
+    ##  Bucephala albeola :3   Min.   :2023  
+    ##  Acanthis flammea  :0   1st Qu.:2023  
+    ##  Accipiter cooperii:0   Median :2023  
+    ##  Accipiter gentilis:0   Mean   :2023  
+    ##  Accipiter striatus:0   3rd Qu.:2023  
+    ##  Actitis macularius:0   Max.   :2023  
     ##  (Other)           :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-17.png)<!-- -->
 
-    ##                 species    eventDate   
-    ##  Colinus virginianus:3   Min.   :2014  
-    ##  Acanthis flammea   :0   1st Qu.:2017  
-    ##  Accipiter cooperii :0   Median :2020  
-    ##  Accipiter gentilis :0   Mean   :2018  
-    ##  Accipiter striatus :0   3rd Qu.:2020  
-    ##  Actitis macularius :0   Max.   :2021  
-    ##  (Other)            :0
+    ##                species    eventDate   
+    ##  Bucephala clangula:2   Min.   :2023  
+    ##  Acanthis flammea  :0   1st Qu.:2023  
+    ##  Accipiter cooperii:0   Median :2023  
+    ##  Accipiter gentilis:0   Mean   :2023  
+    ##  Accipiter striatus:0   3rd Qu.:2023  
+    ##  Actitis macularius:0   Max.   :2023  
+    ##  (Other)           :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-18.png)<!-- -->
 
-    ##                 species    eventDate   
-    ##  Meleagris gallopavo:7   Min.   :2009  
-    ##  Acanthis flammea   :0   1st Qu.:2014  
-    ##  Accipiter cooperii :0   Median :2015  
-    ##  Accipiter gentilis :0   Mean   :2015  
-    ##  Accipiter striatus :0   3rd Qu.:2016  
-    ##  Actitis macularius :0   Max.   :2021  
-    ##  (Other)            :0
+    ##                   species    eventDate   
+    ##  Lophodytes cucullatus:5   Min.   :2012  
+    ##  Acanthis flammea     :0   1st Qu.:2012  
+    ##  Accipiter cooperii   :0   Median :2015  
+    ##  Accipiter gentilis   :0   Mean   :2015  
+    ##  Accipiter striatus   :0   3rd Qu.:2015  
+    ##  Actitis macularius   :0   Max.   :2023  
+    ##  (Other)              :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-19.png)<!-- -->
 
-    ##                      species    eventDate   
-    ##  Tympanuchus phasianellus:9   Min.   :1996  
-    ##  Acanthis flammea        :0   1st Qu.:2015  
-    ##  Accipiter cooperii      :0   Median :2016  
-    ##  Accipiter gentilis      :0   Mean   :2014  
-    ##  Accipiter striatus      :0   3rd Qu.:2017  
-    ##  Actitis macularius      :0   Max.   :2020  
-    ##  (Other)                 :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-20.png)<!-- -->
-
     ##                species    eventDate   
-    ##  Tympanuchus cupido:4   Min.   :2015  
-    ##  Acanthis flammea  :0   1st Qu.:2015  
-    ##  Accipiter cooperii:0   Median :2016  
-    ##  Accipiter gentilis:0   Mean   :2017  
-    ##  Accipiter striatus:0   3rd Qu.:2018  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-21.png)<!-- -->
-
-    ##                 species    eventDate   
-    ##  Phasianus colchicus:6   Min.   :2011  
-    ##  Acanthis flammea   :0   1st Qu.:2015  
-    ##  Accipiter cooperii :0   Median :2016  
-    ##  Accipiter gentilis :0   Mean   :2016  
-    ##  Accipiter striatus :0   3rd Qu.:2019  
-    ##  Actitis macularius :0   Max.   :2021  
-    ##  (Other)            :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-22.png)<!-- -->
-
-    ##                 species     eventDate   
-    ##  Podilymbus podiceps:12   Min.   :2011  
-    ##  Acanthis flammea   : 0   1st Qu.:2018  
-    ##  Accipiter cooperii : 0   Median :2020  
-    ##  Accipiter gentilis : 0   Mean   :2018  
-    ##  Accipiter striatus : 0   3rd Qu.:2021  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-23.png)<!-- -->
-
-    ##                  species    eventDate   
-    ##  Podiceps nigricollis:2   Min.   :2021  
-    ##  Acanthis flammea    :0   1st Qu.:2021  
-    ##  Accipiter cooperii  :0   Median :2021  
-    ##  Accipiter gentilis  :0   Mean   :2021  
-    ##  Accipiter striatus  :0   3rd Qu.:2021  
-    ##  Actitis macularius  :0   Max.   :2021  
-    ##  (Other)             :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-24.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Zenaida macroura  :52   Min.   :2009  
-    ##  Acanthis flammea  : 0   1st Qu.:2015  
-    ##  Accipiter cooperii: 0   Median :2018  
-    ##  Accipiter gentilis: 0   Mean   :2017  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-25.png)<!-- -->
-
-    ##                 species    eventDate   
-    ##  Coccyzus americanus:2   Min.   :2011  
-    ##  Acanthis flammea   :0   1st Qu.:2012  
-    ##  Accipiter cooperii :0   Median :2012  
-    ##  Accipiter gentilis :0   Mean   :2012  
-    ##  Accipiter striatus :0   3rd Qu.:2013  
-    ##  Actitis macularius :0   Max.   :2014  
-    ##  (Other)            :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-26.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Chordeiles minor  :26   Min.   :2009  
-    ##  Acanthis flammea  : 0   1st Qu.:2015  
-    ##  Accipiter cooperii: 0   Median :2017  
-    ##  Accipiter gentilis: 0   Mean   :2017  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-27.png)<!-- -->
-
-    ##                      species    eventDate   
-    ##  Phalaenoptilus nuttallii:2   Min.   :2015  
-    ##  Acanthis flammea        :0   1st Qu.:2016  
-    ##  Accipiter cooperii      :0   Median :2018  
-    ##  Accipiter gentilis      :0   Mean   :2018  
-    ##  Accipiter striatus      :0   3rd Qu.:2020  
-    ##  Actitis macularius      :0   Max.   :2021  
-    ##  (Other)                 :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-28.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Chaetura pelagica :1   Min.   :2021  
+    ##  Oxyura jamaicensis:4   Min.   :2021  
     ##  Acanthis flammea  :0   1st Qu.:2021  
     ##  Accipiter cooperii:0   Median :2021  
     ##  Accipiter gentilis:0   Mean   :2021  
@@ -2688,43 +2881,186 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "MacKelvie")
     ##  Actitis macularius:0   Max.   :2021  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-29.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-20.png)<!-- -->
+
+    ##                 species     eventDate   
+    ##  Colinus virginianus:10   Min.   :2014  
+    ##  Acanthis flammea   : 0   1st Qu.:2020  
+    ##  Accipiter cooperii : 0   Median :2022  
+    ##  Accipiter gentilis : 0   Mean   :2020  
+    ##  Accipiter striatus : 0   3rd Qu.:2022  
+    ##  Actitis macularius : 0   Max.   :2022  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-21.png)<!-- -->
+
+    ##                 species     eventDate   
+    ##  Meleagris gallopavo:15   Min.   :2009  
+    ##  Acanthis flammea   : 0   1st Qu.:2014  
+    ##  Accipiter cooperii : 0   Median :2015  
+    ##  Accipiter gentilis : 0   Mean   :2015  
+    ##  Accipiter striatus : 0   3rd Qu.:2016  
+    ##  Actitis macularius : 0   Max.   :2022  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-22.png)<!-- -->
+
+    ##                      species     eventDate   
+    ##  Tympanuchus phasianellus:19   Min.   :1996  
+    ##  Acanthis flammea        : 0   1st Qu.:2015  
+    ##  Accipiter cooperii      : 0   Median :2016  
+    ##  Accipiter gentilis      : 0   Mean   :2016  
+    ##  Accipiter striatus      : 0   3rd Qu.:2018  
+    ##  Actitis macularius      : 0   Max.   :2022  
+    ##  (Other)                 : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-23.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Rallus limicola   :2   Min.   :2014  
+    ##  Tympanuchus cupido:9   Min.   :2015  
     ##  Acanthis flammea  :0   1st Qu.:2015  
-    ##  Accipiter cooperii:0   Median :2016  
-    ##  Accipiter gentilis:0   Mean   :2016  
-    ##  Accipiter striatus:0   3rd Qu.:2017  
-    ##  Actitis macularius:0   Max.   :2018  
+    ##  Accipiter cooperii:0   Median :2017  
+    ##  Accipiter gentilis:0   Mean   :2018  
+    ##  Accipiter striatus:0   3rd Qu.:2021  
+    ##  Actitis macularius:0   Max.   :2023  
     ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-24.png)<!-- -->
+
+    ##                 species     eventDate   
+    ##  Phasianus colchicus:14   Min.   :2011  
+    ##  Acanthis flammea   : 0   1st Qu.:2015  
+    ##  Accipiter cooperii : 0   Median :2016  
+    ##  Accipiter gentilis : 0   Mean   :2017  
+    ##  Accipiter striatus : 0   3rd Qu.:2021  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-25.png)<!-- -->
+
+    ##                 species     eventDate   
+    ##  Podilymbus podiceps:26   Min.   :2011  
+    ##  Acanthis flammea   : 0   1st Qu.:2018  
+    ##  Accipiter cooperii : 0   Median :2020  
+    ##  Accipiter gentilis : 0   Mean   :2019  
+    ##  Accipiter striatus : 0   3rd Qu.:2021  
+    ##  Actitis macularius : 0   Max.   :2022  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-26.png)<!-- -->
+
+    ##                  species    eventDate   
+    ##  Podiceps nigricollis:5   Min.   :2021  
+    ##  Acanthis flammea    :0   1st Qu.:2021  
+    ##  Accipiter cooperii  :0   Median :2021  
+    ##  Accipiter gentilis  :0   Mean   :2021  
+    ##  Accipiter striatus  :0   3rd Qu.:2021  
+    ##  Actitis macularius  :0   Max.   :2023  
+    ##  (Other)             :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-27.png)<!-- -->
+
+    ##                       species    eventDate   
+    ##  Aechmophorus occidentalis:1   Min.   :2023  
+    ##  Acanthis flammea         :0   1st Qu.:2023  
+    ##  Accipiter cooperii       :0   Median :2023  
+    ##  Accipiter gentilis       :0   Mean   :2023  
+    ##  Accipiter striatus       :0   3rd Qu.:2023  
+    ##  Actitis macularius       :0   Max.   :2023  
+    ##  (Other)                  :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-28.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Zenaida macroura  :123   Min.   :2009  
+    ##  Acanthis flammea  :  0   1st Qu.:2015  
+    ##  Accipiter cooperii:  0   Median :2019  
+    ##  Accipiter gentilis:  0   Mean   :2018  
+    ##  Accipiter striatus:  0   3rd Qu.:2021  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-29.png)<!-- -->
+
+    ##                 species    eventDate   
+    ##  Coccyzus americanus:5   Min.   :2011  
+    ##  Acanthis flammea   :0   1st Qu.:2011  
+    ##  Accipiter cooperii :0   Median :2014  
+    ##  Accipiter gentilis :0   Mean   :2014  
+    ##  Accipiter striatus :0   3rd Qu.:2014  
+    ##  Actitis macularius :0   Max.   :2022  
+    ##  (Other)            :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-30.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Porzana carolina  :5   Min.   :2015  
-    ##  Acanthis flammea  :0   1st Qu.:2016  
-    ##  Accipiter cooperii:0   Median :2018  
-    ##  Accipiter gentilis:0   Mean   :2018  
-    ##  Accipiter striatus:0   3rd Qu.:2019  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
+    ##                species     eventDate   
+    ##  Chordeiles minor  :63   Min.   :2009  
+    ##  Acanthis flammea  : 0   1st Qu.:2015  
+    ##  Accipiter cooperii: 0   Median :2019  
+    ##  Accipiter gentilis: 0   Mean   :2018  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-31.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Fulica americana  :8   Min.   :2016  
-    ##  Acanthis flammea  :0   1st Qu.:2018  
-    ##  Accipiter cooperii:0   Median :2020  
-    ##  Accipiter gentilis:0   Mean   :2019  
-    ##  Accipiter striatus:0   3rd Qu.:2020  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
+    ##                      species    eventDate   
+    ##  Phalaenoptilus nuttallii:7   Min.   :2015  
+    ##  Acanthis flammea        :0   1st Qu.:2018  
+    ##  Accipiter cooperii      :0   Median :2021  
+    ##  Accipiter gentilis      :0   Mean   :2020  
+    ##  Accipiter striatus      :0   3rd Qu.:2022  
+    ##  Actitis macularius      :0   Max.   :2023  
+    ##  (Other)                 :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-32.png)<!-- -->
 
+    ##                species    eventDate   
+    ##  Chaetura pelagica :2   Min.   :2021  
+    ##  Acanthis flammea  :0   1st Qu.:2021  
+    ##  Accipiter cooperii:0   Median :2021  
+    ##  Accipiter gentilis:0   Mean   :2021  
+    ##  Accipiter striatus:0   3rd Qu.:2021  
+    ##  Actitis macularius:0   Max.   :2021  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-33.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Rallus limicola   :5   Min.   :2014  
+    ##  Acanthis flammea  :0   1st Qu.:2014  
+    ##  Accipiter cooperii:0   Median :2018  
+    ##  Accipiter gentilis:0   Mean   :2017  
+    ##  Accipiter striatus:0   3rd Qu.:2018  
+    ##  Actitis macularius:0   Max.   :2022  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-34.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Porzana carolina  :10   Min.   :2015  
+    ##  Acanthis flammea  : 0   1st Qu.:2016  
+    ##  Accipiter cooperii: 0   Median :2018  
+    ##  Accipiter gentilis: 0   Mean   :2018  
+    ##  Accipiter striatus: 0   3rd Qu.:2019  
+    ##  Actitis macularius: 0   Max.   :2021  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-35.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Fulica americana  :15   Min.   :2016  
+    ##  Acanthis flammea  : 0   1st Qu.:2018  
+    ##  Accipiter cooperii: 0   Median :2019  
+    ##  Accipiter gentilis: 0   Mean   :2019  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-36.png)<!-- -->
+
     ##                 species    eventDate   
-    ##  Antigone canadensis:2   Min.   :2015  
+    ##  Antigone canadensis:4   Min.   :2015  
     ##  Acanthis flammea   :0   1st Qu.:2015  
     ##  Accipiter cooperii :0   Median :2016  
     ##  Accipiter gentilis :0   Mean   :2016  
@@ -2732,10 +3068,10 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "MacKelvie")
     ##  Actitis macularius :0   Max.   :2016  
     ##  (Other)            :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-33.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-37.png)<!-- -->
 
     ##                  species    eventDate   
-    ##  Himantopus mexicanus:1   Min.   :2020  
+    ##  Himantopus mexicanus:2   Min.   :2020  
     ##  Acanthis flammea    :0   1st Qu.:2020  
     ##  Accipiter cooperii  :0   Median :2020  
     ##  Accipiter gentilis  :0   Mean   :2020  
@@ -2743,186 +3079,241 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "MacKelvie")
     ##  Actitis macularius  :0   Max.   :2020  
     ##  (Other)             :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-34.png)<!-- -->
-
-    ##                  species     eventDate   
-    ##  Charadrius vociferus:25   Min.   :2012  
-    ##  Acanthis flammea    : 0   1st Qu.:2015  
-    ##  Accipiter cooperii  : 0   Median :2018  
-    ##  Accipiter gentilis  : 0   Mean   :2018  
-    ##  Accipiter striatus  : 0   3rd Qu.:2020  
-    ##  Actitis macularius  : 0   Max.   :2021  
-    ##  (Other)             : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-35.png)<!-- -->
-
-    ##                  species     eventDate   
-    ##  Bartramia longicauda:28   Min.   :2009  
-    ##  Acanthis flammea    : 0   1st Qu.:2015  
-    ##  Accipiter cooperii  : 0   Median :2018  
-    ##  Accipiter gentilis  : 0   Mean   :2018  
-    ##  Accipiter striatus  : 0   3rd Qu.:2020  
-    ##  Actitis macularius  : 0   Max.   :2021  
-    ##  (Other)             : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-36.png)<!-- -->
-
-    ##                 species    eventDate   
-    ##  Numenius americanus:5   Min.   :2016  
-    ##  Acanthis flammea   :0   1st Qu.:2017  
-    ##  Accipiter cooperii :0   Median :2019  
-    ##  Accipiter gentilis :0   Mean   :2018  
-    ##  Accipiter striatus :0   3rd Qu.:2019  
-    ##  Actitis macularius :0   Max.   :2021  
-    ##  (Other)            :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-37.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Gallinago delicata:5   Min.   :2014  
-    ##  Acanthis flammea  :0   1st Qu.:2014  
-    ##  Accipiter cooperii:0   Median :2019  
-    ##  Accipiter gentilis:0   Mean   :2018  
-    ##  Accipiter striatus:0   3rd Qu.:2021  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
-
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-38.png)<!-- -->
 
-    ##                  species    eventDate   
-    ##  Actitis macularius  :3   Min.   :2021  
-    ##  Acanthis flammea    :0   1st Qu.:2021  
-    ##  Accipiter cooperii  :0   Median :2021  
-    ##  Accipiter gentilis  :0   Mean   :2021  
-    ##  Accipiter striatus  :0   3rd Qu.:2021  
-    ##  Aechmophorus clarkii:0   Max.   :2021  
-    ##  (Other)             :0
+    ##                  species     eventDate   
+    ##  Charadrius vociferus:60   Min.   :2012  
+    ##  Acanthis flammea    : 0   1st Qu.:2015  
+    ##  Accipiter cooperii  : 0   Median :2019  
+    ##  Accipiter gentilis  : 0   Mean   :2019  
+    ##  Accipiter striatus  : 0   3rd Qu.:2021  
+    ##  Actitis macularius  : 0   Max.   :2023  
+    ##  (Other)             : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-39.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Tringa solitaria  :1   Min.   :2021  
-    ##  Acanthis flammea  :0   1st Qu.:2021  
-    ##  Accipiter cooperii:0   Median :2021  
-    ##  Accipiter gentilis:0   Mean   :2021  
-    ##  Accipiter striatus:0   3rd Qu.:2021  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
+    ##                  species     eventDate   
+    ##  Bartramia longicauda:65   Min.   :2009  
+    ##  Acanthis flammea    : 0   1st Qu.:2015  
+    ##  Accipiter cooperii  : 0   Median :2019  
+    ##  Accipiter gentilis  : 0   Mean   :2018  
+    ##  Accipiter striatus  : 0   3rd Qu.:2021  
+    ##  Actitis macularius  : 0   Max.   :2023  
+    ##  (Other)             : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-40.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Tringa flavipes   :2   Min.   :2016  
-    ##  Acanthis flammea  :0   1st Qu.:2017  
-    ##  Accipiter cooperii:0   Median :2018  
-    ##  Accipiter gentilis:0   Mean   :2018  
-    ##  Accipiter striatus:0   3rd Qu.:2018  
-    ##  Actitis macularius:0   Max.   :2019  
-    ##  (Other)           :0
+    ##                 species     eventDate   
+    ##  Numenius americanus:16   Min.   :2016  
+    ##  Acanthis flammea   : 0   1st Qu.:2018  
+    ##  Accipiter cooperii : 0   Median :2020  
+    ##  Accipiter gentilis : 0   Mean   :2020  
+    ##  Accipiter striatus : 0   3rd Qu.:2023  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-41.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Tringa semipalmata:1   Min.   :2019  
-    ##  Acanthis flammea  :0   1st Qu.:2019  
-    ##  Accipiter cooperii:0   Median :2019  
-    ##  Accipiter gentilis:0   Mean   :2019  
-    ##  Accipiter striatus:0   3rd Qu.:2019  
-    ##  Actitis macularius:0   Max.   :2019  
+    ##  Limosa fedoa      :1   Min.   :2023  
+    ##  Acanthis flammea  :0   1st Qu.:2023  
+    ##  Accipiter cooperii:0   Median :2023  
+    ##  Accipiter gentilis:0   Mean   :2023  
+    ##  Accipiter striatus:0   3rd Qu.:2023  
+    ##  Actitis macularius:0   Max.   :2023  
     ##  (Other)           :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-42.png)<!-- -->
 
-    ##                 species    eventDate   
-    ##  Phalaropus tricolor:6   Min.   :2015  
-    ##  Acanthis flammea   :0   1st Qu.:2016  
-    ##  Accipiter cooperii :0   Median :2016  
-    ##  Accipiter gentilis :0   Mean   :2018  
-    ##  Accipiter striatus :0   3rd Qu.:2020  
-    ##  Actitis macularius :0   Max.   :2021  
-    ##  (Other)            :0
+    ##                  species    eventDate   
+    ##  Calidris fuscicollis:1   Min.   :2022  
+    ##  Acanthis flammea    :0   1st Qu.:2022  
+    ##  Accipiter cooperii  :0   Median :2022  
+    ##  Accipiter gentilis  :0   Mean   :2022  
+    ##  Accipiter striatus  :0   3rd Qu.:2022  
+    ##  Actitis macularius  :0   Max.   :2022  
+    ##  (Other)             :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-43.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Larus delawarensis:2   Min.   :2018  
-    ##  Acanthis flammea  :0   1st Qu.:2019  
-    ##  Accipiter cooperii:0   Median :2020  
-    ##  Accipiter gentilis:0   Mean   :2020  
-    ##  Accipiter striatus:0   3rd Qu.:2020  
-    ##  Actitis macularius:0   Max.   :2021  
+    ##  Calidris pusilla  :1   Min.   :2022  
+    ##  Acanthis flammea  :0   1st Qu.:2022  
+    ##  Accipiter cooperii:0   Median :2022  
+    ##  Accipiter gentilis:0   Mean   :2022  
+    ##  Accipiter striatus:0   3rd Qu.:2022  
+    ##  Actitis macularius:0   Max.   :2022  
     ##  (Other)           :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-44.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Chlidonias niger  :1   Min.   :2021  
-    ##  Acanthis flammea  :0   1st Qu.:2021  
-    ##  Accipiter cooperii:0   Median :2021  
-    ##  Accipiter gentilis:0   Mean   :2021  
-    ##  Accipiter striatus:0   3rd Qu.:2021  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
+    ##                     species    eventDate   
+    ##  Limnodromus scolopaceus:1   Min.   :2023  
+    ##  Acanthis flammea       :0   1st Qu.:2023  
+    ##  Accipiter cooperii     :0   Median :2023  
+    ##  Accipiter gentilis     :0   Mean   :2023  
+    ##  Accipiter striatus     :0   3rd Qu.:2023  
+    ##  Actitis macularius     :0   Max.   :2023  
+    ##  (Other)                :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-45.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Sterna forsteri   :1   Min.   :2017  
-    ##  Acanthis flammea  :0   1st Qu.:2017  
-    ##  Accipiter cooperii:0   Median :2017  
-    ##  Accipiter gentilis:0   Mean   :2017  
-    ##  Accipiter striatus:0   3rd Qu.:2017  
-    ##  Actitis macularius:0   Max.   :2017  
-    ##  (Other)           :0
+    ##                species     eventDate   
+    ##  Gallinago delicata:10   Min.   :2014  
+    ##  Acanthis flammea  : 0   1st Qu.:2015  
+    ##  Accipiter cooperii: 0   Median :2020  
+    ##  Accipiter gentilis: 0   Mean   :2019  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2022  
+    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-46.png)<!-- -->
 
-    ##                 species    eventDate   
-    ##  Nannopterum auritum:4   Min.   :2014  
-    ##  Acanthis flammea   :0   1st Qu.:2015  
-    ##  Accipiter cooperii :0   Median :2016  
-    ##  Accipiter gentilis :0   Mean   :2017  
-    ##  Accipiter striatus :0   3rd Qu.:2018  
-    ##  Actitis macularius :0   Max.   :2021  
-    ##  (Other)            :0
+    ##                 species     eventDate   
+    ##  Phalaropus tricolor:15   Min.   :2015  
+    ##  Acanthis flammea   : 0   1st Qu.:2016  
+    ##  Accipiter cooperii : 0   Median :2017  
+    ##  Accipiter gentilis : 0   Mean   :2019  
+    ##  Accipiter striatus : 0   3rd Qu.:2021  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-47.png)<!-- -->
 
-    ##                       species    eventDate   
-    ##  Pelecanus erythrorhynchos:9   Min.   :2012  
-    ##  Acanthis flammea         :0   1st Qu.:2015  
-    ##  Accipiter cooperii       :0   Median :2017  
-    ##  Accipiter gentilis       :0   Mean   :2017  
-    ##  Accipiter striatus       :0   3rd Qu.:2020  
-    ##  Actitis macularius       :0   Max.   :2021  
-    ##  (Other)                  :0
+    ##                  species    eventDate   
+    ##  Actitis macularius  :6   Min.   :2021  
+    ##  Acanthis flammea    :0   1st Qu.:2021  
+    ##  Accipiter cooperii  :0   Median :2021  
+    ##  Accipiter gentilis  :0   Mean   :2021  
+    ##  Accipiter striatus  :0   3rd Qu.:2021  
+    ##  Aechmophorus clarkii:0   Max.   :2022  
+    ##  (Other)             :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-48.png)<!-- -->
 
-    ##                   species    eventDate   
-    ##  Botaurus lentiginosus:8   Min.   :2016  
-    ##  Acanthis flammea     :0   1st Qu.:2018  
-    ##  Accipiter cooperii   :0   Median :2020  
-    ##  Accipiter gentilis   :0   Mean   :2019  
-    ##  Accipiter striatus   :0   3rd Qu.:2020  
-    ##  Actitis macularius   :0   Max.   :2021  
-    ##  (Other)              :0
+    ##                species    eventDate   
+    ##  Tringa solitaria  :2   Min.   :2021  
+    ##  Acanthis flammea  :0   1st Qu.:2022  
+    ##  Accipiter cooperii:0   Median :2022  
+    ##  Accipiter gentilis:0   Mean   :2022  
+    ##  Accipiter striatus:0   3rd Qu.:2022  
+    ##  Actitis macularius:0   Max.   :2023  
+    ##  (Other)           :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-49.png)<!-- -->
 
-    ##                species     eventDate   
-    ##  Ardea herodias    :16   Min.   :2011  
-    ##  Acanthis flammea  : 0   1st Qu.:2015  
-    ##  Accipiter cooperii: 0   Median :2016  
-    ##  Accipiter gentilis: 0   Mean   :2017  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
+    ##                species    eventDate   
+    ##  Tringa melanoleuca:1   Min.   :2023  
+    ##  Acanthis flammea  :0   1st Qu.:2023  
+    ##  Accipiter cooperii:0   Median :2023  
+    ##  Accipiter gentilis:0   Mean   :2023  
+    ##  Accipiter striatus:0   3rd Qu.:2023  
+    ##  Actitis macularius:0   Max.   :2023  
+    ##  (Other)           :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-50.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Bubulcus ibis     :2   Min.   :2020  
+    ##  Tringa semipalmata:3   Min.   :2019  
+    ##  Acanthis flammea  :0   1st Qu.:2019  
+    ##  Accipiter cooperii:0   Median :2019  
+    ##  Accipiter gentilis:0   Mean   :2020  
+    ##  Accipiter striatus:0   3rd Qu.:2020  
+    ##  Actitis macularius:0   Max.   :2022  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-51.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Tringa flavipes   :4   Min.   :2016  
+    ##  Acanthis flammea  :0   1st Qu.:2016  
+    ##  Accipiter cooperii:0   Median :2018  
+    ##  Accipiter gentilis:0   Mean   :2018  
+    ##  Accipiter striatus:0   3rd Qu.:2019  
+    ##  Actitis macularius:0   Max.   :2019  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-52.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Larus delawarensis:5   Min.   :2018  
+    ##  Acanthis flammea  :0   1st Qu.:2018  
+    ##  Accipiter cooperii:0   Median :2021  
+    ##  Accipiter gentilis:0   Mean   :2020  
+    ##  Accipiter striatus:0   3rd Qu.:2021  
+    ##  Actitis macularius:0   Max.   :2023  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-53.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Chlidonias niger  :2   Min.   :2021  
+    ##  Acanthis flammea  :0   1st Qu.:2021  
+    ##  Accipiter cooperii:0   Median :2022  
+    ##  Accipiter gentilis:0   Mean   :2022  
+    ##  Accipiter striatus:0   3rd Qu.:2022  
+    ##  Actitis macularius:0   Max.   :2022  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-54.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Sterna forsteri   :3   Min.   :2017  
+    ##  Acanthis flammea  :0   1st Qu.:2017  
+    ##  Accipiter cooperii:0   Median :2017  
+    ##  Accipiter gentilis:0   Mean   :2019  
+    ##  Accipiter striatus:0   3rd Qu.:2020  
+    ##  Actitis macularius:0   Max.   :2023  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-55.png)<!-- -->
+
+    ##                 species    eventDate   
+    ##  Nannopterum auritum:9   Min.   :2014  
+    ##  Acanthis flammea   :0   1st Qu.:2015  
+    ##  Accipiter cooperii :0   Median :2017  
+    ##  Accipiter gentilis :0   Mean   :2018  
+    ##  Accipiter striatus :0   3rd Qu.:2021  
+    ##  Actitis macularius :0   Max.   :2023  
+    ##  (Other)            :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-56.png)<!-- -->
+
+    ##                       species     eventDate   
+    ##  Pelecanus erythrorhynchos:21   Min.   :2012  
+    ##  Acanthis flammea         : 0   1st Qu.:2015  
+    ##  Accipiter cooperii       : 0   Median :2019  
+    ##  Accipiter gentilis       : 0   Mean   :2018  
+    ##  Accipiter striatus       : 0   3rd Qu.:2021  
+    ##  Actitis macularius       : 0   Max.   :2023  
+    ##  (Other)                  : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-57.png)<!-- -->
+
+    ##                   species     eventDate   
+    ##  Botaurus lentiginosus:20   Min.   :2016  
+    ##  Acanthis flammea     : 0   1st Qu.:2018  
+    ##  Accipiter cooperii   : 0   Median :2020  
+    ##  Accipiter gentilis   : 0   Mean   :2020  
+    ##  Accipiter striatus   : 0   3rd Qu.:2021  
+    ##  Actitis macularius   : 0   Max.   :2023  
+    ##  (Other)              : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-58.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Ardea herodias    :34   Min.   :2011  
+    ##  Acanthis flammea  : 0   1st Qu.:2015  
+    ##  Accipiter cooperii: 0   Median :2017  
+    ##  Accipiter gentilis: 0   Mean   :2018  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-59.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Bubulcus ibis     :3   Min.   :2020  
     ##  Acanthis flammea  :0   1st Qu.:2020  
     ##  Accipiter cooperii:0   Median :2020  
     ##  Accipiter gentilis:0   Mean   :2020  
@@ -2930,43 +3321,65 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "MacKelvie")
     ##  Actitis macularius:0   Max.   :2020  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-51.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Plegadis chihi    :2   Min.   :2019  
-    ##  Acanthis flammea  :0   1st Qu.:2020  
-    ##  Accipiter cooperii:0   Median :2020  
-    ##  Accipiter gentilis:0   Mean   :2020  
-    ##  Accipiter striatus:0   3rd Qu.:2020  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-52.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Cathartes aura    :19   Min.   :2013  
-    ##  Acanthis flammea  : 0   1st Qu.:2016  
-    ##  Accipiter cooperii: 0   Median :2018  
-    ##  Accipiter gentilis: 0   Mean   :2018  
-    ##  Accipiter striatus: 0   3rd Qu.:2021  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-53.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Circus hudsonius  :5   Min.   :2013  
-    ##  Acanthis flammea  :0   1st Qu.:2015  
-    ##  Accipiter cooperii:0   Median :2016  
-    ##  Accipiter gentilis:0   Mean   :2017  
-    ##  Accipiter striatus:0   3rd Qu.:2020  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-54.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-60.png)<!-- -->
 
     ##                  species    eventDate   
-    ##  Accipiter cooperii  :4   Min.   :2013  
+    ##  Plegadis falcinellus:1   Min.   :2022  
+    ##  Acanthis flammea    :0   1st Qu.:2022  
+    ##  Accipiter cooperii  :0   Median :2022  
+    ##  Accipiter gentilis  :0   Mean   :2022  
+    ##  Accipiter striatus  :0   3rd Qu.:2022  
+    ##  Actitis macularius  :0   Max.   :2022  
+    ##  (Other)             :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-61.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Plegadis chihi    :5   Min.   :2019  
+    ##  Acanthis flammea  :0   1st Qu.:2019  
+    ##  Accipiter cooperii:0   Median :2021  
+    ##  Accipiter gentilis:0   Mean   :2020  
+    ##  Accipiter striatus:0   3rd Qu.:2021  
+    ##  Actitis macularius:0   Max.   :2022  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-62.png)<!-- -->
+
+    ##                        species    eventDate   
+    ##  Plegadis falcinellus/chihi:1   Min.   :2022  
+    ##  Acanthis flammea          :0   1st Qu.:2022  
+    ##  Accipiter cooperii        :0   Median :2022  
+    ##  Accipiter gentilis        :0   Mean   :2022  
+    ##  Accipiter striatus        :0   3rd Qu.:2022  
+    ##  Actitis macularius        :0   Max.   :2022  
+    ##  (Other)                   :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-63.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Cathartes aura    :46   Min.   :2013  
+    ##  Acanthis flammea  : 0   1st Qu.:2016  
+    ##  Accipiter cooperii: 0   Median :2019  
+    ##  Accipiter gentilis: 0   Mean   :2019  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-64.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Circus hudsonius  :11   Min.   :2013  
+    ##  Acanthis flammea  : 0   1st Qu.:2015  
+    ##  Accipiter cooperii: 0   Median :2016  
+    ##  Accipiter gentilis: 0   Mean   :2018  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-65.png)<!-- -->
+
+    ##                  species    eventDate   
+    ##  Accipiter cooperii  :8   Min.   :2013  
     ##  Acanthis flammea    :0   1st Qu.:2014  
     ##  Accipiter gentilis  :0   Median :2015  
     ##  Accipiter striatus  :0   Mean   :2016  
@@ -2974,43 +3387,43 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "MacKelvie")
     ##  Aechmophorus clarkii:0   Max.   :2020  
     ##  (Other)             :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-55.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-66.png)<!-- -->
 
     ##                      species    eventDate   
-    ##  Haliaeetus leucocephalus:3   Min.   :2015  
+    ##  Haliaeetus leucocephalus:6   Min.   :2015  
     ##  Acanthis flammea        :0   1st Qu.:2015  
-    ##  Accipiter cooperii      :0   Median :2015  
-    ##  Accipiter gentilis      :0   Mean   :2015  
-    ##  Accipiter striatus      :0   3rd Qu.:2016  
-    ##  Actitis macularius      :0   Max.   :2016  
+    ##  Accipiter cooperii      :0   Median :2016  
+    ##  Accipiter gentilis      :0   Mean   :2018  
+    ##  Accipiter striatus      :0   3rd Qu.:2021  
+    ##  Actitis macularius      :0   Max.   :2023  
     ##  (Other)                 :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-56.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-67.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Buteo swainsoni   :10   Min.   :2009  
+    ##  Buteo swainsoni   :23   Min.   :2009  
     ##  Acanthis flammea  : 0   1st Qu.:2015  
-    ##  Accipiter cooperii: 0   Median :2016  
-    ##  Accipiter gentilis: 0   Mean   :2016  
-    ##  Accipiter striatus: 0   3rd Qu.:2018  
-    ##  Actitis macularius: 0   Max.   :2021  
+    ##  Accipiter cooperii: 0   Median :2017  
+    ##  Accipiter gentilis: 0   Mean   :2017  
+    ##  Accipiter striatus: 0   3rd Qu.:2019  
+    ##  Actitis macularius: 0   Max.   :2022  
     ##  (Other)           : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-57.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-68.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Buteo jamaicensis :18   Min.   :2009  
-    ##  Acanthis flammea  : 0   1st Qu.:2014  
+    ##  Buteo jamaicensis :40   Min.   :2009  
+    ##  Acanthis flammea  : 0   1st Qu.:2016  
     ##  Accipiter cooperii: 0   Median :2018  
     ##  Accipiter gentilis: 0   Mean   :2017  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2022  
     ##  (Other)           : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-58.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-69.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Buteo regalis     :1   Min.   :2009  
+    ##  Buteo regalis     :2   Min.   :2009  
     ##  Acanthis flammea  :0   1st Qu.:2009  
     ##  Accipiter cooperii:0   Median :2009  
     ##  Accipiter gentilis:0   Mean   :2009  
@@ -3018,10 +3431,10 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "MacKelvie")
     ##  Actitis macularius:0   Max.   :2009  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-59.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-70.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Megascops asio    :1   Min.   :2011  
+    ##  Megascops asio    :2   Min.   :2011  
     ##  Acanthis flammea  :0   1st Qu.:2011  
     ##  Accipiter cooperii:0   Median :2011  
     ##  Accipiter gentilis:0   Mean   :2011  
@@ -3029,21 +3442,21 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "MacKelvie")
     ##  Actitis macularius:0   Max.   :2011  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-60.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-71.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Bubo virginianus  :11   Min.   :2009  
+    ##  Bubo virginianus  :23   Min.   :2009  
     ##  Acanthis flammea  : 0   1st Qu.:2013  
     ##  Accipiter cooperii: 0   Median :2013  
     ##  Accipiter gentilis: 0   Mean   :2015  
     ##  Accipiter striatus: 0   3rd Qu.:2018  
-    ##  Actitis macularius: 0   Max.   :2021  
+    ##  Actitis macularius: 0   Max.   :2022  
     ##  (Other)           : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-61.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-72.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Athene cunicularia:1   Min.   :2018  
+    ##  Athene cunicularia:2   Min.   :2018  
     ##  Acanthis flammea  :0   1st Qu.:2018  
     ##  Accipiter cooperii:0   Median :2018  
     ##  Accipiter gentilis:0   Mean   :2018  
@@ -3051,32 +3464,32 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "MacKelvie")
     ##  Actitis macularius:0   Max.   :2018  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-62.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-73.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Asio otus         :2   Min.   :2020  
-    ##  Acanthis flammea  :0   1st Qu.:2020  
-    ##  Accipiter cooperii:0   Median :2020  
-    ##  Accipiter gentilis:0   Mean   :2020  
-    ##  Accipiter striatus:0   3rd Qu.:2021  
-    ##  Actitis macularius:0   Max.   :2021  
+    ##  Megaceryle alcyon :1   Min.   :2022  
+    ##  Acanthis flammea  :0   1st Qu.:2022  
+    ##  Accipiter cooperii:0   Median :2022  
+    ##  Accipiter gentilis:0   Mean   :2022  
+    ##  Accipiter striatus:0   3rd Qu.:2022  
+    ##  Actitis macularius:0   Max.   :2022  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-63.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-74.png)<!-- -->
 
     ##                        species     eventDate   
-    ##  Melanerpes erythrocephalus:10   Min.   :2011  
-    ##  Acanthis flammea          : 0   1st Qu.:2014  
-    ##  Accipiter cooperii        : 0   Median :2016  
-    ##  Accipiter gentilis        : 0   Mean   :2016  
-    ##  Accipiter striatus        : 0   3rd Qu.:2019  
-    ##  Actitis macularius        : 0   Max.   :2021  
+    ##  Melanerpes erythrocephalus:26   Min.   :2011  
+    ##  Acanthis flammea          : 0   1st Qu.:2015  
+    ##  Accipiter cooperii        : 0   Median :2018  
+    ##  Accipiter gentilis        : 0   Mean   :2018  
+    ##  Accipiter striatus        : 0   3rd Qu.:2021  
+    ##  Actitis macularius        : 0   Max.   :2023  
     ##  (Other)                   : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-64.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-75.png)<!-- -->
 
     ##                  species    eventDate   
-    ##  Melanerpes carolinus:1   Min.   :2012  
+    ##  Melanerpes carolinus:2   Min.   :2012  
     ##  Acanthis flammea    :0   1st Qu.:2012  
     ##  Accipiter cooperii  :0   Median :2012  
     ##  Accipiter gentilis  :0   Mean   :2012  
@@ -3084,219 +3497,230 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "MacKelvie")
     ##  Actitis macularius  :0   Max.   :2012  
     ##  (Other)             :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-65.png)<!-- -->
-
-    ##                 species     eventDate   
-    ##  Dryobates pubescens:11   Min.   :2011  
-    ##  Acanthis flammea   : 0   1st Qu.:2013  
-    ##  Accipiter cooperii : 0   Median :2017  
-    ##  Accipiter gentilis : 0   Mean   :2016  
-    ##  Accipiter striatus : 0   3rd Qu.:2020  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-66.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Dryobates villosus:5   Min.   :2011  
-    ##  Acanthis flammea  :0   1st Qu.:2014  
-    ##  Accipiter cooperii:0   Median :2020  
-    ##  Accipiter gentilis:0   Mean   :2017  
-    ##  Accipiter striatus:0   3rd Qu.:2021  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-67.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Colaptes auratus  :15   Min.   :2011  
-    ##  Acanthis flammea  : 0   1st Qu.:2013  
-    ##  Accipiter cooperii: 0   Median :2013  
-    ##  Accipiter gentilis: 0   Mean   :2016  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-68.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Falco sparverius  :8   Min.   :2011  
-    ##  Acanthis flammea  :0   1st Qu.:2013  
-    ##  Accipiter cooperii:0   Median :2016  
-    ##  Accipiter gentilis:0   Mean   :2016  
-    ##  Accipiter striatus:0   3rd Qu.:2019  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-69.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Falco columbarius :1   Min.   :2013  
-    ##  Acanthis flammea  :0   1st Qu.:2013  
-    ##  Accipiter cooperii:0   Median :2013  
-    ##  Accipiter gentilis:0   Mean   :2013  
-    ##  Accipiter striatus:0   3rd Qu.:2013  
-    ##  Actitis macularius:0   Max.   :2013  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-70.png)<!-- -->
-
-    ##                 species     eventDate   
-    ##  Contopus sordidulus:18   Min.   :2011  
-    ##  Acanthis flammea   : 0   1st Qu.:2015  
-    ##  Accipiter cooperii : 0   Median :2018  
-    ##  Accipiter gentilis : 0   Mean   :2018  
-    ##  Accipiter striatus : 0   3rd Qu.:2021  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-71.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Contopus virens   :2   Min.   :2013  
-    ##  Acanthis flammea  :0   1st Qu.:2014  
-    ##  Accipiter cooperii:0   Median :2015  
-    ##  Accipiter gentilis:0   Mean   :2015  
-    ##  Accipiter striatus:0   3rd Qu.:2016  
-    ##  Actitis macularius:0   Max.   :2017  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-72.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Empidonax minimus :5   Min.   :2013  
-    ##  Acanthis flammea  :0   1st Qu.:2015  
-    ##  Accipiter cooperii:0   Median :2018  
-    ##  Accipiter gentilis:0   Mean   :2017  
-    ##  Accipiter striatus:0   3rd Qu.:2020  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-73.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Sayornis saya     :1   Min.   :2013  
-    ##  Acanthis flammea  :0   1st Qu.:2013  
-    ##  Accipiter cooperii:0   Median :2013  
-    ##  Accipiter gentilis:0   Mean   :2013  
-    ##  Accipiter striatus:0   3rd Qu.:2013  
-    ##  Actitis macularius:0   Max.   :2013  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-74.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Myiarchus crinitus:14   Min.   :2012  
-    ##  Acanthis flammea  : 0   1st Qu.:2015  
-    ##  Accipiter cooperii: 0   Median :2019  
-    ##  Accipiter gentilis: 0   Mean   :2018  
-    ##  Accipiter striatus: 0   3rd Qu.:2021  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-75.png)<!-- -->
-
-    ##                 species     eventDate   
-    ##  Tyrannus verticalis:18   Min.   :2011  
-    ##  Acanthis flammea   : 0   1st Qu.:2015  
-    ##  Accipiter cooperii : 0   Median :2016  
-    ##  Accipiter gentilis : 0   Mean   :2017  
-    ##  Accipiter striatus : 0   3rd Qu.:2020  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
-
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-76.png)<!-- -->
 
-    ##                species     eventDate   
-    ##  Tyrannus tyrannus :39   Min.   :2009  
-    ##  Acanthis flammea  : 0   1st Qu.:2015  
-    ##  Accipiter cooperii: 0   Median :2019  
-    ##  Accipiter gentilis: 0   Mean   :2017  
-    ##  Accipiter striatus: 0   3rd Qu.:2021  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
+    ##                 species     eventDate   
+    ##  Dryobates pubescens:32   Min.   :2011  
+    ##  Acanthis flammea   : 0   1st Qu.:2014  
+    ##  Accipiter cooperii : 0   Median :2020  
+    ##  Accipiter gentilis : 0   Mean   :2018  
+    ##  Accipiter striatus : 0   3rd Qu.:2022  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-77.png)<!-- -->
 
-    ##                 species    eventDate   
-    ##  Lanius ludovicianus:6   Min.   :2009  
-    ##  Acanthis flammea   :0   1st Qu.:2011  
-    ##  Accipiter cooperii :0   Median :2014  
-    ##  Accipiter gentilis :0   Mean   :2015  
-    ##  Accipiter striatus :0   3rd Qu.:2020  
-    ##  Actitis macularius :0   Max.   :2021  
-    ##  (Other)            :0
+    ##                species     eventDate   
+    ##  Dryobates villosus:18   Min.   :2011  
+    ##  Acanthis flammea  : 0   1st Qu.:2020  
+    ##  Accipiter cooperii: 0   Median :2021  
+    ##  Accipiter gentilis: 0   Mean   :2020  
+    ##  Accipiter striatus: 0   3rd Qu.:2022  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-78.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Lanius borealis   :1   Min.   :2013  
-    ##  Acanthis flammea  :0   1st Qu.:2013  
-    ##  Accipiter cooperii:0   Median :2013  
-    ##  Accipiter gentilis:0   Mean   :2013  
-    ##  Accipiter striatus:0   3rd Qu.:2013  
-    ##  Actitis macularius:0   Max.   :2013  
-    ##  (Other)           :0
+    ##                species     eventDate   
+    ##  Colaptes auratus  :35   Min.   :2011  
+    ##  Acanthis flammea  : 0   1st Qu.:2013  
+    ##  Accipiter cooperii: 0   Median :2014  
+    ##  Accipiter gentilis: 0   Mean   :2016  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-79.png)<!-- -->
 
-    ##                species     eventDate   
-    ##  Vireo bellii      :13   Min.   :2012  
-    ##  Acanthis flammea  : 0   1st Qu.:2015  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2016  
-    ##  Accipiter striatus: 0   3rd Qu.:2019  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-80.png)<!-- -->
-
     ##                species    eventDate   
-    ##  Vireo solitarius  :1   Min.   :2013  
+    ##  Falco columbarius :2   Min.   :2013  
     ##  Acanthis flammea  :0   1st Qu.:2013  
     ##  Accipiter cooperii:0   Median :2013  
     ##  Accipiter gentilis:0   Mean   :2013  
     ##  Accipiter striatus:0   3rd Qu.:2013  
     ##  Actitis macularius:0   Max.   :2013  
     ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-80.png)<!-- -->
+
+    ##                 species     eventDate   
+    ##  Contopus sordidulus:50   Min.   :2011  
+    ##  Acanthis flammea   : 0   1st Qu.:2016  
+    ##  Accipiter cooperii : 0   Median :2021  
+    ##  Accipiter gentilis : 0   Mean   :2019  
+    ##  Accipiter striatus : 0   3rd Qu.:2022  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-81.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Vireo gilvus      :2   Min.   :2013  
-    ##  Acanthis flammea  :0   1st Qu.:2014  
+    ##  Contopus virens   :4   Min.   :2013  
+    ##  Acanthis flammea  :0   1st Qu.:2013  
     ##  Accipiter cooperii:0   Median :2015  
     ##  Accipiter gentilis:0   Mean   :2015  
-    ##  Accipiter striatus:0   3rd Qu.:2016  
+    ##  Accipiter striatus:0   3rd Qu.:2017  
     ##  Actitis macularius:0   Max.   :2017  
     ##  (Other)           :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-82.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Vireo olivaceus   :4   Min.   :2013  
-    ##  Acanthis flammea  :0   1st Qu.:2014  
-    ##  Accipiter cooperii:0   Median :2014  
-    ##  Accipiter gentilis:0   Mean   :2014  
-    ##  Accipiter striatus:0   3rd Qu.:2015  
-    ##  Actitis macularius:0   Max.   :2015  
-    ##  (Other)           :0
+    ##                        species    eventDate   
+    ##  Contopus sordidulus/virens:2   Min.   :2022  
+    ##  Acanthis flammea          :0   1st Qu.:2022  
+    ##  Accipiter cooperii        :0   Median :2022  
+    ##  Accipiter gentilis        :0   Mean   :2022  
+    ##  Accipiter striatus        :0   3rd Qu.:2022  
+    ##  Actitis macularius        :0   Max.   :2022  
+    ##  (Other)                   :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-83.png)<!-- -->
 
-    ##                 species     eventDate   
-    ##  Cyanocitta cristata:12   Min.   :2011  
-    ##  Acanthis flammea   : 0   1st Qu.:2015  
-    ##  Accipiter cooperii : 0   Median :2018  
-    ##  Accipiter gentilis : 0   Mean   :2017  
-    ##  Accipiter striatus : 0   3rd Qu.:2021  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
+    ##                species     eventDate   
+    ##  Empidonax minimus :10   Min.   :2013  
+    ##  Acanthis flammea  : 0   1st Qu.:2015  
+    ##  Accipiter cooperii: 0   Median :2018  
+    ##  Accipiter gentilis: 0   Mean   :2017  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2021  
+    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-84.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Pica hudsonia     :1   Min.   :2015  
+    ##  Sayornis phoebe   :1   Min.   :2023  
+    ##  Acanthis flammea  :0   1st Qu.:2023  
+    ##  Accipiter cooperii:0   Median :2023  
+    ##  Accipiter gentilis:0   Mean   :2023  
+    ##  Accipiter striatus:0   3rd Qu.:2023  
+    ##  Actitis macularius:0   Max.   :2023  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-85.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Sayornis saya     :2   Min.   :2013  
+    ##  Acanthis flammea  :0   1st Qu.:2013  
+    ##  Accipiter cooperii:0   Median :2013  
+    ##  Accipiter gentilis:0   Mean   :2013  
+    ##  Accipiter striatus:0   3rd Qu.:2013  
+    ##  Actitis macularius:0   Max.   :2013  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-86.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Myiarchus crinitus:37   Min.   :2012  
+    ##  Acanthis flammea  : 0   1st Qu.:2016  
+    ##  Accipiter cooperii: 0   Median :2020  
+    ##  Accipiter gentilis: 0   Mean   :2019  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-87.png)<!-- -->
+
+    ##                 species     eventDate   
+    ##  Tyrannus verticalis:40   Min.   :2011  
+    ##  Acanthis flammea   : 0   1st Qu.:2015  
+    ##  Accipiter cooperii : 0   Median :2017  
+    ##  Accipiter gentilis : 0   Mean   :2017  
+    ##  Accipiter striatus : 0   3rd Qu.:2020  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-88.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Tyrannus tyrannus :90   Min.   :2009  
+    ##  Acanthis flammea  : 0   1st Qu.:2015  
+    ##  Accipiter cooperii: 0   Median :2019  
+    ##  Accipiter gentilis: 0   Mean   :2018  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-89.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Vireo bellii      :30   Min.   :2012  
+    ##  Acanthis flammea  : 0   1st Qu.:2015  
+    ##  Accipiter cooperii: 0   Median :2016  
+    ##  Accipiter gentilis: 0   Mean   :2018  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-90.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Vireo solitarius  :2   Min.   :2013  
+    ##  Acanthis flammea  :0   1st Qu.:2013  
+    ##  Accipiter cooperii:0   Median :2013  
+    ##  Accipiter gentilis:0   Mean   :2013  
+    ##  Accipiter striatus:0   3rd Qu.:2013  
+    ##  Actitis macularius:0   Max.   :2013  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-91.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Vireo gilvus      :5   Min.   :2013  
+    ##  Acanthis flammea  :0   1st Qu.:2013  
+    ##  Accipiter cooperii:0   Median :2017  
+    ##  Accipiter gentilis:0   Mean   :2016  
+    ##  Accipiter striatus:0   3rd Qu.:2017  
+    ##  Actitis macularius:0   Max.   :2022  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-92.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Vireo olivaceus   :11   Min.   :2013  
+    ##  Acanthis flammea  : 0   1st Qu.:2014  
+    ##  Accipiter cooperii: 0   Median :2015  
+    ##  Accipiter gentilis: 0   Mean   :2016  
+    ##  Accipiter striatus: 0   3rd Qu.:2018  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-93.png)<!-- -->
+
+    ##                 species     eventDate   
+    ##  Lanius ludovicianus:12   Min.   :2009  
+    ##  Acanthis flammea   : 0   1st Qu.:2011  
+    ##  Accipiter cooperii : 0   Median :2018  
+    ##  Accipiter gentilis : 0   Mean   :2016  
+    ##  Accipiter striatus : 0   3rd Qu.:2021  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-94.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Lanius borealis   :2   Min.   :2013  
+    ##  Acanthis flammea  :0   1st Qu.:2013  
+    ##  Accipiter cooperii:0   Median :2013  
+    ##  Accipiter gentilis:0   Mean   :2013  
+    ##  Accipiter striatus:0   3rd Qu.:2013  
+    ##  Actitis macularius:0   Max.   :2013  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-95.png)<!-- -->
+
+    ##                 species     eventDate   
+    ##  Cyanocitta cristata:33   Min.   :2011  
+    ##  Acanthis flammea   : 0   1st Qu.:2015  
+    ##  Accipiter cooperii : 0   Median :2021  
+    ##  Accipiter gentilis : 0   Mean   :2019  
+    ##  Accipiter striatus : 0   3rd Qu.:2022  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-96.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Pica hudsonia     :2   Min.   :2015  
     ##  Acanthis flammea  :0   1st Qu.:2015  
     ##  Accipiter cooperii:0   Median :2015  
     ##  Accipiter gentilis:0   Mean   :2015  
@@ -3304,32 +3728,76 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "MacKelvie")
     ##  Actitis macularius:0   Max.   :2015  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-85.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-97.png)<!-- -->
 
     ##                   species     eventDate   
-    ##  Corvus brachyrhynchos:30   Min.   :2011  
-    ##  Acanthis flammea     : 0   1st Qu.:2013  
-    ##  Accipiter cooperii   : 0   Median :2018  
-    ##  Accipiter gentilis   : 0   Mean   :2017  
+    ##  Corvus brachyrhynchos:79   Min.   :2011  
+    ##  Acanthis flammea     : 0   1st Qu.:2014  
+    ##  Accipiter cooperii   : 0   Median :2020  
+    ##  Accipiter gentilis   : 0   Mean   :2018  
     ##  Accipiter striatus   : 0   3rd Qu.:2021  
-    ##  Actitis macularius   : 0   Max.   :2021  
+    ##  Actitis macularius   : 0   Max.   :2023  
     ##  (Other)              : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-86.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-98.png)<!-- -->
 
     ##                  species     eventDate   
-    ##  Eremophila alpestris:25   Min.   :2011  
-    ##  Acanthis flammea    : 0   1st Qu.:2015  
-    ##  Accipiter cooperii  : 0   Median :2018  
+    ##  Poecile atricapillus:69   Min.   :2009  
+    ##  Acanthis flammea    : 0   1st Qu.:2013  
+    ##  Accipiter cooperii  : 0   Median :2017  
     ##  Accipiter gentilis  : 0   Mean   :2017  
-    ##  Accipiter striatus  : 0   3rd Qu.:2020  
-    ##  Actitis macularius  : 0   Max.   :2021  
+    ##  Accipiter striatus  : 0   3rd Qu.:2021  
+    ##  Actitis macularius  : 0   Max.   :2023  
     ##  (Other)             : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-87.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-99.png)<!-- -->
+
+    ##                  species     eventDate   
+    ##  Eremophila alpestris:57   Min.   :2011  
+    ##  Acanthis flammea    : 0   1st Qu.:2015  
+    ##  Accipiter cooperii  : 0   Median :2019  
+    ##  Accipiter gentilis  : 0   Mean   :2018  
+    ##  Accipiter striatus  : 0   3rd Qu.:2021  
+    ##  Actitis macularius  : 0   Max.   :2023  
+    ##  (Other)             : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-100.png)<!-- -->
+
+    ##                        species     eventDate   
+    ##  Stelgidopteryx serripennis:10   Min.   :2015  
+    ##  Acanthis flammea          : 0   1st Qu.:2015  
+    ##  Accipiter cooperii        : 0   Median :2016  
+    ##  Accipiter gentilis        : 0   Mean   :2018  
+    ##  Accipiter striatus        : 0   3rd Qu.:2019  
+    ##  Actitis macularius        : 0   Max.   :2023  
+    ##  (Other)                   : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-101.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Riparia riparia   :4   Min.   :2015  
+    ##  Progne subis      :1   Min.   :2023  
+    ##  Acanthis flammea  :0   1st Qu.:2023  
+    ##  Accipiter cooperii:0   Median :2023  
+    ##  Accipiter gentilis:0   Mean   :2023  
+    ##  Accipiter striatus:0   3rd Qu.:2023  
+    ##  Actitis macularius:0   Max.   :2023  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-102.png)<!-- -->
+
+    ##                 species     eventDate   
+    ##  Tachycineta bicolor:24   Min.   :2015  
+    ##  Acanthis flammea   : 0   1st Qu.:2018  
+    ##  Accipiter cooperii : 0   Median :2020  
+    ##  Accipiter gentilis : 0   Mean   :2019  
+    ##  Accipiter striatus : 0   3rd Qu.:2021  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-103.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Riparia riparia   :8   Min.   :2015  
     ##  Acanthis flammea  :0   1st Qu.:2020  
     ##  Accipiter cooperii:0   Median :2021  
     ##  Accipiter gentilis:0   Mean   :2020  
@@ -3337,120 +3805,120 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "MacKelvie")
     ##  Actitis macularius:0   Max.   :2021  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-88.png)<!-- -->
-
-    ##                 species     eventDate   
-    ##  Tachycineta bicolor:10   Min.   :2015  
-    ##  Acanthis flammea   : 0   1st Qu.:2017  
-    ##  Accipiter cooperii : 0   Median :2020  
-    ##  Accipiter gentilis : 0   Mean   :2019  
-    ##  Accipiter striatus : 0   3rd Qu.:2021  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-89.png)<!-- -->
-
-    ##                        species    eventDate   
-    ##  Stelgidopteryx serripennis:4   Min.   :2015  
-    ##  Acanthis flammea          :0   1st Qu.:2015  
-    ##  Accipiter cooperii        :0   Median :2016  
-    ##  Accipiter gentilis        :0   Mean   :2016  
-    ##  Accipiter striatus        :0   3rd Qu.:2017  
-    ##  Actitis macularius        :0   Max.   :2019  
-    ##  (Other)                   :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-90.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-104.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Hirundo rustica   :15   Min.   :2013  
-    ##  Acanthis flammea  : 0   1st Qu.:2014  
-    ##  Accipiter cooperii: 0   Median :2018  
-    ##  Accipiter gentilis: 0   Mean   :2017  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-91.png)<!-- -->
-
-    ##                      species    eventDate   
-    ##  Petrochelidon pyrrhonota:4   Min.   :2015  
-    ##  Acanthis flammea        :0   1st Qu.:2016  
-    ##  Accipiter cooperii      :0   Median :2018  
-    ##  Accipiter gentilis      :0   Mean   :2018  
-    ##  Accipiter striatus      :0   3rd Qu.:2020  
-    ##  Actitis macularius      :0   Max.   :2021  
-    ##  (Other)                 :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-92.png)<!-- -->
-
-    ##                  species     eventDate   
-    ##  Poecile atricapillus:28   Min.   :2009  
-    ##  Acanthis flammea    : 0   1st Qu.:2013  
-    ##  Accipiter cooperii  : 0   Median :2014  
-    ##  Accipiter gentilis  : 0   Mean   :2016  
-    ##  Accipiter striatus  : 0   3rd Qu.:2020  
-    ##  Actitis macularius  : 0   Max.   :2021  
-    ##  (Other)             : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-93.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Sitta canadensis  :16   Min.   :2011  
+    ##  Hirundo rustica   :37   Min.   :2013  
     ##  Acanthis flammea  : 0   1st Qu.:2015  
-    ##  Accipiter cooperii: 0   Median :2020  
+    ##  Accipiter cooperii: 0   Median :2018  
     ##  Accipiter gentilis: 0   Mean   :2018  
     ##  Accipiter striatus: 0   3rd Qu.:2021  
-    ##  Actitis macularius: 0   Max.   :2021  
+    ##  Actitis macularius: 0   Max.   :2023  
     ##  (Other)           : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-94.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-105.png)<!-- -->
+
+    ##                      species     eventDate   
+    ##  Petrochelidon pyrrhonota:10   Min.   :2015  
+    ##  Acanthis flammea        : 0   1st Qu.:2017  
+    ##  Accipiter cooperii      : 0   Median :2020  
+    ##  Accipiter gentilis      : 0   Mean   :2019  
+    ##  Accipiter striatus      : 0   3rd Qu.:2022  
+    ##  Actitis macularius      : 0   Max.   :2023  
+    ##  (Other)                 : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-106.png)<!-- -->
+
+    ##                 species    eventDate   
+    ##  Corthylio calendula:5   Min.   :2013  
+    ##  Acanthis flammea   :0   1st Qu.:2013  
+    ##  Accipiter cooperii :0   Median :2013  
+    ##  Accipiter gentilis :0   Mean   :2015  
+    ##  Accipiter striatus :0   3rd Qu.:2013  
+    ##  Actitis macularius :0   Max.   :2023  
+    ##  (Other)            :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-107.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Sitta canadensis  :41   Min.   :2011  
+    ##  Acanthis flammea  : 0   1st Qu.:2016  
+    ##  Accipiter cooperii: 0   Median :2020  
+    ##  Accipiter gentilis: 0   Mean   :2019  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-108.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Sitta carolinensis:14   Min.   :2011  
+    ##  Acanthis flammea  : 0   1st Qu.:2012  
+    ##  Accipiter cooperii: 0   Median :2017  
+    ##  Accipiter gentilis: 0   Mean   :2017  
+    ##  Accipiter striatus: 0   3rd Qu.:2022  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-109.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Sitta carolinensis:5   Min.   :2011  
-    ##  Acanthis flammea  :0   1st Qu.:2012  
-    ##  Accipiter cooperii:0   Median :2013  
-    ##  Accipiter gentilis:0   Mean   :2015  
-    ##  Accipiter striatus:0   3rd Qu.:2017  
-    ##  Actitis macularius:0   Max.   :2020  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-95.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Sitta pygmaea     :2   Min.   :2011  
+    ##  Sitta pygmaea     :5   Min.   :2011  
     ##  Acanthis flammea  :0   1st Qu.:2011  
     ##  Accipiter cooperii:0   Median :2011  
-    ##  Accipiter gentilis:0   Mean   :2011  
+    ##  Accipiter gentilis:0   Mean   :2013  
     ##  Accipiter striatus:0   3rd Qu.:2011  
-    ##  Actitis macularius:0   Max.   :2011  
+    ##  Actitis macularius:0   Max.   :2022  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-96.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-110.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Certhia americana :2   Min.   :2011  
-    ##  Acanthis flammea  :0   1st Qu.:2012  
+    ##  Certhia americana :4   Min.   :2011  
+    ##  Acanthis flammea  :0   1st Qu.:2011  
     ##  Accipiter cooperii:0   Median :2012  
     ##  Accipiter gentilis:0   Mean   :2012  
-    ##  Accipiter striatus:0   3rd Qu.:2013  
+    ##  Accipiter striatus:0   3rd Qu.:2014  
     ##  Actitis macularius:0   Max.   :2014  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-97.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-111.png)<!-- -->
+
+    ##                 species    eventDate   
+    ##  Polioptila caerulea:4   Min.   :2021  
+    ##  Acanthis flammea   :0   1st Qu.:2021  
+    ##  Accipiter cooperii :0   Median :2022  
+    ##  Accipiter gentilis :0   Mean   :2022  
+    ##  Accipiter striatus :0   3rd Qu.:2022  
+    ##  Actitis macularius :0   Max.   :2023  
+    ##  (Other)            :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-112.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Troglodytes aedon :22   Min.   :2009  
-    ##  Acanthis flammea  : 0   1st Qu.:2013  
-    ##  Accipiter cooperii: 0   Median :2017  
-    ##  Accipiter gentilis: 0   Mean   :2016  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
+    ##  Troglodytes aedon :63   Min.   :2009  
+    ##  Acanthis flammea  : 0   1st Qu.:2014  
+    ##  Accipiter cooperii: 0   Median :2020  
+    ##  Accipiter gentilis: 0   Mean   :2018  
+    ##  Accipiter striatus: 0   3rd Qu.:2022  
+    ##  Actitis macularius: 0   Max.   :2023  
     ##  (Other)           : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-98.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-113.png)<!-- -->
 
     ##                   species    eventDate   
-    ##  Cistothorus palustris:1   Min.   :2015  
+    ##  Cistothorus stellaris:1   Min.   :2022  
+    ##  Acanthis flammea     :0   1st Qu.:2022  
+    ##  Accipiter cooperii   :0   Median :2022  
+    ##  Accipiter gentilis   :0   Mean   :2022  
+    ##  Accipiter striatus   :0   3rd Qu.:2022  
+    ##  Actitis macularius   :0   Max.   :2022  
+    ##  (Other)              :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-114.png)<!-- -->
+
+    ##                   species    eventDate   
+    ##  Cistothorus palustris:2   Min.   :2015  
     ##  Acanthis flammea     :0   1st Qu.:2015  
     ##  Accipiter cooperii   :0   Median :2015  
     ##  Accipiter gentilis   :0   Mean   :2015  
@@ -3458,87 +3926,43 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "MacKelvie")
     ##  Actitis macularius   :0   Max.   :2015  
     ##  (Other)              :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-99.png)<!-- -->
-
-    ##                 species    eventDate   
-    ##  Polioptila caerulea:1   Min.   :2021  
-    ##  Acanthis flammea   :0   1st Qu.:2021  
-    ##  Accipiter cooperii :0   Median :2021  
-    ##  Accipiter gentilis :0   Mean   :2021  
-    ##  Accipiter striatus :0   3rd Qu.:2021  
-    ##  Actitis macularius :0   Max.   :2021  
-    ##  (Other)            :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-100.png)<!-- -->
-
-    ##                 species    eventDate   
-    ##  Corthylio calendula:2   Min.   :2013  
-    ##  Acanthis flammea   :0   1st Qu.:2013  
-    ##  Accipiter cooperii :0   Median :2013  
-    ##  Accipiter gentilis :0   Mean   :2013  
-    ##  Accipiter striatus :0   3rd Qu.:2013  
-    ##  Actitis macularius :0   Max.   :2013  
-    ##  (Other)            :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-101.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-115.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Sialia sialis     :6   Min.   :2011  
-    ##  Acanthis flammea  :0   1st Qu.:2012  
-    ##  Accipiter cooperii:0   Median :2016  
-    ##  Accipiter gentilis:0   Mean   :2015  
-    ##  Accipiter striatus:0   3rd Qu.:2017  
-    ##  Actitis macularius:0   Max.   :2020  
+    ##  Sturnus vulgaris  :5   Min.   :2019  
+    ##  Acanthis flammea  :0   1st Qu.:2019  
+    ##  Accipiter cooperii:0   Median :2021  
+    ##  Accipiter gentilis:0   Mean   :2020  
+    ##  Accipiter striatus:0   3rd Qu.:2021  
+    ##  Actitis macularius:0   Max.   :2022  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-102.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-116.png)<!-- -->
 
-    ##                 species    eventDate   
-    ##  Myadestes townsendi:3   Min.   :2013  
-    ##  Acanthis flammea   :0   1st Qu.:2013  
-    ##  Accipiter cooperii :0   Median :2013  
-    ##  Accipiter gentilis :0   Mean   :2013  
-    ##  Accipiter striatus :0   3rd Qu.:2013  
-    ##  Actitis macularius :0   Max.   :2013  
-    ##  (Other)            :0
+    ##                    species     eventDate   
+    ##  Dumetella carolinensis:10   Min.   :2013  
+    ##  Acanthis flammea      : 0   1st Qu.:2013  
+    ##  Accipiter cooperii    : 0   Median :2013  
+    ##  Accipiter gentilis    : 0   Mean   :2016  
+    ##  Accipiter striatus    : 0   3rd Qu.:2021  
+    ##  Actitis macularius    : 0   Max.   :2021  
+    ##  (Other)               : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-103.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Turdus migratorius:30   Min.   :2009  
-    ##  Acanthis flammea  : 0   1st Qu.:2014  
-    ##  Accipiter cooperii: 0   Median :2020  
-    ##  Accipiter gentilis: 0   Mean   :2017  
-    ##  Accipiter striatus: 0   3rd Qu.:2021  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-104.png)<!-- -->
-
-    ##                    species    eventDate   
-    ##  Dumetella carolinensis:5   Min.   :2013  
-    ##  Acanthis flammea      :0   1st Qu.:2013  
-    ##  Accipiter cooperii    :0   Median :2013  
-    ##  Accipiter gentilis    :0   Mean   :2016  
-    ##  Accipiter striatus    :0   3rd Qu.:2021  
-    ##  Actitis macularius    :0   Max.   :2021  
-    ##  (Other)               :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-105.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-117.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Toxostoma rufum   :16   Min.   :2011  
+    ##  Toxostoma rufum   :35   Min.   :2011  
     ##  Acanthis flammea  : 0   1st Qu.:2013  
     ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2016  
-    ##  Accipiter striatus: 0   3rd Qu.:2019  
-    ##  Actitis macularius: 0   Max.   :2021  
+    ##  Accipiter gentilis: 0   Mean   :2017  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2023  
     ##  (Other)           : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-106.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-118.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Mimus polyglottos :1   Min.   :2018  
+    ##  Mimus polyglottos :2   Min.   :2018  
     ##  Acanthis flammea  :0   1st Qu.:2018  
     ##  Accipiter cooperii:0   Median :2018  
     ##  Accipiter gentilis:0   Mean   :2018  
@@ -3546,32 +3970,65 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "MacKelvie")
     ##  Actitis macularius:0   Max.   :2018  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-107.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-119.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Sialia sialis     :18   Min.   :2011  
+    ##  Acanthis flammea  : 0   1st Qu.:2014  
+    ##  Accipiter cooperii: 0   Median :2017  
+    ##  Accipiter gentilis: 0   Mean   :2018  
+    ##  Accipiter striatus: 0   3rd Qu.:2022  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-120.png)<!-- -->
+
+    ##                 species    eventDate   
+    ##  Myadestes townsendi:6   Min.   :2013  
+    ##  Acanthis flammea   :0   1st Qu.:2013  
+    ##  Accipiter cooperii :0   Median :2013  
+    ##  Accipiter gentilis :0   Mean   :2013  
+    ##  Accipiter striatus :0   3rd Qu.:2013  
+    ##  Actitis macularius :0   Max.   :2013  
+    ##  (Other)            :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-121.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Sturnus vulgaris  :2   Min.   :2019  
-    ##  Acanthis flammea  :0   1st Qu.:2020  
-    ##  Accipiter cooperii:0   Median :2020  
-    ##  Accipiter gentilis:0   Mean   :2020  
-    ##  Accipiter striatus:0   3rd Qu.:2020  
-    ##  Actitis macularius:0   Max.   :2021  
+    ##  Catharus ustulatus:3   Min.   :2022  
+    ##  Acanthis flammea  :0   1st Qu.:2022  
+    ##  Accipiter cooperii:0   Median :2022  
+    ##  Accipiter gentilis:0   Mean   :2022  
+    ##  Accipiter striatus:0   3rd Qu.:2022  
+    ##  Actitis macularius:0   Max.   :2023  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-108.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-122.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Turdus migratorius:82   Min.   :2009  
+    ##  Acanthis flammea  : 0   1st Qu.:2015  
+    ##  Accipiter cooperii: 0   Median :2021  
+    ##  Accipiter gentilis: 0   Mean   :2019  
+    ##  Accipiter striatus: 0   3rd Qu.:2022  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-123.png)<!-- -->
 
     ##                 species     eventDate   
-    ##  Bombycilla cedrorum:10   Min.   :2011  
-    ##  Acanthis flammea   : 0   1st Qu.:2015  
-    ##  Accipiter cooperii : 0   Median :2018  
-    ##  Accipiter gentilis : 0   Mean   :2017  
-    ##  Accipiter striatus : 0   3rd Qu.:2021  
-    ##  Actitis macularius : 0   Max.   :2021  
+    ##  Bombycilla cedrorum:28   Min.   :2011  
+    ##  Acanthis flammea   : 0   1st Qu.:2017  
+    ##  Accipiter cooperii : 0   Median :2020  
+    ##  Accipiter gentilis : 0   Mean   :2019  
+    ##  Accipiter striatus : 0   3rd Qu.:2022  
+    ##  Actitis macularius : 0   Max.   :2023  
     ##  (Other)            : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-109.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-124.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Passer domesticus :1   Min.   :2021  
+    ##  Passer domesticus :2   Min.   :2021  
     ##  Acanthis flammea  :0   1st Qu.:2021  
     ##  Accipiter cooperii:0   Median :2021  
     ##  Accipiter gentilis:0   Mean   :2021  
@@ -3579,54 +4036,54 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "MacKelvie")
     ##  Actitis macularius:0   Max.   :2021  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-110.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-125.png)<!-- -->
 
     ##                  species    eventDate   
-    ##  Haemorhous mexicanus:1   Min.   :2016  
+    ##  Haemorhous mexicanus:3   Min.   :2016  
     ##  Acanthis flammea    :0   1st Qu.:2016  
     ##  Accipiter cooperii  :0   Median :2016  
-    ##  Accipiter gentilis  :0   Mean   :2016  
-    ##  Accipiter striatus  :0   3rd Qu.:2016  
-    ##  Actitis macularius  :0   Max.   :2016  
+    ##  Accipiter gentilis  :0   Mean   :2018  
+    ##  Accipiter striatus  :0   3rd Qu.:2019  
+    ##  Actitis macularius  :0   Max.   :2022  
     ##  (Other)             :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-111.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-126.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Loxia curvirostra :3   Min.   :2011  
+    ##  Loxia curvirostra :8   Min.   :2011  
     ##  Acanthis flammea  :0   1st Qu.:2011  
-    ##  Accipiter cooperii:0   Median :2011  
-    ##  Accipiter gentilis:0   Mean   :2012  
-    ##  Accipiter striatus:0   3rd Qu.:2012  
-    ##  Actitis macularius:0   Max.   :2014  
+    ##  Accipiter cooperii:0   Median :2014  
+    ##  Accipiter gentilis:0   Mean   :2016  
+    ##  Accipiter striatus:0   3rd Qu.:2022  
+    ##  Actitis macularius:0   Max.   :2023  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-112.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-127.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Spinus pinus      :2   Min.   :2016  
-    ##  Acanthis flammea  :0   1st Qu.:2017  
+    ##  Spinus pinus      :4   Min.   :2016  
+    ##  Acanthis flammea  :0   1st Qu.:2016  
     ##  Accipiter cooperii:0   Median :2018  
     ##  Accipiter gentilis:0   Mean   :2018  
-    ##  Accipiter striatus:0   3rd Qu.:2019  
+    ##  Accipiter striatus:0   3rd Qu.:2020  
     ##  Actitis macularius:0   Max.   :2020  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-113.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-128.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Spinus tristis    :32   Min.   :2011  
-    ##  Acanthis flammea  : 0   1st Qu.:2013  
-    ##  Accipiter cooperii: 0   Median :2018  
-    ##  Accipiter gentilis: 0   Mean   :2017  
+    ##  Spinus tristis    :83   Min.   :2011  
+    ##  Acanthis flammea  : 0   1st Qu.:2016  
+    ##  Accipiter cooperii: 0   Median :2020  
+    ##  Accipiter gentilis: 0   Mean   :2018  
     ##  Accipiter striatus: 0   3rd Qu.:2021  
-    ##  Actitis macularius: 0   Max.   :2021  
+    ##  Actitis macularius: 0   Max.   :2023  
     ##  (Other)           : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-114.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-129.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Calcarius ornatus :1   Min.   :2015  
+    ##  Calcarius ornatus :2   Min.   :2015  
     ##  Acanthis flammea  :0   1st Qu.:2015  
     ##  Accipiter cooperii:0   Median :2015  
     ##  Accipiter gentilis:0   Mean   :2015  
@@ -3634,7 +4091,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "MacKelvie")
     ##  Actitis macularius:0   Max.   :2015  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-115.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-130.png)<!-- -->
 
     ##                species    eventDate   
     ##  Peucaea cassinii  :1   Min.   :2013  
@@ -3645,29 +4102,513 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "MacKelvie")
     ##  Actitis macularius:0   Max.   :2013  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-116.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-131.png)<!-- -->
 
     ##                   species     eventDate   
-    ##  Ammodramus savannarum:33   Min.   :2011  
-    ##  Acanthis flammea     : 0   1st Qu.:2014  
-    ##  Accipiter cooperii   : 0   Median :2016  
+    ##  Ammodramus savannarum:76   Min.   :2011  
+    ##  Acanthis flammea     : 0   1st Qu.:2015  
+    ##  Accipiter cooperii   : 0   Median :2018  
     ##  Accipiter gentilis   : 0   Mean   :2017  
-    ##  Accipiter striatus   : 0   3rd Qu.:2019  
-    ##  Actitis macularius   : 0   Max.   :2021  
+    ##  Accipiter striatus   : 0   3rd Qu.:2021  
+    ##  Actitis macularius   : 0   Max.   :2023  
     ##  (Other)              : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-117.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-132.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Spizella passerina:62   Min.   :2011  
+    ##  Acanthis flammea  : 0   1st Qu.:2013  
+    ##  Accipiter cooperii: 0   Median :2017  
+    ##  Accipiter gentilis: 0   Mean   :2018  
+    ##  Accipiter striatus: 0   3rd Qu.:2022  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-133.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Spizella pallida  :8   Min.   :2013  
+    ##  Acanthis flammea  :0   1st Qu.:2013  
+    ##  Accipiter cooperii:0   Median :2016  
+    ##  Accipiter gentilis:0   Mean   :2016  
+    ##  Accipiter striatus:0   3rd Qu.:2018  
+    ##  Actitis macularius:0   Max.   :2020  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-134.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Spizella pusilla  :61   Min.   :2011  
+    ##  Acanthis flammea  : 0   1st Qu.:2015  
+    ##  Accipiter cooperii: 0   Median :2018  
+    ##  Accipiter gentilis: 0   Mean   :2018  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-135.png)<!-- -->
 
     ##                  species     eventDate   
-    ##  Chondestes grammacus:42   Min.   :2009  
+    ##  Chondestes grammacus:97   Min.   :2009  
     ##  Acanthis flammea    : 0   1st Qu.:2015  
-    ##  Accipiter cooperii  : 0   Median :2017  
-    ##  Accipiter gentilis  : 0   Mean   :2017  
-    ##  Accipiter striatus  : 0   3rd Qu.:2020  
-    ##  Actitis macularius  : 0   Max.   :2021  
+    ##  Accipiter cooperii  : 0   Median :2018  
+    ##  Accipiter gentilis  : 0   Mean   :2018  
+    ##  Accipiter striatus  : 0   3rd Qu.:2021  
+    ##  Actitis macularius  : 0   Max.   :2023  
     ##  (Other)             : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-118.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-136.png)<!-- -->
+
+    ##                  species    eventDate   
+    ##  Spizelloides arborea:9   Min.   :2013  
+    ##  Acanthis flammea    :0   1st Qu.:2013  
+    ##  Accipiter cooperii  :0   Median :2017  
+    ##  Accipiter gentilis  :0   Mean   :2017  
+    ##  Accipiter striatus  :0   3rd Qu.:2021  
+    ##  Actitis macularius  :0   Max.   :2023  
+    ##  (Other)             :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-137.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Junco sp.         :8   Min.   :2013  
+    ##  Acanthis flammea  :0   1st Qu.:2013  
+    ##  Accipiter cooperii:0   Median :2016  
+    ##  Accipiter gentilis:0   Mean   :2017  
+    ##  Accipiter striatus:0   3rd Qu.:2020  
+    ##  Actitis macularius:0   Max.   :2021  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-138.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Junco hyemalis    :2   Min.   :2020  
+    ##  Acanthis flammea  :0   1st Qu.:2020  
+    ##  Accipiter cooperii:0   Median :2020  
+    ##  Accipiter gentilis:0   Mean   :2020  
+    ##  Accipiter striatus:0   3rd Qu.:2020  
+    ##  Actitis macularius:0   Max.   :2020  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-139.png)<!-- -->
+
+    ##                    species    eventDate   
+    ##  Zonotrichia leucophrys:7   Min.   :2013  
+    ##  Acanthis flammea      :0   1st Qu.:2013  
+    ##  Accipiter cooperii    :0   Median :2013  
+    ##  Accipiter gentilis    :0   Mean   :2016  
+    ##  Accipiter striatus    :0   3rd Qu.:2020  
+    ##  Actitis macularius    :0   Max.   :2023  
+    ##  (Other)               :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-140.png)<!-- -->
+
+    ##                 species    eventDate   
+    ##  Zonotrichia querula:4   Min.   :2013  
+    ##  Acanthis flammea   :0   1st Qu.:2013  
+    ##  Accipiter cooperii :0   Median :2013  
+    ##  Accipiter gentilis :0   Mean   :2013  
+    ##  Accipiter striatus :0   3rd Qu.:2013  
+    ##  Actitis macularius :0   Max.   :2013  
+    ##  (Other)            :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-141.png)<!-- -->
+
+    ##                    species    eventDate   
+    ##  Zonotrichia albicollis:2   Min.   :2021  
+    ##  Acanthis flammea      :0   1st Qu.:2021  
+    ##  Accipiter cooperii    :0   Median :2021  
+    ##  Accipiter gentilis    :0   Mean   :2021  
+    ##  Accipiter striatus    :0   3rd Qu.:2021  
+    ##  Actitis macularius    :0   Max.   :2021  
+    ##  (Other)               :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-142.png)<!-- -->
+
+    ##                 species     eventDate   
+    ##  Pooecetes gramineus:10   Min.   :2013  
+    ##  Acanthis flammea   : 0   1st Qu.:2013  
+    ##  Accipiter cooperii : 0   Median :2013  
+    ##  Accipiter gentilis : 0   Mean   :2014  
+    ##  Accipiter striatus : 0   3rd Qu.:2015  
+    ##  Actitis macularius : 0   Max.   :2015  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-143.png)<!-- -->
+
+    ##                       species    eventDate   
+    ##  Passerculus sandwichensis:7   Min.   :2016  
+    ##  Acanthis flammea         :0   1st Qu.:2016  
+    ##  Accipiter cooperii       :0   Median :2016  
+    ##  Accipiter gentilis       :0   Mean   :2017  
+    ##  Accipiter striatus       :0   3rd Qu.:2016  
+    ##  Actitis macularius       :0   Max.   :2023  
+    ##  (Other)                  :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-144.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Pipilo maculatus  :31   Min.   :2012  
+    ##  Acanthis flammea  : 0   1st Qu.:2013  
+    ##  Accipiter cooperii: 0   Median :2015  
+    ##  Accipiter gentilis: 0   Mean   :2017  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-145.png)<!-- -->
+
+    ##                               species    eventDate   
+    ##  Pipilo maculatus/erythrophthalmus:2   Min.   :2020  
+    ##  Acanthis flammea                 :0   1st Qu.:2021  
+    ##  Accipiter cooperii               :0   Median :2022  
+    ##  Accipiter gentilis               :0   Mean   :2022  
+    ##  Accipiter striatus               :0   3rd Qu.:2022  
+    ##  Actitis macularius               :0   Max.   :2023  
+    ##  (Other)                          :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-146.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Icteria virens    :6   Min.   :2013  
+    ##  Acanthis flammea  :0   1st Qu.:2013  
+    ##  Accipiter cooperii:0   Median :2013  
+    ##  Accipiter gentilis:0   Mean   :2014  
+    ##  Accipiter striatus:0   3rd Qu.:2016  
+    ##  Actitis macularius:0   Max.   :2017  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-147.png)<!-- -->
+
+    ##                           species     eventDate   
+    ##  Xanthocephalus xanthocephalus:33   Min.   :2015  
+    ##  Acanthis flammea             : 0   1st Qu.:2019  
+    ##  Accipiter cooperii           : 0   Median :2021  
+    ##  Accipiter gentilis           : 0   Mean   :2020  
+    ##  Accipiter striatus           : 0   3rd Qu.:2021  
+    ##  Actitis macularius           : 0   Max.   :2023  
+    ##  (Other)                      : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-148.png)<!-- -->
+
+    ##                   species    eventDate   
+    ##  Dolichonyx oryzivorus:9   Min.   :2011  
+    ##  Acanthis flammea     :0   1st Qu.:2015  
+    ##  Accipiter cooperii   :0   Median :2018  
+    ##  Accipiter gentilis   :0   Mean   :2017  
+    ##  Accipiter striatus   :0   3rd Qu.:2021  
+    ##  Actitis macularius   :0   Max.   :2022  
+    ##  (Other)              :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-149.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Sturnella neglecta:112   Min.   :2011  
+    ##  Acanthis flammea  :  0   1st Qu.:2015  
+    ##  Accipiter cooperii:  0   Median :2018  
+    ##  Accipiter gentilis:  0   Mean   :2018  
+    ##  Accipiter striatus:  0   3rd Qu.:2021  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-150.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Sturnella magna   :5   Min.   :2016  
+    ##  Acanthis flammea  :0   1st Qu.:2016  
+    ##  Accipiter cooperii:0   Median :2021  
+    ##  Accipiter gentilis:0   Mean   :2019  
+    ##  Accipiter striatus:0   3rd Qu.:2021  
+    ##  Actitis macularius:0   Max.   :2023  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-151.png)<!-- -->
+
+    ##                      species    eventDate   
+    ##  Sturnella neglecta/magna:5   Min.   :2009  
+    ##  Acanthis flammea        :0   1st Qu.:2012  
+    ##  Accipiter cooperii      :0   Median :2012  
+    ##  Accipiter gentilis      :0   Mean   :2013  
+    ##  Accipiter striatus      :0   3rd Qu.:2014  
+    ##  Actitis macularius      :0   Max.   :2018  
+    ##  (Other)                 :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-152.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Icterus galbula   :7   Min.   :2016  
+    ##  Acanthis flammea  :0   1st Qu.:2016  
+    ##  Accipiter cooperii:0   Median :2017  
+    ##  Accipiter gentilis:0   Mean   :2019  
+    ##  Accipiter striatus:0   3rd Qu.:2021  
+    ##  Actitis macularius:0   Max.   :2022  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-153.png)<!-- -->
+
+    ##                 species     eventDate   
+    ##  Agelaius phoeniceus:88   Min.   :2009  
+    ##  Acanthis flammea   : 0   1st Qu.:2017  
+    ##  Accipiter cooperii : 0   Median :2020  
+    ##  Accipiter gentilis : 0   Mean   :2019  
+    ##  Accipiter striatus : 0   3rd Qu.:2021  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-154.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Molothrus ater    :72   Min.   :2011  
+    ##  Acanthis flammea  : 0   1st Qu.:2015  
+    ##  Accipiter cooperii: 0   Median :2019  
+    ##  Accipiter gentilis: 0   Mean   :2018  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-155.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Quiscalus quiscula:36   Min.   :2011  
+    ##  Acanthis flammea  : 0   1st Qu.:2016  
+    ##  Accipiter cooperii: 0   Median :2021  
+    ##  Accipiter gentilis: 0   Mean   :2019  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-156.png)<!-- -->
+
+    ##                 species    eventDate   
+    ##  Quiscalus mexicanus:2   Min.   :2015  
+    ##  Acanthis flammea   :0   1st Qu.:2015  
+    ##  Accipiter cooperii :0   Median :2015  
+    ##  Accipiter gentilis :0   Mean   :2015  
+    ##  Accipiter striatus :0   3rd Qu.:2015  
+    ##  Actitis macularius :0   Max.   :2015  
+    ##  (Other)            :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-157.png)<!-- -->
+
+    ##                 species    eventDate   
+    ##  Seiurus aurocapilla:8   Min.   :2013  
+    ##  Acanthis flammea   :0   1st Qu.:2014  
+    ##  Accipiter cooperii :0   Median :2016  
+    ##  Accipiter gentilis :0   Mean   :2017  
+    ##  Accipiter striatus :0   3rd Qu.:2018  
+    ##  Actitis macularius :0   Max.   :2023  
+    ##  (Other)            :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-158.png)<!-- -->
+
+    ##                     species    eventDate   
+    ##  Parkesia noveboracensis:1   Min.   :2023  
+    ##  Acanthis flammea       :0   1st Qu.:2023  
+    ##  Accipiter cooperii     :0   Median :2023  
+    ##  Accipiter gentilis     :0   Mean   :2023  
+    ##  Accipiter striatus     :0   3rd Qu.:2023  
+    ##  Actitis macularius     :0   Max.   :2023  
+    ##  (Other)                :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-159.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Mniotilta varia   :3   Min.   :2013  
+    ##  Acanthis flammea  :0   1st Qu.:2013  
+    ##  Accipiter cooperii:0   Median :2013  
+    ##  Accipiter gentilis:0   Mean   :2016  
+    ##  Accipiter striatus:0   3rd Qu.:2018  
+    ##  Actitis macularius:0   Max.   :2023  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-160.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Leiothlypis celata:11   Min.   :2013  
+    ##  Acanthis flammea  : 0   1st Qu.:2013  
+    ##  Accipiter cooperii: 0   Median :2013  
+    ##  Accipiter gentilis: 0   Mean   :2017  
+    ##  Accipiter striatus: 0   3rd Qu.:2022  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-161.png)<!-- -->
+
+    ##                     species    eventDate   
+    ##  Leiothlypis ruficapilla:1   Min.   :2023  
+    ##  Acanthis flammea       :0   1st Qu.:2023  
+    ##  Accipiter cooperii     :0   Median :2023  
+    ##  Accipiter gentilis     :0   Mean   :2023  
+    ##  Accipiter striatus     :0   3rd Qu.:2023  
+    ##  Actitis macularius     :0   Max.   :2023  
+    ##  (Other)                :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-162.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Geothlypis trichas:34   Min.   :2011  
+    ##  Acanthis flammea  : 0   1st Qu.:2015  
+    ##  Accipiter cooperii: 0   Median :2017  
+    ##  Accipiter gentilis: 0   Mean   :2017  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2022  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-163.png)<!-- -->
+
+    ##                 species     eventDate   
+    ##  Setophaga ruticilla:11   Min.   :2013  
+    ##  Acanthis flammea   : 0   1st Qu.:2013  
+    ##  Accipiter cooperii : 0   Median :2015  
+    ##  Accipiter gentilis : 0   Mean   :2016  
+    ##  Accipiter striatus : 0   3rd Qu.:2018  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-164.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Setophaga petechia:49   Min.   :2011  
+    ##  Acanthis flammea  : 0   1st Qu.:2015  
+    ##  Accipiter cooperii: 0   Median :2019  
+    ##  Accipiter gentilis: 0   Mean   :2018  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-165.png)<!-- -->
+
+    ##                         species    eventDate   
+    ##  Setophaga coronata/auduboni:4   Min.   :2013  
+    ##  Acanthis flammea           :0   1st Qu.:2013  
+    ##  Accipiter cooperii         :0   Median :2018  
+    ##  Accipiter gentilis         :0   Mean   :2018  
+    ##  Accipiter striatus         :0   3rd Qu.:2023  
+    ##  Actitis macularius         :0   Max.   :2023  
+    ##  (Other)                    :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-166.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Setophaga coronata:3   Min.   :2013  
+    ##  Acanthis flammea  :0   1st Qu.:2013  
+    ##  Accipiter cooperii:0   Median :2013  
+    ##  Accipiter gentilis:0   Mean   :2016  
+    ##  Accipiter striatus:0   3rd Qu.:2018  
+    ##  Actitis macularius:0   Max.   :2023  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-167.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Cardellina pusilla:6   Min.   :2013  
+    ##  Acanthis flammea  :0   1st Qu.:2013  
+    ##  Accipiter cooperii:0   Median :2013  
+    ##  Accipiter gentilis:0   Mean   :2013  
+    ##  Accipiter striatus:0   3rd Qu.:2013  
+    ##  Actitis macularius:0   Max.   :2013  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-168.png)<!-- -->
+
+    ##                   species     eventDate   
+    ##  Cardinalis cardinalis:24   Min.   :2013  
+    ##  Acanthis flammea     : 0   1st Qu.:2013  
+    ##  Accipiter cooperii   : 0   Median :2013  
+    ##  Accipiter gentilis   : 0   Mean   :2014  
+    ##  Accipiter striatus   : 0   3rd Qu.:2013  
+    ##  Actitis macularius   : 0   Max.   :2019  
+    ##  (Other)              : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-169.png)<!-- -->
+
+    ##                     species    eventDate   
+    ##  Pheucticus ludovicianus:2   Min.   :2020  
+    ##  Acanthis flammea       :0   1st Qu.:2020  
+    ##  Accipiter cooperii     :0   Median :2020  
+    ##  Accipiter gentilis     :0   Mean   :2020  
+    ##  Accipiter striatus     :0   3rd Qu.:2020  
+    ##  Actitis macularius     :0   Max.   :2020  
+    ##  (Other)                :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-170.png)<!-- -->
+
+    ##                       species    eventDate   
+    ##  Pheucticus melanocephalus:2   Min.   :2022  
+    ##  Acanthis flammea         :0   1st Qu.:2022  
+    ##  Accipiter cooperii       :0   Median :2022  
+    ##  Accipiter gentilis       :0   Mean   :2022  
+    ##  Accipiter striatus       :0   3rd Qu.:2023  
+    ##  Actitis macularius       :0   Max.   :2023  
+    ##  (Other)                  :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-171.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Passerina caerulea:37   Min.   :2011  
+    ##  Acanthis flammea  : 0   1st Qu.:2015  
+    ##  Accipiter cooperii: 0   Median :2020  
+    ##  Accipiter gentilis: 0   Mean   :2018  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-172.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Passerina cyanea  :2   Min.   :2011  
+    ##  Acanthis flammea  :0   1st Qu.:2011  
+    ##  Accipiter cooperii:0   Median :2011  
+    ##  Accipiter gentilis:0   Mean   :2011  
+    ##  Accipiter striatus:0   3rd Qu.:2011  
+    ##  Actitis macularius:0   Max.   :2011  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-173.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Spiza americana   :24   Min.   :2011  
+    ##  Acanthis flammea  : 0   1st Qu.:2015  
+    ##  Accipiter cooperii: 0   Median :2020  
+    ##  Accipiter gentilis: 0   Mean   :2018  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2022  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-174.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Aix sponsa        :10   Min.   :2015  
+    ##  Acanthis flammea  : 0   1st Qu.:2020  
+    ##  Accipiter cooperii: 0   Median :2020  
+    ##  Accipiter gentilis: 0   Mean   :2020  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2022  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-175.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Asio otus         :2   Min.   :2020  
+    ##  Acanthis flammea  :0   1st Qu.:2020  
+    ##  Accipiter cooperii:0   Median :2020  
+    ##  Accipiter gentilis:0   Mean   :2020  
+    ##  Accipiter striatus:0   3rd Qu.:2021  
+    ##  Actitis macularius:0   Max.   :2021  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-176.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Falco sparverius  :8   Min.   :2011  
+    ##  Acanthis flammea  :0   1st Qu.:2013  
+    ##  Accipiter cooperii:0   Median :2016  
+    ##  Accipiter gentilis:0   Mean   :2016  
+    ##  Accipiter striatus:0   3rd Qu.:2019  
+    ##  Actitis macularius:0   Max.   :2021  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-177.png)<!-- -->
 
     ##                     species    eventDate   
     ##  Calamospiza melanocorys:5   Min.   :2015  
@@ -3678,117 +4619,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "MacKelvie")
     ##  Actitis macularius     :0   Max.   :2021  
     ##  (Other)                :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-119.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Spizella passerina:23   Min.   :2011  
-    ##  Acanthis flammea  : 0   1st Qu.:2013  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2016  
-    ##  Accipiter striatus: 0   3rd Qu.:2019  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-120.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Spizella pallida  :4   Min.   :2013  
-    ##  Acanthis flammea  :0   1st Qu.:2013  
-    ##  Accipiter cooperii:0   Median :2016  
-    ##  Accipiter gentilis:0   Mean   :2016  
-    ##  Accipiter striatus:0   3rd Qu.:2018  
-    ##  Actitis macularius:0   Max.   :2020  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-121.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Spizella pusilla  :26   Min.   :2011  
-    ##  Acanthis flammea  : 0   1st Qu.:2015  
-    ##  Accipiter cooperii: 0   Median :2018  
-    ##  Accipiter gentilis: 0   Mean   :2017  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-122.png)<!-- -->
-
-    ##                  species    eventDate   
-    ##  Spizelloides arborea:4   Min.   :2013  
-    ##  Acanthis flammea    :0   1st Qu.:2013  
-    ##  Accipiter cooperii  :0   Median :2015  
-    ##  Accipiter gentilis  :0   Mean   :2016  
-    ##  Accipiter striatus  :0   3rd Qu.:2018  
-    ##  Actitis macularius  :0   Max.   :2021  
-    ##  (Other)             :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-123.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Junco hyemalis    :4   Min.   :2013  
-    ##  Acanthis flammea  :0   1st Qu.:2013  
-    ##  Accipiter cooperii:0   Median :2016  
-    ##  Accipiter gentilis:0   Mean   :2017  
-    ##  Accipiter striatus:0   3rd Qu.:2020  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-124.png)<!-- -->
-
-    ##                    species    eventDate   
-    ##  Zonotrichia leucophrys:3   Min.   :2013  
-    ##  Acanthis flammea      :0   1st Qu.:2013  
-    ##  Accipiter cooperii    :0   Median :2013  
-    ##  Accipiter gentilis    :0   Mean   :2015  
-    ##  Accipiter striatus    :0   3rd Qu.:2016  
-    ##  Actitis macularius    :0   Max.   :2020  
-    ##  (Other)               :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-125.png)<!-- -->
-
-    ##                 species    eventDate   
-    ##  Zonotrichia querula:2   Min.   :2013  
-    ##  Acanthis flammea   :0   1st Qu.:2013  
-    ##  Accipiter cooperii :0   Median :2013  
-    ##  Accipiter gentilis :0   Mean   :2013  
-    ##  Accipiter striatus :0   3rd Qu.:2013  
-    ##  Actitis macularius :0   Max.   :2013  
-    ##  (Other)            :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-126.png)<!-- -->
-
-    ##                    species    eventDate   
-    ##  Zonotrichia albicollis:1   Min.   :2021  
-    ##  Acanthis flammea      :0   1st Qu.:2021  
-    ##  Accipiter cooperii    :0   Median :2021  
-    ##  Accipiter gentilis    :0   Mean   :2021  
-    ##  Accipiter striatus    :0   3rd Qu.:2021  
-    ##  Actitis macularius    :0   Max.   :2021  
-    ##  (Other)               :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-127.png)<!-- -->
-
-    ##                 species    eventDate   
-    ##  Pooecetes gramineus:5   Min.   :2013  
-    ##  Acanthis flammea   :0   1st Qu.:2013  
-    ##  Accipiter cooperii :0   Median :2013  
-    ##  Accipiter gentilis :0   Mean   :2014  
-    ##  Accipiter striatus :0   3rd Qu.:2015  
-    ##  Actitis macularius :0   Max.   :2015  
-    ##  (Other)            :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-128.png)<!-- -->
-
-    ##                       species    eventDate   
-    ##  Passerculus sandwichensis:3   Min.   :2016  
-    ##  Acanthis flammea         :0   1st Qu.:2016  
-    ##  Accipiter cooperii       :0   Median :2016  
-    ##  Accipiter gentilis       :0   Mean   :2016  
-    ##  Accipiter striatus       :0   3rd Qu.:2016  
-    ##  Actitis macularius       :0   Max.   :2016  
-    ##  (Other)                  :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-129.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-178.png)<!-- -->
 
     ##                 species    eventDate   
     ##  Melospiza lincolnii:6   Min.   :2013  
@@ -3799,7 +4630,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "MacKelvie")
     ##  Actitis macularius :0   Max.   :2020  
     ##  (Other)            :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-130.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-179.png)<!-- -->
 
     ##                 species    eventDate   
     ##  Melospiza georgiana:1   Min.   :2013  
@@ -3810,73 +4641,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "MacKelvie")
     ##  Actitis macularius :0   Max.   :2013  
     ##  (Other)            :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-131.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Pipilo maculatus  :13   Min.   :2012  
-    ##  Acanthis flammea  : 0   1st Qu.:2013  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2016  
-    ##  Accipiter striatus: 0   3rd Qu.:2019  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-132.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Icteria virens    :3   Min.   :2013  
-    ##  Acanthis flammea  :0   1st Qu.:2013  
-    ##  Accipiter cooperii:0   Median :2013  
-    ##  Accipiter gentilis:0   Mean   :2014  
-    ##  Accipiter striatus:0   3rd Qu.:2015  
-    ##  Actitis macularius:0   Max.   :2017  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-133.png)<!-- -->
-
-    ##                           species     eventDate   
-    ##  Xanthocephalus xanthocephalus:15   Min.   :2015  
-    ##  Acanthis flammea             : 0   1st Qu.:2019  
-    ##  Accipiter cooperii           : 0   Median :2020  
-    ##  Accipiter gentilis           : 0   Mean   :2020  
-    ##  Accipiter striatus           : 0   3rd Qu.:2021  
-    ##  Actitis macularius           : 0   Max.   :2021  
-    ##  (Other)                      : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-134.png)<!-- -->
-
-    ##                   species    eventDate   
-    ##  Dolichonyx oryzivorus:4   Min.   :2011  
-    ##  Acanthis flammea     :0   1st Qu.:2014  
-    ##  Accipiter cooperii   :0   Median :2016  
-    ##  Accipiter gentilis   :0   Mean   :2016  
-    ##  Accipiter striatus   :0   3rd Qu.:2019  
-    ##  Actitis macularius   :0   Max.   :2021  
-    ##  (Other)              :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-135.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Sturnella magna   :2   Min.   :2016  
-    ##  Acanthis flammea  :0   1st Qu.:2017  
-    ##  Accipiter cooperii:0   Median :2018  
-    ##  Accipiter gentilis:0   Mean   :2018  
-    ##  Accipiter striatus:0   3rd Qu.:2020  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-136.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Sturnella neglecta:46   Min.   :2011  
-    ##  Acanthis flammea  : 0   1st Qu.:2015  
-    ##  Accipiter cooperii: 0   Median :2017  
-    ##  Accipiter gentilis: 0   Mean   :2017  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-137.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-180.png)<!-- -->
 
     ##                species     eventDate   
     ##  Icterus spurius   :14   Min.   :2011  
@@ -3887,205 +4652,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "MacKelvie")
     ##  Actitis macularius: 0   Max.   :2021  
     ##  (Other)           : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-138.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Icterus galbula   :3   Min.   :2016  
-    ##  Acanthis flammea  :0   1st Qu.:2016  
-    ##  Accipiter cooperii:0   Median :2017  
-    ##  Accipiter gentilis:0   Mean   :2018  
-    ##  Accipiter striatus:0   3rd Qu.:2019  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-139.png)<!-- -->
-
-    ##                 species     eventDate   
-    ##  Agelaius phoeniceus:36   Min.   :2009  
-    ##  Acanthis flammea   : 0   1st Qu.:2016  
-    ##  Accipiter cooperii : 0   Median :2019  
-    ##  Accipiter gentilis : 0   Mean   :2018  
-    ##  Accipiter striatus : 0   3rd Qu.:2021  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-140.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Molothrus ater    :29   Min.   :2011  
-    ##  Acanthis flammea  : 0   1st Qu.:2015  
-    ##  Accipiter cooperii: 0   Median :2017  
-    ##  Accipiter gentilis: 0   Mean   :2017  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-141.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Quiscalus quiscula:16   Min.   :2011  
-    ##  Acanthis flammea  : 0   1st Qu.:2016  
-    ##  Accipiter cooperii: 0   Median :2020  
-    ##  Accipiter gentilis: 0   Mean   :2018  
-    ##  Accipiter striatus: 0   3rd Qu.:2021  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-142.png)<!-- -->
-
-    ##                 species    eventDate   
-    ##  Quiscalus mexicanus:1   Min.   :2015  
-    ##  Acanthis flammea   :0   1st Qu.:2015  
-    ##  Accipiter cooperii :0   Median :2015  
-    ##  Accipiter gentilis :0   Mean   :2015  
-    ##  Accipiter striatus :0   3rd Qu.:2015  
-    ##  Actitis macularius :0   Max.   :2015  
-    ##  (Other)            :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-143.png)<!-- -->
-
-    ##                 species    eventDate   
-    ##  Seiurus aurocapilla:3   Min.   :2013  
-    ##  Acanthis flammea   :0   1st Qu.:2014  
-    ##  Accipiter cooperii :0   Median :2015  
-    ##  Accipiter gentilis :0   Mean   :2015  
-    ##  Accipiter striatus :0   3rd Qu.:2016  
-    ##  Actitis macularius :0   Max.   :2016  
-    ##  (Other)            :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-144.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Mniotilta varia   :1   Min.   :2013  
-    ##  Acanthis flammea  :0   1st Qu.:2013  
-    ##  Accipiter cooperii:0   Median :2013  
-    ##  Accipiter gentilis:0   Mean   :2013  
-    ##  Accipiter striatus:0   3rd Qu.:2013  
-    ##  Actitis macularius:0   Max.   :2013  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-145.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Leiothlypis celata:4   Min.   :2013  
-    ##  Acanthis flammea  :0   1st Qu.:2013  
-    ##  Accipiter cooperii:0   Median :2013  
-    ##  Accipiter gentilis:0   Mean   :2015  
-    ##  Accipiter striatus:0   3rd Qu.:2015  
-    ##  Actitis macularius:0   Max.   :2020  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-146.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Geothlypis trichas:15   Min.   :2011  
-    ##  Acanthis flammea  : 0   1st Qu.:2015  
-    ##  Accipiter cooperii: 0   Median :2017  
-    ##  Accipiter gentilis: 0   Mean   :2017  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-147.png)<!-- -->
-
-    ##                 species    eventDate   
-    ##  Setophaga ruticilla:4   Min.   :2013  
-    ##  Acanthis flammea   :0   1st Qu.:2013  
-    ##  Accipiter cooperii :0   Median :2014  
-    ##  Accipiter gentilis :0   Mean   :2014  
-    ##  Accipiter striatus :0   3rd Qu.:2015  
-    ##  Actitis macularius :0   Max.   :2015  
-    ##  (Other)            :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-148.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Setophaga petechia:21   Min.   :2011  
-    ##  Acanthis flammea  : 0   1st Qu.:2015  
-    ##  Accipiter cooperii: 0   Median :2017  
-    ##  Accipiter gentilis: 0   Mean   :2017  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-149.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Setophaga coronata:2   Min.   :2013  
-    ##  Acanthis flammea  :0   1st Qu.:2013  
-    ##  Accipiter cooperii:0   Median :2013  
-    ##  Accipiter gentilis:0   Mean   :2013  
-    ##  Accipiter striatus:0   3rd Qu.:2013  
-    ##  Actitis macularius:0   Max.   :2013  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-150.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Cardellina pusilla:3   Min.   :2013  
-    ##  Acanthis flammea  :0   1st Qu.:2013  
-    ##  Accipiter cooperii:0   Median :2013  
-    ##  Accipiter gentilis:0   Mean   :2013  
-    ##  Accipiter striatus:0   3rd Qu.:2013  
-    ##  Actitis macularius:0   Max.   :2013  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-151.png)<!-- -->
-
-    ##                   species     eventDate   
-    ##  Cardinalis cardinalis:12   Min.   :2013  
-    ##  Acanthis flammea     : 0   1st Qu.:2013  
-    ##  Accipiter cooperii   : 0   Median :2013  
-    ##  Accipiter gentilis   : 0   Mean   :2014  
-    ##  Accipiter striatus   : 0   3rd Qu.:2013  
-    ##  Actitis macularius   : 0   Max.   :2019  
-    ##  (Other)              : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-152.png)<!-- -->
-
-    ##                     species    eventDate   
-    ##  Pheucticus ludovicianus:1   Min.   :2020  
-    ##  Acanthis flammea       :0   1st Qu.:2020  
-    ##  Accipiter cooperii     :0   Median :2020  
-    ##  Accipiter gentilis     :0   Mean   :2020  
-    ##  Accipiter striatus     :0   3rd Qu.:2020  
-    ##  Actitis macularius     :0   Max.   :2020  
-    ##  (Other)                :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-153.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Passerina caerulea:17   Min.   :2011  
-    ##  Acanthis flammea  : 0   1st Qu.:2015  
-    ##  Accipiter cooperii: 0   Median :2019  
-    ##  Accipiter gentilis: 0   Mean   :2018  
-    ##  Accipiter striatus: 0   3rd Qu.:2021  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-154.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Passerina cyanea  :1   Min.   :2011  
-    ##  Acanthis flammea  :0   1st Qu.:2011  
-    ##  Accipiter cooperii:0   Median :2011  
-    ##  Accipiter gentilis:0   Mean   :2011  
-    ##  Accipiter striatus:0   3rd Qu.:2011  
-    ##  Actitis macularius:0   Max.   :2011  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-155.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Spiza americana   :11   Min.   :2011  
-    ##  Acanthis flammea  : 0   1st Qu.:2015  
-    ##  Accipiter cooperii: 0   Median :2020  
-    ##  Accipiter gentilis: 0   Mean   :2018  
-    ##  Accipiter striatus: 0   3rd Qu.:2021  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-10-156.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-10-181.png)<!-- -->
 
 ## Pine Ridge / Oglala
 
@@ -4096,7 +4663,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Anser caerulescens:1   Min.   :2017  
+    ##  Anser caerulescens:2   Min.   :2017  
     ##  Acanthis flammea  :0   1st Qu.:2017  
     ##  Accipiter cooperii:0   Median :2017  
     ##  Accipiter gentilis:0   Mean   :2017  
@@ -4107,7 +4674,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-2.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Branta hutchinsii :1   Min.   :2021  
+    ##  Branta hutchinsii :2   Min.   :2021  
     ##  Acanthis flammea  :0   1st Qu.:2021  
     ##  Accipiter cooperii:0   Median :2021  
     ##  Accipiter gentilis:0   Mean   :2021  
@@ -4118,18 +4685,29 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-3.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Branta canadensis :37   Min.   :2010  
+    ##  Branta canadensis :81   Min.   :2010  
     ##  Acanthis flammea  : 0   1st Qu.:2017  
-    ##  Accipiter cooperii: 0   Median :2019  
-    ##  Accipiter gentilis: 0   Mean   :2018  
+    ##  Accipiter cooperii: 0   Median :2020  
+    ##  Accipiter gentilis: 0   Mean   :2019  
     ##  Accipiter striatus: 0   3rd Qu.:2021  
-    ##  Actitis macularius: 0   Max.   :2021  
+    ##  Actitis macularius: 0   Max.   :2023  
     ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-4.png)<!-- -->
 
+    ##                          species    eventDate   
+    ##  Branta hutchinsii/canadensis:2   Min.   :2011  
+    ##  Acanthis flammea            :0   1st Qu.:2012  
+    ##  Accipiter cooperii          :0   Median :2014  
+    ##  Accipiter gentilis          :0   Mean   :2014  
+    ##  Accipiter striatus          :0   3rd Qu.:2016  
+    ##  Actitis macularius          :0   Max.   :2017  
+    ##  (Other)                     :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-5.png)<!-- -->
+
     ##                species    eventDate   
-    ##  Cygnus buccinator :1   Min.   :2020  
+    ##  Cygnus buccinator :2   Min.   :2020  
     ##  Acanthis flammea  :0   1st Qu.:2020  
     ##  Accipiter cooperii:0   Median :2020  
     ##  Accipiter gentilis:0   Mean   :2020  
@@ -4137,153 +4715,164 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius:0   Max.   :2020  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-5.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Aix sponsa        :61   Min.   :2009  
-    ##  Acanthis flammea  : 0   1st Qu.:2014  
-    ##  Accipiter cooperii: 0   Median :2017  
-    ##  Accipiter gentilis: 0   Mean   :2017  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-6.png)<!-- -->
 
-    ##                species     eventDate   
-    ##  Spatula discors   :80   Min.   :1985  
-    ##  Acanthis flammea  : 0   1st Qu.:2016  
-    ##  Accipiter cooperii: 0   Median :2019  
-    ##  Accipiter gentilis: 0   Mean   :2017  
-    ##  Accipiter striatus: 0   3rd Qu.:2021  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
+    ##                species      eventDate   
+    ##  Spatula discors   :168   Min.   :1984  
+    ##  Acanthis flammea  :  0   1st Qu.:2016  
+    ##  Accipiter cooperii:  0   Median :2019  
+    ##  Accipiter gentilis:  0   Mean   :2017  
+    ##  Accipiter striatus:  0   3rd Qu.:2021  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-7.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Spatula cyanoptera:2   Min.   :2018  
+    ##  Spatula cyanoptera:5   Min.   :2018  
     ##  Acanthis flammea  :0   1st Qu.:2018  
-    ##  Accipiter cooperii:0   Median :2019  
-    ##  Accipiter gentilis:0   Mean   :2019  
+    ##  Accipiter cooperii:0   Median :2020  
+    ##  Accipiter gentilis:0   Mean   :2020  
     ##  Accipiter striatus:0   3rd Qu.:2020  
-    ##  Actitis macularius:0   Max.   :2020  
+    ##  Actitis macularius:0   Max.   :2022  
     ##  (Other)           :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-8.png)<!-- -->
 
-    ##                species     eventDate   
-    ##  Spatula clypeata  :51   Min.   :1986  
-    ##  Acanthis flammea  : 0   1st Qu.:2016  
-    ##  Accipiter cooperii: 0   Median :2019  
-    ##  Accipiter gentilis: 0   Mean   :2017  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2022  
-    ##  (Other)           : 0
+    ##                        species    eventDate   
+    ##  Spatula discors/cyanoptera:2   Min.   :2014  
+    ##  Acanthis flammea          :0   1st Qu.:2016  
+    ##  Accipiter cooperii        :0   Median :2018  
+    ##  Accipiter gentilis        :0   Mean   :2018  
+    ##  Accipiter striatus        :0   3rd Qu.:2020  
+    ##  Actitis macularius        :0   Max.   :2022  
+    ##  (Other)                   :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-9.png)<!-- -->
 
-    ##                species     eventDate   
-    ##  Mareca strepera   :30   Min.   :2010  
-    ##  Acanthis flammea  : 0   1st Qu.:2017  
-    ##  Accipiter cooperii: 0   Median :2019  
-    ##  Accipiter gentilis: 0   Mean   :2018  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
+    ##                species      eventDate   
+    ##  Spatula clypeata  :111   Min.   :1984  
+    ##  Acanthis flammea  :  0   1st Qu.:2016  
+    ##  Accipiter cooperii:  0   Median :2019  
+    ##  Accipiter gentilis:  0   Mean   :2017  
+    ##  Accipiter striatus:  0   3rd Qu.:2021  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-10.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Mareca americana  :19   Min.   :2000  
-    ##  Acanthis flammea  : 0   1st Qu.:2014  
-    ##  Accipiter cooperii: 0   Median :2018  
-    ##  Accipiter gentilis: 0   Mean   :2016  
-    ##  Accipiter striatus: 0   3rd Qu.:2019  
-    ##  Actitis macularius: 0   Max.   :2021  
+    ##  Mareca strepera   :70   Min.   :1984  
+    ##  Acanthis flammea  : 0   1st Qu.:2017  
+    ##  Accipiter cooperii: 0   Median :2019  
+    ##  Accipiter gentilis: 0   Mean   :2018  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2023  
     ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-11.png)<!-- -->
 
-    ##                species      eventDate   
-    ##  Anas platyrhynchos:164   Min.   :1985  
-    ##  Acanthis flammea  :  0   1st Qu.:2014  
-    ##  Accipiter cooperii:  0   Median :2018  
-    ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2021  
-    ##  (Other)           :  0
+    ##                species     eventDate   
+    ##  Mareca americana  :40   Min.   :2000  
+    ##  Acanthis flammea  : 0   1st Qu.:2015  
+    ##  Accipiter cooperii: 0   Median :2018  
+    ##  Accipiter gentilis: 0   Mean   :2016  
+    ##  Accipiter striatus: 0   3rd Qu.:2019  
+    ##  Actitis macularius: 0   Max.   :2022  
+    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-12.png)<!-- -->
 
-    ##                species     eventDate   
-    ##  Anas acuta        :24   Min.   :1985  
-    ##  Acanthis flammea  : 0   1st Qu.:2013  
-    ##  Accipiter cooperii: 0   Median :2018  
-    ##  Accipiter gentilis: 0   Mean   :2015  
-    ##  Accipiter striatus: 0   3rd Qu.:2019  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
+    ##                species      eventDate   
+    ##  Anas platyrhynchos:346   Min.   :1984  
+    ##  Acanthis flammea  :  0   1st Qu.:2015  
+    ##  Accipiter cooperii:  0   Median :2018  
+    ##  Accipiter gentilis:  0   Mean   :2016  
+    ##  Accipiter striatus:  0   3rd Qu.:2021  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-13.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Anas crecca       :15   Min.   :1995  
-    ##  Acanthis flammea  : 0   1st Qu.:2014  
-    ##  Accipiter cooperii: 0   Median :2016  
+    ##  Anas acuta        :51   Min.   :1984  
+    ##  Acanthis flammea  : 0   1st Qu.:2012  
+    ##  Accipiter cooperii: 0   Median :2018  
     ##  Accipiter gentilis: 0   Mean   :2015  
-    ##  Accipiter striatus: 0   3rd Qu.:2018  
-    ##  Actitis macularius: 0   Max.   :2020  
+    ##  Accipiter striatus: 0   3rd Qu.:2019  
+    ##  Actitis macularius: 0   Max.   :2023  
     ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-14.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Aythya americana  :10   Min.   :1985  
-    ##  Acanthis flammea  : 0   1st Qu.:2011  
+    ##  Anas crecca       :35   Min.   :1995  
+    ##  Acanthis flammea  : 0   1st Qu.:2014  
     ##  Accipiter cooperii: 0   Median :2016  
-    ##  Accipiter gentilis: 0   Mean   :2012  
-    ##  Accipiter striatus: 0   3rd Qu.:2018  
-    ##  Actitis macularius: 0   Max.   :2021  
+    ##  Accipiter gentilis: 0   Mean   :2016  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2023  
     ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-15.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Aythya collaris   :9   Min.   :2011  
-    ##  Acanthis flammea  :0   1st Qu.:2014  
-    ##  Accipiter cooperii:0   Median :2017  
-    ##  Accipiter gentilis:0   Mean   :2017  
-    ##  Accipiter striatus:0   3rd Qu.:2019  
-    ##  Actitis macularius:0   Max.   :2022  
+    ##  Aythya valisineria:2   Min.   :1984  
+    ##  Acanthis flammea  :0   1st Qu.:1994  
+    ##  Accipiter cooperii:0   Median :2004  
+    ##  Accipiter gentilis:0   Mean   :2004  
+    ##  Accipiter striatus:0   3rd Qu.:2013  
+    ##  Actitis macularius:0   Max.   :2023  
     ##  (Other)           :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-16.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Aythya affinis    :5   Min.   :2011  
-    ##  Acanthis flammea  :0   1st Qu.:2011  
-    ##  Accipiter cooperii:0   Median :2019  
-    ##  Accipiter gentilis:0   Mean   :2016  
-    ##  Accipiter striatus:0   3rd Qu.:2019  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
+    ##                species     eventDate   
+    ##  Aythya americana  :19   Min.   :1985  
+    ##  Acanthis flammea  : 0   1st Qu.:2011  
+    ##  Accipiter cooperii: 0   Median :2014  
+    ##  Accipiter gentilis: 0   Mean   :2012  
+    ##  Accipiter striatus: 0   3rd Qu.:2018  
+    ##  Actitis macularius: 0   Max.   :2021  
+    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-17.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Bucephala albeola :8   Min.   :2011  
-    ##  Acanthis flammea  :0   1st Qu.:2017  
-    ##  Accipiter cooperii:0   Median :2019  
-    ##  Accipiter gentilis:0   Mean   :2018  
-    ##  Accipiter striatus:0   3rd Qu.:2020  
-    ##  Actitis macularius:0   Max.   :2022  
-    ##  (Other)           :0
+    ##                species     eventDate   
+    ##  Aythya collaris   :21   Min.   :1984  
+    ##  Acanthis flammea  : 0   1st Qu.:2014  
+    ##  Accipiter cooperii: 0   Median :2019  
+    ##  Accipiter gentilis: 0   Mean   :2016  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2022  
+    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-18.png)<!-- -->
 
+    ##                species     eventDate   
+    ##  Aythya affinis    :10   Min.   :2011  
+    ##  Acanthis flammea  : 0   1st Qu.:2011  
+    ##  Accipiter cooperii: 0   Median :2019  
+    ##  Accipiter gentilis: 0   Mean   :2016  
+    ##  Accipiter striatus: 0   3rd Qu.:2019  
+    ##  Actitis macularius: 0   Max.   :2021  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-19.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Bucephala albeola :18   Min.   :2011  
+    ##  Acanthis flammea  : 0   1st Qu.:2019  
+    ##  Accipiter cooperii: 0   Median :2019  
+    ##  Accipiter gentilis: 0   Mean   :2018  
+    ##  Accipiter striatus: 0   3rd Qu.:2022  
+    ##  Actitis macularius: 0   Max.   :2022  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-20.png)<!-- -->
+
     ##                species    eventDate   
-    ##  Bucephala clangula:1   Min.   :2011  
+    ##  Bucephala clangula:2   Min.   :2011  
     ##  Acanthis flammea  :0   1st Qu.:2011  
     ##  Accipiter cooperii:0   Median :2011  
     ##  Accipiter gentilis:0   Mean   :2011  
@@ -4291,120 +4880,120 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius:0   Max.   :2011  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-19.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-21.png)<!-- -->
 
     ##                   species    eventDate   
-    ##  Lophodytes cucullatus:3   Min.   :2016  
-    ##  Acanthis flammea     :0   1st Qu.:2018  
+    ##  Lophodytes cucullatus:6   Min.   :2016  
+    ##  Acanthis flammea     :0   1st Qu.:2017  
     ##  Accipiter cooperii   :0   Median :2021  
     ##  Accipiter gentilis   :0   Mean   :2019  
     ##  Accipiter striatus   :0   3rd Qu.:2021  
     ##  Actitis macularius   :0   Max.   :2021  
     ##  (Other)              :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-20.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Mergus merganser  :5   Min.   :2011  
-    ##  Acanthis flammea  :0   1st Qu.:2016  
-    ##  Accipiter cooperii:0   Median :2016  
-    ##  Accipiter gentilis:0   Mean   :2017  
-    ##  Accipiter striatus:0   3rd Qu.:2021  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-21.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-22.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Oxyura jamaicensis:15   Min.   :2009  
+    ##  Mergus merganser  :10   Min.   :2011  
+    ##  Acanthis flammea  : 0   1st Qu.:2016  
+    ##  Accipiter cooperii: 0   Median :2016  
+    ##  Accipiter gentilis: 0   Mean   :2017  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2021  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-23.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Oxyura jamaicensis:31   Min.   :2009  
     ##  Acanthis flammea  : 0   1st Qu.:2016  
     ##  Accipiter cooperii: 0   Median :2018  
     ##  Accipiter gentilis: 0   Mean   :2017  
     ##  Accipiter striatus: 0   3rd Qu.:2019  
-    ##  Actitis macularius: 0   Max.   :2021  
+    ##  Actitis macularius: 0   Max.   :2022  
     ##  (Other)           : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-22.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-24.png)<!-- -->
 
     ##                 species    eventDate   
-    ##  Colinus virginianus:2   Min.   :1933  
-    ##  Acanthis flammea   :0   1st Qu.:1933  
+    ##  Colinus virginianus:3   Min.   :1933  
+    ##  Acanthis flammea   :0   1st Qu.:1934  
     ##  Accipiter cooperii :0   Median :1934  
-    ##  Accipiter gentilis :0   Mean   :1934  
-    ##  Accipiter striatus :0   3rd Qu.:1934  
-    ##  Actitis macularius :0   Max.   :1934  
+    ##  Accipiter gentilis :0   Mean   :1963  
+    ##  Accipiter striatus :0   3rd Qu.:1978  
+    ##  Actitis macularius :0   Max.   :2023  
     ##  (Other)            :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-23.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-25.png)<!-- -->
 
     ##                 species      eventDate   
-    ##  Meleagris gallopavo:263   Min.   :1988  
+    ##  Meleagris gallopavo:541   Min.   :1988  
     ##  Acanthis flammea   :  0   1st Qu.:2016  
     ##  Accipiter cooperii :  0   Median :2018  
     ##  Accipiter gentilis :  0   Mean   :2017  
     ##  Accipiter striatus :  0   3rd Qu.:2020  
-    ##  Actitis macularius :  0   Max.   :2022  
+    ##  Actitis macularius :  0   Max.   :2023  
     ##  (Other)            :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-24.png)<!-- -->
-
-    ##                      species     eventDate   
-    ##  Tympanuchus phasianellus:43   Min.   :1987  
-    ##  Acanthis flammea        : 0   1st Qu.:2016  
-    ##  Accipiter cooperii      : 0   Median :2019  
-    ##  Accipiter gentilis      : 0   Mean   :2017  
-    ##  Accipiter striatus      : 0   3rd Qu.:2020  
-    ##  Actitis macularius      : 0   Max.   :2021  
-    ##  (Other)                 : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-25.png)<!-- -->
-
-    ##                 species     eventDate   
-    ##  Phasianus colchicus:22   Min.   :1995  
-    ##  Acanthis flammea   : 0   1st Qu.:2014  
-    ##  Accipiter cooperii : 0   Median :2018  
-    ##  Accipiter gentilis : 0   Mean   :2015  
-    ##  Accipiter striatus : 0   3rd Qu.:2019  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-26.png)<!-- -->
 
-    ##                 species     eventDate   
-    ##  Podilymbus podiceps:34   Min.   :2000  
-    ##  Acanthis flammea   : 0   1st Qu.:2014  
-    ##  Accipiter cooperii : 0   Median :2017  
-    ##  Accipiter gentilis : 0   Mean   :2016  
-    ##  Accipiter striatus : 0   3rd Qu.:2019  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
+    ##                      species     eventDate   
+    ##  Tympanuchus phasianellus:93   Min.   :1984  
+    ##  Acanthis flammea        : 0   1st Qu.:2017  
+    ##  Accipiter cooperii      : 0   Median :2019  
+    ##  Accipiter gentilis      : 0   Mean   :2017  
+    ##  Accipiter striatus      : 0   3rd Qu.:2020  
+    ##  Actitis macularius      : 0   Max.   :2023  
+    ##  (Other)                 : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-27.png)<!-- -->
 
-    ##                  species     eventDate   
-    ##  Podiceps nigricollis:14   Min.   :2009  
-    ##  Acanthis flammea    : 0   1st Qu.:2012  
-    ##  Accipiter cooperii  : 0   Median :2016  
-    ##  Accipiter gentilis  : 0   Mean   :2015  
-    ##  Accipiter striatus  : 0   3rd Qu.:2019  
-    ##  Actitis macularius  : 0   Max.   :2021  
-    ##  (Other)             : 0
+    ##                 species     eventDate   
+    ##  Phasianus colchicus:46   Min.   :1984  
+    ##  Acanthis flammea   : 0   1st Qu.:2014  
+    ##  Accipiter cooperii : 0   Median :2018  
+    ##  Accipiter gentilis : 0   Mean   :2015  
+    ##  Accipiter striatus : 0   3rd Qu.:2020  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-28.png)<!-- -->
 
-    ##                       species     eventDate   
-    ##  Aechmophorus occidentalis:12   Min.   :1982  
-    ##  Acanthis flammea         : 0   1st Qu.:2010  
-    ##  Accipiter cooperii       : 0   Median :2013  
-    ##  Accipiter gentilis       : 0   Mean   :2010  
-    ##  Accipiter striatus       : 0   3rd Qu.:2014  
-    ##  Actitis macularius       : 0   Max.   :2020  
-    ##  (Other)                  : 0
+    ##                 species     eventDate   
+    ##  Podilymbus podiceps:75   Min.   :2000  
+    ##  Acanthis flammea   : 0   1st Qu.:2014  
+    ##  Accipiter cooperii : 0   Median :2018  
+    ##  Accipiter gentilis : 0   Mean   :2017  
+    ##  Accipiter striatus : 0   3rd Qu.:2020  
+    ##  Actitis macularius : 0   Max.   :2022  
+    ##  (Other)            : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-29.png)<!-- -->
 
+    ##                  species     eventDate   
+    ##  Podiceps nigricollis:35   Min.   :1984  
+    ##  Acanthis flammea    : 0   1st Qu.:2012  
+    ##  Accipiter cooperii  : 0   Median :2016  
+    ##  Accipiter gentilis  : 0   Mean   :2016  
+    ##  Accipiter striatus  : 0   3rd Qu.:2021  
+    ##  Actitis macularius  : 0   Max.   :2023  
+    ##  (Other)             : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-30.png)<!-- -->
+
+    ##                       species     eventDate   
+    ##  Aechmophorus occidentalis:25   Min.   :1982  
+    ##  Acanthis flammea         : 0   1st Qu.:2009  
+    ##  Accipiter cooperii       : 0   Median :2013  
+    ##  Accipiter gentilis       : 0   Mean   :2009  
+    ##  Accipiter striatus       : 0   3rd Qu.:2013  
+    ##  Actitis macularius       : 0   Max.   :2022  
+    ##  (Other)                  : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-31.png)<!-- -->
+
     ##                  species    eventDate   
-    ##  Aechmophorus clarkii:1   Min.   :2013  
+    ##  Aechmophorus clarkii:2   Min.   :2013  
     ##  Acanthis flammea    :0   1st Qu.:2013  
     ##  Accipiter cooperii  :0   Median :2013  
     ##  Accipiter gentilis  :0   Mean   :2013  
@@ -4412,98 +5001,109 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius  :0   Max.   :2013  
     ##  (Other)             :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-30.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-32.png)<!-- -->
 
-    ##                species     eventDate   
-    ##  Columba livia     :57   Min.   :1991  
-    ##  Acanthis flammea  : 0   1st Qu.:2016  
-    ##  Accipiter cooperii: 0   Median :2017  
-    ##  Accipiter gentilis: 0   Mean   :2016  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
+    ##                               species    eventDate   
+    ##  Aechmophorus occidentalis/clarkii:2   Min.   :2011  
+    ##  Acanthis flammea                 :0   1st Qu.:2013  
+    ##  Accipiter cooperii               :0   Median :2016  
+    ##  Accipiter gentilis               :0   Mean   :2016  
+    ##  Accipiter striatus               :0   3rd Qu.:2018  
+    ##  Actitis macularius               :0   Max.   :2020  
+    ##  (Other)                          :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-31.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-33.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Columba livia     :123   Min.   :1991  
+    ##  Acanthis flammea  :  0   1st Qu.:2016  
+    ##  Accipiter cooperii:  0   Median :2018  
+    ##  Accipiter gentilis:  0   Mean   :2016  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-34.png)<!-- -->
 
     ##                   species      eventDate   
-    ##  Streptopelia decaocto:254   Min.   :2007  
+    ##  Streptopelia decaocto:539   Min.   :2007  
     ##  Acanthis flammea     :  0   1st Qu.:2014  
     ##  Accipiter cooperii   :  0   Median :2016  
     ##  Accipiter gentilis   :  0   Mean   :2016  
     ##  Accipiter striatus   :  0   3rd Qu.:2018  
-    ##  Actitis macularius   :  0   Max.   :2021  
+    ##  Actitis macularius   :  0   Max.   :2023  
     ##  (Other)              :  0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-32.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-35.png)<!-- -->
 
-    ##                species      eventDate   
-    ##  Zenaida macroura  :606   Min.   :1975  
-    ##  Acanthis flammea  :  0   1st Qu.:2014  
-    ##  Accipiter cooperii:  0   Median :2018  
-    ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2022  
-    ##  (Other)           :  0
+    ##                species       eventDate   
+    ##  Zenaida macroura  :1367   Min.   :1975  
+    ##  Acanthis flammea  :   0   1st Qu.:2015  
+    ##  Accipiter cooperii:   0   Median :2018  
+    ##  Accipiter gentilis:   0   Mean   :2017  
+    ##  Accipiter striatus:   0   3rd Qu.:2020  
+    ##  Actitis macularius:   0   Max.   :2023  
+    ##  (Other)           :   0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-33.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-36.png)<!-- -->
 
     ##                 species     eventDate   
-    ##  Coccyzus americanus:14   Min.   :2017  
+    ##  Coccyzus americanus:29   Min.   :2017  
     ##  Acanthis flammea   : 0   1st Qu.:2018  
     ##  Accipiter cooperii : 0   Median :2020  
     ##  Accipiter gentilis : 0   Mean   :2020  
     ##  Accipiter striatus : 0   3rd Qu.:2021  
-    ##  Actitis macularius : 0   Max.   :2022  
+    ##  Actitis macularius : 0   Max.   :2023  
     ##  (Other)            : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-34.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Chordeiles minor  :147   Min.   :1959  
-    ##  Acanthis flammea  :  0   1st Qu.:2015  
-    ##  Accipiter cooperii:  0   Median :2018  
-    ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2021  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-35.png)<!-- -->
-
-    ##                      species     eventDate   
-    ##  Phalaenoptilus nuttallii:68   Min.   :1981  
-    ##  Acanthis flammea        : 0   1st Qu.:2015  
-    ##  Accipiter cooperii      : 0   Median :2016  
-    ##  Accipiter gentilis      : 0   Mean   :2015  
-    ##  Accipiter striatus      : 0   3rd Qu.:2017  
-    ##  Actitis macularius      : 0   Max.   :2021  
-    ##  (Other)                 : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-36.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Chaetura pelagica :14   Min.   :1988  
-    ##  Acanthis flammea  : 0   1st Qu.:2005  
-    ##  Accipiter cooperii: 0   Median :2014  
-    ##  Accipiter gentilis: 0   Mean   :2011  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-37.png)<!-- -->
 
+    ##                species      eventDate   
+    ##  Chordeiles minor  :318   Min.   :1959  
+    ##  Acanthis flammea  :  0   1st Qu.:2015  
+    ##  Accipiter cooperii:  0   Median :2019  
+    ##  Accipiter gentilis:  0   Mean   :2016  
+    ##  Accipiter striatus:  0   3rd Qu.:2021  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-38.png)<!-- -->
+
+    ##                      species      eventDate   
+    ##  Phalaenoptilus nuttallii:142   Min.   :1981  
+    ##  Acanthis flammea        :  0   1st Qu.:2015  
+    ##  Accipiter cooperii      :  0   Median :2016  
+    ##  Accipiter gentilis      :  0   Mean   :2016  
+    ##  Accipiter striatus      :  0   3rd Qu.:2020  
+    ##  Actitis macularius      :  0   Max.   :2023  
+    ##  (Other)                 :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-39.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Chaetura pelagica :31   Min.   :1988  
+    ##  Acanthis flammea  : 0   1st Qu.:2006  
+    ##  Accipiter cooperii: 0   Median :2016  
+    ##  Accipiter gentilis: 0   Mean   :2012  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-40.png)<!-- -->
+
     ##                  species     eventDate   
-    ##  Aeronautes saxatalis:30   Min.   :1991  
-    ##  Acanthis flammea    : 0   1st Qu.:2015  
+    ##  Aeronautes saxatalis:66   Min.   :1991  
+    ##  Acanthis flammea    : 0   1st Qu.:2018  
     ##  Accipiter cooperii  : 0   Median :2020  
-    ##  Accipiter gentilis  : 0   Mean   :2016  
+    ##  Accipiter gentilis  : 0   Mean   :2017  
     ##  Accipiter striatus  : 0   3rd Qu.:2021  
     ##  Actitis macularius  : 0   Max.   :2023  
     ##  (Other)             : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-38.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-41.png)<!-- -->
 
     ##                  species    eventDate   
-    ##  Archilochus colubris:1   Min.   :2016  
+    ##  Archilochus colubris:2   Min.   :2016  
     ##  Acanthis flammea    :0   1st Qu.:2016  
     ##  Accipiter cooperii  :0   Median :2016  
     ##  Accipiter gentilis  :0   Mean   :2016  
@@ -4511,32 +5111,21 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius  :0   Max.   :2016  
     ##  (Other)             :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-39.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-42.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Selasphorus rufus :2   Min.   :2013  
-    ##  Acanthis flammea  :0   1st Qu.:2013  
-    ##  Accipiter cooperii:0   Median :2013  
-    ##  Accipiter gentilis:0   Mean   :2013  
-    ##  Accipiter striatus:0   3rd Qu.:2013  
-    ##  Actitis macularius:0   Max.   :2013  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-40.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Porzana carolina  :3   Min.   :2015  
+    ##  Porzana carolina  :7   Min.   :2015  
     ##  Acanthis flammea  :0   1st Qu.:2016  
     ##  Accipiter cooperii:0   Median :2018  
-    ##  Accipiter gentilis:0   Mean   :2018  
-    ##  Accipiter striatus:0   3rd Qu.:2020  
-    ##  Actitis macularius:0   Max.   :2021  
+    ##  Accipiter gentilis:0   Mean   :2019  
+    ##  Accipiter striatus:0   3rd Qu.:2021  
+    ##  Actitis macularius:0   Max.   :2023  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-41.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-43.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Fulica americana  :39   Min.   :2000  
+    ##  Fulica americana  :77   Min.   :2000  
     ##  Acanthis flammea  : 0   1st Qu.:2015  
     ##  Accipiter cooperii: 0   Median :2017  
     ##  Accipiter gentilis: 0   Mean   :2016  
@@ -4544,98 +5133,120 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius: 0   Max.   :2021  
     ##  (Other)           : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-42.png)<!-- -->
-
-    ##                 species     eventDate   
-    ##  Antigone canadensis:11   Min.   :2009  
-    ##  Acanthis flammea   : 0   1st Qu.:2016  
-    ##  Accipiter cooperii : 0   Median :2017  
-    ##  Accipiter gentilis : 0   Mean   :2017  
-    ##  Accipiter striatus : 0   3rd Qu.:2018  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-43.png)<!-- -->
-
-    ##                     species    eventDate   
-    ##  Recurvirostra americana:4   Min.   :1981  
-    ##  Acanthis flammea       :0   1st Qu.:2004  
-    ##  Accipiter cooperii     :0   Median :2014  
-    ##  Accipiter gentilis     :0   Mean   :2007  
-    ##  Accipiter striatus     :0   3rd Qu.:2018  
-    ##  Actitis macularius     :0   Max.   :2019  
-    ##  (Other)                :0
-
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-44.png)<!-- -->
 
-    ##                  species      eventDate   
-    ##  Charadrius vociferus:141   Min.   :1975  
-    ##  Acanthis flammea    :  0   1st Qu.:2016  
-    ##  Accipiter cooperii  :  0   Median :2019  
-    ##  Accipiter gentilis  :  0   Mean   :2016  
-    ##  Accipiter striatus  :  0   3rd Qu.:2020  
-    ##  Actitis macularius  :  0   Max.   :2021  
-    ##  (Other)             :  0
+    ##                 species     eventDate   
+    ##  Antigone canadensis:29   Min.   :2009  
+    ##  Acanthis flammea   : 0   1st Qu.:2016  
+    ##  Accipiter cooperii : 0   Median :2018  
+    ##  Accipiter gentilis : 0   Mean   :2018  
+    ##  Accipiter striatus : 0   3rd Qu.:2021  
+    ##  Actitis macularius : 0   Max.   :2022  
+    ##  (Other)            : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-45.png)<!-- -->
 
-    ##                  species     eventDate   
-    ##  Bartramia longicauda:92   Min.   :1985  
-    ##  Acanthis flammea    : 0   1st Qu.:2016  
-    ##  Accipiter cooperii  : 0   Median :2019  
-    ##  Accipiter gentilis  : 0   Mean   :2016  
-    ##  Accipiter striatus  : 0   3rd Qu.:2020  
-    ##  Actitis macularius  : 0   Max.   :2023  
-    ##  (Other)             : 0
+    ##                     species    eventDate   
+    ##  Recurvirostra americana:9   Min.   :1981  
+    ##  Acanthis flammea       :0   1st Qu.:2011  
+    ##  Accipiter cooperii     :0   Median :2018  
+    ##  Accipiter gentilis     :0   Mean   :2009  
+    ##  Accipiter striatus     :0   3rd Qu.:2019  
+    ##  Actitis macularius     :0   Max.   :2022  
+    ##  (Other)                :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-46.png)<!-- -->
 
-    ##                 species     eventDate   
-    ##  Numenius americanus:31   Min.   :1971  
-    ##  Acanthis flammea   : 0   1st Qu.:2013  
-    ##  Accipiter cooperii : 0   Median :2019  
-    ##  Accipiter gentilis : 0   Mean   :2014  
-    ##  Accipiter striatus : 0   3rd Qu.:2021  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
+    ##                  species      eventDate   
+    ##  Charadrius vociferus:309   Min.   :1975  
+    ##  Acanthis flammea    :  0   1st Qu.:2016  
+    ##  Accipiter cooperii  :  0   Median :2019  
+    ##  Accipiter gentilis  :  0   Mean   :2017  
+    ##  Accipiter striatus  :  0   3rd Qu.:2021  
+    ##  Actitis macularius  :  0   Max.   :2023  
+    ##  (Other)             :  0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-47.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Limosa fedoa      :3   Min.   :2011  
-    ##  Acanthis flammea  :0   1st Qu.:2012  
-    ##  Accipiter cooperii:0   Median :2014  
-    ##  Accipiter gentilis:0   Mean   :2015  
-    ##  Accipiter striatus:0   3rd Qu.:2018  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
+    ##                  species      eventDate   
+    ##  Bartramia longicauda:192   Min.   :1985  
+    ##  Acanthis flammea    :  0   1st Qu.:2016  
+    ##  Accipiter cooperii  :  0   Median :2019  
+    ##  Accipiter gentilis  :  0   Mean   :2017  
+    ##  Accipiter striatus  :  0   3rd Qu.:2021  
+    ##  Actitis macularius  :  0   Max.   :2023  
+    ##  (Other)             :  0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-48.png)<!-- -->
 
-    ##                species    eventDate   
-    ##  Calidris bairdii  :2   Min.   :2011  
-    ##  Acanthis flammea  :0   1st Qu.:2012  
-    ##  Accipiter cooperii:0   Median :2014  
-    ##  Accipiter gentilis:0   Mean   :2014  
-    ##  Accipiter striatus:0   3rd Qu.:2016  
-    ##  Actitis macularius:0   Max.   :2017  
-    ##  (Other)           :0
+    ##                 species     eventDate   
+    ##  Numenius americanus:62   Min.   :1971  
+    ##  Acanthis flammea   : 0   1st Qu.:2015  
+    ##  Accipiter cooperii : 0   Median :2019  
+    ##  Accipiter gentilis : 0   Mean   :2015  
+    ##  Accipiter striatus : 0   3rd Qu.:2021  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-49.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Calidris minutilla:1   Min.   :2021  
-    ##  Acanthis flammea  :0   1st Qu.:2021  
-    ##  Accipiter cooperii:0   Median :2021  
-    ##  Accipiter gentilis:0   Mean   :2021  
+    ##  Limosa fedoa      :6   Min.   :2011  
+    ##  Acanthis flammea  :0   1st Qu.:2012  
+    ##  Accipiter cooperii:0   Median :2018  
+    ##  Accipiter gentilis:0   Mean   :2017  
     ##  Accipiter striatus:0   3rd Qu.:2021  
-    ##  Actitis macularius:0   Max.   :2021  
+    ##  Actitis macularius:0   Max.   :2023  
     ##  (Other)           :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-50.png)<!-- -->
 
+    ##                species    eventDate   
+    ##  Calidris bairdii  :6   Min.   :2011  
+    ##  Acanthis flammea  :0   1st Qu.:2012  
+    ##  Accipiter cooperii:0   Median :2017  
+    ##  Accipiter gentilis:0   Mean   :2017  
+    ##  Accipiter striatus:0   3rd Qu.:2021  
+    ##  Actitis macularius:0   Max.   :2022  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-51.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Calidris minutilla:3   Min.   :2021  
+    ##  Acanthis flammea  :0   1st Qu.:2021  
+    ##  Accipiter cooperii:0   Median :2021  
+    ##  Accipiter gentilis:0   Mean   :2021  
+    ##  Accipiter striatus:0   3rd Qu.:2022  
+    ##  Actitis macularius:0   Max.   :2022  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-52.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Calidris melanotos:1   Min.   :2022  
+    ##  Acanthis flammea  :0   1st Qu.:2022  
+    ##  Accipiter cooperii:0   Median :2022  
+    ##  Accipiter gentilis:0   Mean   :2022  
+    ##  Accipiter striatus:0   3rd Qu.:2022  
+    ##  Actitis macularius:0   Max.   :2022  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-53.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Calidris pusilla  :1   Min.   :2022  
+    ##  Acanthis flammea  :0   1st Qu.:2022  
+    ##  Accipiter cooperii:0   Median :2022  
+    ##  Accipiter gentilis:0   Mean   :2022  
+    ##  Accipiter striatus:0   3rd Qu.:2022  
+    ##  Actitis macularius:0   Max.   :2022  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-54.png)<!-- -->
+
     ##                     species    eventDate   
-    ##  Limnodromus scolopaceus:1   Min.   :2013  
+    ##  Limnodromus scolopaceus:2   Min.   :2013  
     ##  Acanthis flammea       :0   1st Qu.:2013  
     ##  Accipiter cooperii     :0   Median :2013  
     ##  Accipiter gentilis     :0   Mean   :2013  
@@ -4643,109 +5254,109 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius     :0   Max.   :2013  
     ##  (Other)                :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-51.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-55.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Gallinago delicata:11   Min.   :2014  
-    ##  Acanthis flammea  : 0   1st Qu.:2018  
+    ##  Gallinago delicata:21   Min.   :2014  
+    ##  Acanthis flammea  : 0   1st Qu.:2017  
     ##  Accipiter cooperii: 0   Median :2020  
     ##  Accipiter gentilis: 0   Mean   :2019  
     ##  Accipiter striatus: 0   3rd Qu.:2021  
     ##  Actitis macularius: 0   Max.   :2021  
     ##  (Other)           : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-52.png)<!-- -->
-
-    ##                  species     eventDate   
-    ##  Actitis macularius  :29   Min.   :1987  
-    ##  Acanthis flammea    : 0   1st Qu.:2014  
-    ##  Accipiter cooperii  : 0   Median :2017  
-    ##  Accipiter gentilis  : 0   Mean   :2016  
-    ##  Accipiter striatus  : 0   3rd Qu.:2021  
-    ##  Aechmophorus clarkii: 0   Max.   :2021  
-    ##  (Other)             : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-53.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Tringa solitaria  :2   Min.   :2015  
-    ##  Acanthis flammea  :0   1st Qu.:2016  
-    ##  Accipiter cooperii:0   Median :2016  
-    ##  Accipiter gentilis:0   Mean   :2016  
-    ##  Accipiter striatus:0   3rd Qu.:2016  
-    ##  Actitis macularius:0   Max.   :2017  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-54.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Tringa flavipes   :4   Min.   :2000  
-    ##  Acanthis flammea  :0   1st Qu.:2014  
-    ##  Accipiter cooperii:0   Median :2018  
-    ##  Accipiter gentilis:0   Mean   :2014  
-    ##  Accipiter striatus:0   3rd Qu.:2019  
-    ##  Actitis macularius:0   Max.   :2020  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-55.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Tringa melanoleuca:4   Min.   :2011  
-    ##  Acanthis flammea  :0   1st Qu.:2018  
-    ##  Accipiter cooperii:0   Median :2020  
-    ##  Accipiter gentilis:0   Mean   :2018  
-    ##  Accipiter striatus:0   3rd Qu.:2021  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
-
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-56.png)<!-- -->
 
     ##                 species     eventDate   
-    ##  Phalaropus tricolor:27   Min.   :2011  
+    ##  Phalaropus tricolor:58   Min.   :2011  
     ##  Acanthis flammea   : 0   1st Qu.:2018  
     ##  Accipiter cooperii : 0   Median :2019  
-    ##  Accipiter gentilis : 0   Mean   :2018  
-    ##  Accipiter striatus : 0   3rd Qu.:2020  
-    ##  Actitis macularius : 0   Max.   :2021  
+    ##  Accipiter gentilis : 0   Mean   :2019  
+    ##  Accipiter striatus : 0   3rd Qu.:2021  
+    ##  Actitis macularius : 0   Max.   :2023  
     ##  (Other)            : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-57.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Phalaropus lobatus:1   Min.   :2018  
+    ##  Phalaropus lobatus:3   Min.   :2018  
     ##  Acanthis flammea  :0   1st Qu.:2018  
     ##  Accipiter cooperii:0   Median :2018  
-    ##  Accipiter gentilis:0   Mean   :2018  
-    ##  Accipiter striatus:0   3rd Qu.:2018  
-    ##  Actitis macularius:0   Max.   :2018  
+    ##  Accipiter gentilis:0   Mean   :2020  
+    ##  Accipiter striatus:0   3rd Qu.:2020  
+    ##  Actitis macularius:0   Max.   :2023  
     ##  (Other)           :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-58.png)<!-- -->
 
-    ##                  species    eventDate   
-    ##  Leucophaeus pipixcan:2   Min.   :1985  
-    ##  Acanthis flammea    :0   1st Qu.:1993  
-    ##  Accipiter cooperii  :0   Median :2000  
-    ##  Accipiter gentilis  :0   Mean   :2000  
-    ##  Accipiter striatus  :0   3rd Qu.:2008  
-    ##  Actitis macularius  :0   Max.   :2016  
-    ##  (Other)             :0
+    ##                  species     eventDate   
+    ##  Actitis macularius  :60   Min.   :1987  
+    ##  Acanthis flammea    : 0   1st Qu.:2014  
+    ##  Accipiter cooperii  : 0   Median :2018  
+    ##  Accipiter gentilis  : 0   Mean   :2016  
+    ##  Accipiter striatus  : 0   3rd Qu.:2021  
+    ##  Aechmophorus clarkii: 0   Max.   :2022  
+    ##  (Other)             : 0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-59.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Larus delawarensis:1   Min.   :1985  
-    ##  Acanthis flammea  :0   1st Qu.:1985  
-    ##  Accipiter cooperii:0   Median :1985  
-    ##  Accipiter gentilis:0   Mean   :1985  
-    ##  Accipiter striatus:0   3rd Qu.:1985  
-    ##  Actitis macularius:0   Max.   :1985  
+    ##  Tringa solitaria  :6   Min.   :2015  
+    ##  Acanthis flammea  :0   1st Qu.:2016  
+    ##  Accipiter cooperii:0   Median :2017  
+    ##  Accipiter gentilis:0   Mean   :2018  
+    ##  Accipiter striatus:0   3rd Qu.:2021  
+    ##  Actitis macularius:0   Max.   :2023  
     ##  (Other)           :0
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-60.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Chlidonias niger  :1   Min.   :2003  
+    ##  Tringa melanoleuca:9   Min.   :2011  
+    ##  Acanthis flammea  :0   1st Qu.:2020  
+    ##  Accipiter cooperii:0   Median :2021  
+    ##  Accipiter gentilis:0   Mean   :2019  
+    ##  Accipiter striatus:0   3rd Qu.:2021  
+    ##  Actitis macularius:0   Max.   :2022  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-61.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Tringa flavipes   :9   Min.   :2000  
+    ##  Acanthis flammea  :0   1st Qu.:2018  
+    ##  Accipiter cooperii:0   Median :2019  
+    ##  Accipiter gentilis:0   Mean   :2015  
+    ##  Accipiter striatus:0   3rd Qu.:2020  
+    ##  Actitis macularius:0   Max.   :2022  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-62.png)<!-- -->
+
+    ##                  species    eventDate   
+    ##  Leucophaeus pipixcan:4   Min.   :1985  
+    ##  Acanthis flammea    :0   1st Qu.:1985  
+    ##  Accipiter cooperii  :0   Median :2000  
+    ##  Accipiter gentilis  :0   Mean   :2000  
+    ##  Accipiter striatus  :0   3rd Qu.:2016  
+    ##  Actitis macularius  :0   Max.   :2016  
+    ##  (Other)             :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-63.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Larus delawarensis:4   Min.   :1985  
+    ##  Acanthis flammea  :0   1st Qu.:1985  
+    ##  Accipiter cooperii:0   Median :2004  
+    ##  Accipiter gentilis:0   Mean   :2004  
+    ##  Accipiter striatus:0   3rd Qu.:2022  
+    ##  Actitis macularius:0   Max.   :2022  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-64.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Chlidonias niger  :2   Min.   :2003  
     ##  Acanthis flammea  :0   1st Qu.:2003  
     ##  Accipiter cooperii:0   Median :2003  
     ##  Accipiter gentilis:0   Mean   :2003  
@@ -4753,10 +5364,10 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius:0   Max.   :2003  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-61.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-65.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Gavia immer       :1   Min.   :2018  
+    ##  Gavia immer       :2   Min.   :2018  
     ##  Acanthis flammea  :0   1st Qu.:2018  
     ##  Accipiter cooperii:0   Median :2018  
     ##  Accipiter gentilis:0   Mean   :2018  
@@ -4764,43 +5375,54 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius:0   Max.   :2018  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-62.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-66.png)<!-- -->
 
     ##                 species     eventDate   
-    ##  Nannopterum auritum:11   Min.   :2000  
+    ##  Nannopterum auritum:24   Min.   :1984  
     ##  Acanthis flammea   : 0   1st Qu.:2015  
     ##  Accipiter cooperii : 0   Median :2018  
-    ##  Accipiter gentilis : 0   Mean   :2015  
-    ##  Accipiter striatus : 0   3rd Qu.:2020  
-    ##  Actitis macularius : 0   Max.   :2021  
+    ##  Accipiter gentilis : 0   Mean   :2014  
+    ##  Accipiter striatus : 0   3rd Qu.:2021  
+    ##  Actitis macularius : 0   Max.   :2023  
     ##  (Other)            : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-63.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-67.png)<!-- -->
 
     ##                       species    eventDate   
-    ##  Pelecanus erythrorhynchos:4   Min.   :2000  
-    ##  Acanthis flammea         :0   1st Qu.:2014  
-    ##  Accipiter cooperii       :0   Median :2018  
-    ##  Accipiter gentilis       :0   Mean   :2014  
-    ##  Accipiter striatus       :0   3rd Qu.:2019  
-    ##  Actitis macularius       :0   Max.   :2020  
+    ##  Pelecanus erythrorhynchos:9   Min.   :2000  
+    ##  Acanthis flammea         :0   1st Qu.:2018  
+    ##  Accipiter cooperii       :0   Median :2019  
+    ##  Accipiter gentilis       :0   Mean   :2015  
+    ##  Accipiter striatus       :0   3rd Qu.:2020  
+    ##  Actitis macularius       :0   Max.   :2022  
     ##  (Other)                  :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-64.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-68.png)<!-- -->
 
-    ##                species     eventDate   
-    ##  Ardea herodias    :75   Min.   :1986  
-    ##  Acanthis flammea  : 0   1st Qu.:2016  
-    ##  Accipiter cooperii: 0   Median :2019  
-    ##  Accipiter gentilis: 0   Mean   :2016  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
+    ##                   species    eventDate   
+    ##  Botaurus lentiginosus:1   Min.   :1984  
+    ##  Acanthis flammea     :0   1st Qu.:1984  
+    ##  Accipiter cooperii   :0   Median :1984  
+    ##  Accipiter gentilis   :0   Mean   :1984  
+    ##  Accipiter striatus   :0   3rd Qu.:1984  
+    ##  Actitis macularius   :0   Max.   :1984  
+    ##  (Other)              :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-65.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-69.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Ardea herodias    :169   Min.   :1986  
+    ##  Acanthis flammea  :  0   1st Qu.:2016  
+    ##  Accipiter cooperii:  0   Median :2019  
+    ##  Accipiter gentilis:  0   Mean   :2017  
+    ##  Accipiter striatus:  0   3rd Qu.:2021  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-70.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Ardea alba        :1   Min.   :2021  
+    ##  Ardea alba        :2   Min.   :2021  
     ##  Acanthis flammea  :0   1st Qu.:2021  
     ##  Accipiter cooperii:0   Median :2021  
     ##  Accipiter gentilis:0   Mean   :2021  
@@ -4808,10 +5430,10 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius:0   Max.   :2021  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-66.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-71.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Bubulcus ibis     :1   Min.   :2014  
+    ##  Bubulcus ibis     :2   Min.   :2014  
     ##  Acanthis flammea  :0   1st Qu.:2014  
     ##  Accipiter cooperii:0   Median :2014  
     ##  Accipiter gentilis:0   Mean   :2014  
@@ -4819,98 +5441,109 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius:0   Max.   :2014  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-67.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-72.png)<!-- -->
 
-    ##                   species    eventDate   
-    ##  Nycticorax nycticorax:5   Min.   :2009  
-    ##  Acanthis flammea     :0   1st Qu.:2014  
-    ##  Accipiter cooperii   :0   Median :2014  
-    ##  Accipiter gentilis   :0   Mean   :2016  
-    ##  Accipiter striatus   :0   3rd Qu.:2021  
-    ##  Actitis macularius   :0   Max.   :2021  
-    ##  (Other)              :0
+    ##                   species     eventDate   
+    ##  Nycticorax nycticorax:12   Min.   :1984  
+    ##  Acanthis flammea     : 0   1st Qu.:2013  
+    ##  Accipiter cooperii   : 0   Median :2014  
+    ##  Accipiter gentilis   : 0   Mean   :2014  
+    ##  Accipiter striatus   : 0   3rd Qu.:2021  
+    ##  Actitis macularius   : 0   Max.   :2022  
+    ##  (Other)              : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-68.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-73.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Plegadis chihi    :1   Min.   :2018  
+    ##  Plegadis chihi    :3   Min.   :2018  
     ##  Acanthis flammea  :0   1st Qu.:2018  
     ##  Accipiter cooperii:0   Median :2018  
-    ##  Accipiter gentilis:0   Mean   :2018  
-    ##  Accipiter striatus:0   3rd Qu.:2018  
-    ##  Actitis macularius:0   Max.   :2018  
+    ##  Accipiter gentilis:0   Mean   :2019  
+    ##  Accipiter striatus:0   3rd Qu.:2020  
+    ##  Actitis macularius:0   Max.   :2022  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-69.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-74.png)<!-- -->
+
+    ##                        species    eventDate   
+    ##  Plegadis falcinellus/chihi:1   Min.   :2020  
+    ##  Acanthis flammea          :0   1st Qu.:2020  
+    ##  Accipiter cooperii        :0   Median :2020  
+    ##  Accipiter gentilis        :0   Mean   :2020  
+    ##  Accipiter striatus        :0   3rd Qu.:2020  
+    ##  Actitis macularius        :0   Max.   :2020  
+    ##  (Other)                   :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-75.png)<!-- -->
 
     ##                species      eventDate   
-    ##  Cathartes aura    :437   Min.   :1986  
+    ##  Cathartes aura    :947   Min.   :1986  
     ##  Acanthis flammea  :  0   1st Qu.:2015  
-    ##  Accipiter cooperii:  0   Median :2017  
+    ##  Accipiter cooperii:  0   Median :2018  
     ##  Accipiter gentilis:  0   Mean   :2017  
     ##  Accipiter striatus:  0   3rd Qu.:2020  
     ##  Actitis macularius:  0   Max.   :2023  
     ##  (Other)           :  0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-70.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-76.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Pandion haliaetus :23   Min.   :2010  
-    ##  Acanthis flammea  : 0   1st Qu.:2014  
+    ##  Pandion haliaetus :46   Min.   :2010  
+    ##  Acanthis flammea  : 0   1st Qu.:2013  
     ##  Accipiter cooperii: 0   Median :2016  
     ##  Accipiter gentilis: 0   Mean   :2016  
-    ##  Accipiter striatus: 0   3rd Qu.:2018  
-    ##  Actitis macularius: 0   Max.   :2021  
+    ##  Accipiter striatus: 0   3rd Qu.:2019  
+    ##  Actitis macularius: 0   Max.   :2022  
     ##  (Other)           : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-71.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-77.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Aquila chrysaetos :120   Min.   :1986  
+    ##  Acanthis flammea  :  0   1st Qu.:2017  
+    ##  Accipiter cooperii:  0   Median :2020  
+    ##  Accipiter gentilis:  0   Mean   :2018  
+    ##  Accipiter striatus:  0   3rd Qu.:2021  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-78.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Aquila chrysaetos :56   Min.   :1986  
-    ##  Acanthis flammea  : 0   1st Qu.:2017  
-    ##  Accipiter cooperii: 0   Median :2019  
-    ##  Accipiter gentilis: 0   Mean   :2018  
+    ##  Circus hudsonius  :90   Min.   :1999  
+    ##  Acanthis flammea  : 0   1st Qu.:2015  
+    ##  Accipiter cooperii: 0   Median :2018  
+    ##  Accipiter gentilis: 0   Mean   :2016  
     ##  Accipiter striatus: 0   3rd Qu.:2020  
     ##  Actitis macularius: 0   Max.   :2023  
     ##  (Other)           : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-72.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Circus hudsonius  :42   Min.   :1999  
-    ##  Acanthis flammea  : 0   1st Qu.:2014  
-    ##  Accipiter cooperii: 0   Median :2018  
-    ##  Accipiter gentilis: 0   Mean   :2016  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-73.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-79.png)<!-- -->
 
     ##                  species     eventDate   
-    ##  Accipiter striatus  :23   Min.   :2009  
+    ##  Accipiter striatus  :47   Min.   :2009  
     ##  Acanthis flammea    : 0   1st Qu.:2014  
     ##  Accipiter cooperii  : 0   Median :2017  
     ##  Accipiter gentilis  : 0   Mean   :2016  
-    ##  Actitis macularius  : 0   3rd Qu.:2018  
-    ##  Aechmophorus clarkii: 0   Max.   :2020  
+    ##  Actitis macularius  : 0   3rd Qu.:2019  
+    ##  Aechmophorus clarkii: 0   Max.   :2022  
     ##  (Other)             : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-74.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-80.png)<!-- -->
 
     ##                  species     eventDate   
-    ##  Accipiter cooperii  :45   Min.   :1984  
+    ##  Accipiter cooperii  :97   Min.   :1984  
     ##  Acanthis flammea    : 0   1st Qu.:2015  
-    ##  Accipiter gentilis  : 0   Median :2016  
+    ##  Accipiter gentilis  : 0   Median :2017  
     ##  Accipiter striatus  : 0   Mean   :2016  
-    ##  Actitis macularius  : 0   3rd Qu.:2020  
-    ##  Aechmophorus clarkii: 0   Max.   :2021  
+    ##  Actitis macularius  : 0   3rd Qu.:2021  
+    ##  Aechmophorus clarkii: 0   Max.   :2023  
     ##  (Other)             : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-75.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-81.png)<!-- -->
 
     ##                  species    eventDate   
-    ##  Accipiter gentilis  :1   Min.   :1989  
+    ##  Accipiter gentilis  :2   Min.   :1989  
     ##  Acanthis flammea    :0   1st Qu.:1989  
     ##  Accipiter cooperii  :0   Median :1989  
     ##  Accipiter striatus  :0   Mean   :1989  
@@ -4918,54 +5551,54 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Aechmophorus clarkii:0   Max.   :1989  
     ##  (Other)             :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-76.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-82.png)<!-- -->
 
     ##                      species     eventDate   
-    ##  Haliaeetus leucocephalus:18   Min.   :2014  
+    ##  Haliaeetus leucocephalus:38   Min.   :2014  
     ##  Acanthis flammea        : 0   1st Qu.:2017  
-    ##  Accipiter cooperii      : 0   Median :2019  
+    ##  Accipiter cooperii      : 0   Median :2020  
     ##  Accipiter gentilis      : 0   Mean   :2019  
     ##  Accipiter striatus      : 0   3rd Qu.:2021  
-    ##  Actitis macularius      : 0   Max.   :2021  
+    ##  Actitis macularius      : 0   Max.   :2022  
     ##  (Other)                 : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-77.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Buteo platypterus :5   Min.   :2015  
-    ##  Acanthis flammea  :0   1st Qu.:2017  
-    ##  Accipiter cooperii:0   Median :2017  
-    ##  Accipiter gentilis:0   Mean   :2018  
-    ##  Accipiter striatus:0   3rd Qu.:2019  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-78.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-83.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Buteo swainsoni   :77   Min.   :1981  
-    ##  Acanthis flammea  : 0   1st Qu.:2010  
+    ##  Buteo platypterus :10   Min.   :2015  
+    ##  Acanthis flammea  : 0   1st Qu.:2017  
     ##  Accipiter cooperii: 0   Median :2017  
-    ##  Accipiter gentilis: 0   Mean   :2014  
+    ##  Accipiter gentilis: 0   Mean   :2018  
     ##  Accipiter striatus: 0   3rd Qu.:2019  
-    ##  Actitis macularius: 0   Max.   :2022  
+    ##  Actitis macularius: 0   Max.   :2021  
     ##  (Other)           : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-79.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-84.png)<!-- -->
 
     ##                species      eventDate   
-    ##  Buteo jamaicensis :302   Min.   :1984  
-    ##  Acanthis flammea  :  0   1st Qu.:2015  
+    ##  Buteo swainsoni   :149   Min.   :1981  
+    ##  Acanthis flammea  :  0   1st Qu.:2010  
     ##  Accipiter cooperii:  0   Median :2017  
-    ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2021  
+    ##  Accipiter gentilis:  0   Mean   :2014  
+    ##  Accipiter striatus:  0   3rd Qu.:2019  
+    ##  Actitis macularius:  0   Max.   :2023  
     ##  (Other)           :  0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-80.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-85.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Buteo jamaicensis :640   Min.   :1984  
+    ##  Acanthis flammea  :  0   1st Qu.:2015  
+    ##  Accipiter cooperii:  0   Median :2018  
+    ##  Accipiter gentilis:  0   Mean   :2017  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-86.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Buteo lagopus     :15   Min.   :2018  
+    ##  Buteo lagopus     :27   Min.   :2018  
     ##  Acanthis flammea  : 0   1st Qu.:2020  
     ##  Accipiter cooperii: 0   Median :2021  
     ##  Accipiter gentilis: 0   Mean   :2020  
@@ -4973,21 +5606,21 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius: 0   Max.   :2022  
     ##  (Other)           : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-81.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-87.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Buteo regalis     :17   Min.   :2010  
+    ##  Buteo regalis     :36   Min.   :2010  
     ##  Acanthis flammea  : 0   1st Qu.:2016  
     ##  Accipiter cooperii: 0   Median :2020  
     ##  Accipiter gentilis: 0   Mean   :2018  
     ##  Accipiter striatus: 0   3rd Qu.:2021  
-    ##  Actitis macularius: 0   Max.   :2022  
+    ##  Actitis macularius: 0   Max.   :2023  
     ##  (Other)           : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-82.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-88.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Tyto alba         :2   Min.   :2015  
+    ##  Tyto alba         :4   Min.   :2015  
     ##  Acanthis flammea  :0   1st Qu.:2015  
     ##  Accipiter cooperii:0   Median :2015  
     ##  Accipiter gentilis:0   Mean   :2015  
@@ -4995,32 +5628,21 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius:0   Max.   :2015  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-83.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-89.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Megascops asio    :24   Min.   :1984  
+    ##  Megascops asio    :54   Min.   :1984  
     ##  Acanthis flammea  : 0   1st Qu.:2015  
-    ##  Accipiter cooperii: 0   Median :2016  
-    ##  Accipiter gentilis: 0   Mean   :2015  
+    ##  Accipiter cooperii: 0   Median :2017  
+    ##  Accipiter gentilis: 0   Mean   :2016  
     ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
+    ##  Actitis macularius: 0   Max.   :2023  
     ##  (Other)           : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-84.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Bubo virginianus  :131   Min.   :1986  
-    ##  Acanthis flammea  :  0   1st Qu.:2014  
-    ##  Accipiter cooperii:  0   Median :2016  
-    ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2019  
-    ##  Actitis macularius:  0   Max.   :2022  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-85.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-90.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Bubo scandiacus   :1   Min.   :2021  
+    ##  Bubo scandiacus   :2   Min.   :2021  
     ##  Acanthis flammea  :0   1st Qu.:2021  
     ##  Accipiter cooperii:0   Median :2021  
     ##  Accipiter gentilis:0   Mean   :2021  
@@ -5028,21 +5650,32 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius:0   Max.   :2021  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-86.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-91.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Bubo virginianus  :273   Min.   :1986  
+    ##  Acanthis flammea  :  0   1st Qu.:2015  
+    ##  Accipiter cooperii:  0   Median :2016  
+    ##  Accipiter gentilis:  0   Mean   :2016  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2022  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-92.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Athene cunicularia:15   Min.   :1999  
-    ##  Acanthis flammea  : 0   1st Qu.:2015  
+    ##  Athene cunicularia:32   Min.   :1984  
+    ##  Acanthis flammea  : 0   1st Qu.:2016  
     ##  Accipiter cooperii: 0   Median :2018  
     ##  Accipiter gentilis: 0   Mean   :2016  
-    ##  Accipiter striatus: 0   3rd Qu.:2019  
-    ##  Actitis macularius: 0   Max.   :2021  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2023  
     ##  (Other)           : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-87.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-93.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Strix varia       :1   Min.   :2016  
+    ##  Strix varia       :2   Min.   :2016  
     ##  Acanthis flammea  :0   1st Qu.:2016  
     ##  Accipiter cooperii:0   Median :2016  
     ##  Accipiter gentilis:0   Mean   :2016  
@@ -5050,87 +5683,43 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius:0   Max.   :2016  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-88.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Asio otus         :3   Min.   :2010  
-    ##  Acanthis flammea  :0   1st Qu.:2012  
-    ##  Accipiter cooperii:0   Median :2015  
-    ##  Accipiter gentilis:0   Mean   :2015  
-    ##  Accipiter striatus:0   3rd Qu.:2018  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-89.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Asio flammeus     :6   Min.   :2004  
-    ##  Acanthis flammea  :0   1st Qu.:2010  
-    ##  Accipiter cooperii:0   Median :2012  
-    ##  Accipiter gentilis:0   Mean   :2012  
-    ##  Accipiter striatus:0   3rd Qu.:2015  
-    ##  Actitis macularius:0   Max.   :2020  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-90.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Aegolius acadicus :2   Min.   :2009  
-    ##  Acanthis flammea  :0   1st Qu.:2012  
-    ##  Accipiter cooperii:0   Median :2014  
-    ##  Accipiter gentilis:0   Mean   :2014  
-    ##  Accipiter striatus:0   3rd Qu.:2017  
-    ##  Actitis macularius:0   Max.   :2020  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-91.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-94.png)<!-- -->
 
     ##                species     eventDate   
-    ##  Megaceryle alcyon :94   Min.   :1986  
-    ##  Acanthis flammea  : 0   1st Qu.:2014  
-    ##  Accipiter cooperii: 0   Median :2017  
-    ##  Accipiter gentilis: 0   Mean   :2015  
+    ##  Asio flammeus     :13   Min.   :2004  
+    ##  Acanthis flammea  : 0   1st Qu.:2010  
+    ##  Accipiter cooperii: 0   Median :2015  
+    ##  Accipiter gentilis: 0   Mean   :2014  
     ##  Accipiter striatus: 0   3rd Qu.:2020  
     ##  Actitis macularius: 0   Max.   :2022  
     ##  (Other)           : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-92.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Melanerpes lewis  :24   Min.   :1980  
-    ##  Acanthis flammea  : 0   1st Qu.:1989  
-    ##  Accipiter cooperii: 0   Median :2002  
-    ##  Accipiter gentilis: 0   Mean   :2003  
-    ##  Accipiter striatus: 0   3rd Qu.:2018  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-93.png)<!-- -->
-
-    ##                        species      eventDate   
-    ##  Melanerpes erythrocephalus:426   Min.   :1985  
-    ##  Acanthis flammea          :  0   1st Qu.:2016  
-    ##  Accipiter cooperii        :  0   Median :2018  
-    ##  Accipiter gentilis        :  0   Mean   :2017  
-    ##  Accipiter striatus        :  0   3rd Qu.:2020  
-    ##  Actitis macularius        :  0   Max.   :2023  
-    ##  (Other)                   :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-94.png)<!-- -->
-
-    ##                  species    eventDate   
-    ##  Melanerpes carolinus:5   Min.   :2011  
-    ##  Acanthis flammea    :0   1st Qu.:2013  
-    ##  Accipiter cooperii  :0   Median :2014  
-    ##  Accipiter gentilis  :0   Mean   :2014  
-    ##  Accipiter striatus  :0   3rd Qu.:2015  
-    ##  Actitis macularius  :0   Max.   :2017  
-    ##  (Other)             :0
-
 ![](appendix_1_files/figure-gfm/unnamed-chunk-11-95.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Sphyrapicus varius:1   Min.   :2009  
+    ##  Aegolius acadicus :5   Min.   :2009  
+    ##  Acanthis flammea  :0   1st Qu.:2009  
+    ##  Accipiter cooperii:0   Median :2020  
+    ##  Accipiter gentilis:0   Mean   :2016  
+    ##  Accipiter striatus:0   3rd Qu.:2020  
+    ##  Actitis macularius:0   Max.   :2022  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-96.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Megaceryle alcyon :203   Min.   :1986  
+    ##  Acanthis flammea  :  0   1st Qu.:2015  
+    ##  Accipiter cooperii:  0   Median :2018  
+    ##  Accipiter gentilis:  0   Mean   :2016  
+    ##  Accipiter striatus:  0   3rd Qu.:2021  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-97.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Sphyrapicus varius:2   Min.   :2009  
     ##  Acanthis flammea  :0   1st Qu.:2009  
     ##  Accipiter cooperii:0   Median :2009  
     ##  Accipiter gentilis:0   Mean   :2009  
@@ -5138,7 +5727,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius:0   Max.   :2009  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-96.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-98.png)<!-- -->
 
     ##                  species    eventDate   
     ##  Sphyrapicus nuchalis:1   Min.   :2014  
@@ -5149,10 +5738,54 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius  :0   Max.   :2014  
     ##  (Other)             :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-97.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-99.png)<!-- -->
+
+    ##                         species    eventDate   
+    ##  Sphyrapicus varius/nuchalis:1   Min.   :2018  
+    ##  Acanthis flammea           :0   1st Qu.:2018  
+    ##  Accipiter cooperii         :0   Median :2018  
+    ##  Accipiter gentilis         :0   Mean   :2018  
+    ##  Accipiter striatus         :0   3rd Qu.:2018  
+    ##  Actitis macularius         :0   Max.   :2018  
+    ##  (Other)                    :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-100.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Melanerpes lewis  :44   Min.   :1980  
+    ##  Acanthis flammea  : 0   1st Qu.:1988  
+    ##  Accipiter cooperii: 0   Median :2000  
+    ##  Accipiter gentilis: 0   Mean   :2002  
+    ##  Accipiter striatus: 0   3rd Qu.:2017  
+    ##  Actitis macularius: 0   Max.   :2022  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-101.png)<!-- -->
+
+    ##                        species      eventDate   
+    ##  Melanerpes erythrocephalus:938   Min.   :1985  
+    ##  Acanthis flammea          :  0   1st Qu.:2016  
+    ##  Accipiter cooperii        :  0   Median :2018  
+    ##  Accipiter gentilis        :  0   Mean   :2018  
+    ##  Accipiter striatus        :  0   3rd Qu.:2020  
+    ##  Actitis macularius        :  0   Max.   :2023  
+    ##  (Other)                   :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-102.png)<!-- -->
+
+    ##                  species     eventDate   
+    ##  Melanerpes carolinus:10   Min.   :2011  
+    ##  Acanthis flammea    : 0   1st Qu.:2013  
+    ##  Accipiter cooperii  : 0   Median :2014  
+    ##  Accipiter gentilis  : 0   Mean   :2014  
+    ##  Accipiter striatus  : 0   3rd Qu.:2015  
+    ##  Actitis macularius  : 0   Max.   :2017  
+    ##  (Other)             : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-103.png)<!-- -->
 
     ##                species    eventDate   
-    ##  Picoides dorsalis :4   Min.   :2014  
+    ##  Picoides dorsalis :8   Min.   :2014  
     ##  Acanthis flammea  :0   1st Qu.:2014  
     ##  Accipiter cooperii:0   Median :2014  
     ##  Accipiter gentilis:0   Mean   :2014  
@@ -5160,40 +5793,1756 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius:0   Max.   :2014  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-98.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-104.png)<!-- -->
 
     ##                 species      eventDate   
-    ##  Dryobates pubescens:403   Min.   :1975  
+    ##  Dryobates pubescens:876   Min.   :1975  
+    ##  Acanthis flammea   :  0   1st Qu.:2015  
+    ##  Accipiter cooperii :  0   Median :2018  
+    ##  Accipiter gentilis :  0   Mean   :2017  
+    ##  Accipiter striatus :  0   3rd Qu.:2020  
+    ##  Actitis macularius :  0   Max.   :2023  
+    ##  (Other)            :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-105.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Dryobates villosus:980   Min.   :1975  
+    ##  Acanthis flammea  :  0   1st Qu.:2015  
+    ##  Accipiter cooperii:  0   Median :2017  
+    ##  Accipiter gentilis:  0   Mean   :2017  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-106.png)<!-- -->
+
+    ##                          species    eventDate   
+    ##  Dryobates pubescens/villosus:1   Min.   :2021  
+    ##  Acanthis flammea            :0   1st Qu.:2021  
+    ##  Accipiter cooperii          :0   Median :2021  
+    ##  Accipiter gentilis          :0   Mean   :2021  
+    ##  Accipiter striatus          :0   3rd Qu.:2021  
+    ##  Actitis macularius          :0   Max.   :2021  
+    ##  (Other)                     :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-107.png)<!-- -->
+
+    ##                species       eventDate   
+    ##  Colaptes auratus  :1473   Min.   :1975  
+    ##  Acanthis flammea  :   0   1st Qu.:2015  
+    ##  Accipiter cooperii:   0   Median :2018  
+    ##  Accipiter gentilis:   0   Mean   :2017  
+    ##  Accipiter striatus:   0   3rd Qu.:2020  
+    ##  Actitis macularius:   0   Max.   :2023  
+    ##  (Other)           :   0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-108.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Falco columbarius :13   Min.   :2014  
+    ##  Acanthis flammea  : 0   1st Qu.:2016  
+    ##  Accipiter cooperii: 0   Median :2017  
+    ##  Accipiter gentilis: 0   Mean   :2017  
+    ##  Accipiter striatus: 0   3rd Qu.:2018  
+    ##  Actitis macularius: 0   Max.   :2022  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-109.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Falco peregrinus  :8   Min.   :2016  
+    ##  Acanthis flammea  :0   1st Qu.:2016  
+    ##  Accipiter cooperii:0   Median :2016  
+    ##  Accipiter gentilis:0   Mean   :2017  
+    ##  Accipiter striatus:0   3rd Qu.:2017  
+    ##  Actitis macularius:0   Max.   :2020  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-110.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Falco mexicanus   :64   Min.   :1935  
+    ##  Acanthis flammea  : 0   1st Qu.:2014  
+    ##  Accipiter cooperii: 0   Median :2018  
+    ##  Accipiter gentilis: 0   Mean   :2012  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-111.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Contopus cooperi  :16   Min.   :2010  
+    ##  Acanthis flammea  : 0   1st Qu.:2015  
+    ##  Accipiter cooperii: 0   Median :2018  
+    ##  Accipiter gentilis: 0   Mean   :2017  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-112.png)<!-- -->
+
+    ##                 species      eventDate   
+    ##  Contopus sordidulus:844   Min.   :1959  
+    ##  Acanthis flammea   :  0   1st Qu.:2015  
+    ##  Accipiter cooperii :  0   Median :2018  
+    ##  Accipiter gentilis :  0   Mean   :2017  
+    ##  Accipiter striatus :  0   3rd Qu.:2020  
+    ##  Actitis macularius :  0   Max.   :2023  
+    ##  (Other)            :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-113.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Contopus virens   :3   Min.   :2009  
+    ##  Acanthis flammea  :0   1st Qu.:2014  
+    ##  Accipiter cooperii:0   Median :2020  
+    ##  Accipiter gentilis:0   Mean   :2016  
+    ##  Accipiter striatus:0   3rd Qu.:2020  
+    ##  Actitis macularius:0   Max.   :2020  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-114.png)<!-- -->
+
+    ##                        species    eventDate   
+    ##  Contopus sordidulus/virens:1   Min.   :2010  
+    ##  Acanthis flammea          :0   1st Qu.:2010  
+    ##  Accipiter cooperii        :0   Median :2010  
+    ##  Accipiter gentilis        :0   Mean   :2010  
+    ##  Accipiter striatus        :0   3rd Qu.:2010  
+    ##  Actitis macularius        :0   Max.   :2010  
+    ##  (Other)                   :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-115.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Empidonax alnorum :3   Min.   :2021  
+    ##  Acanthis flammea  :0   1st Qu.:2021  
+    ##  Accipiter cooperii:0   Median :2021  
+    ##  Accipiter gentilis:0   Mean   :2021  
+    ##  Accipiter striatus:0   3rd Qu.:2022  
+    ##  Actitis macularius:0   Max.   :2022  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-116.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Empidonax traillii:40   Min.   :2010  
+    ##  Acanthis flammea  : 0   1st Qu.:2018  
+    ##  Accipiter cooperii: 0   Median :2020  
+    ##  Accipiter gentilis: 0   Mean   :2019  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-117.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Empidonax minimus :73   Min.   :2007  
+    ##  Acanthis flammea  : 0   1st Qu.:2016  
+    ##  Accipiter cooperii: 0   Median :2018  
+    ##  Accipiter gentilis: 0   Mean   :2017  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-118.png)<!-- -->
+
+    ##                 species    eventDate   
+    ##  Empidonax hammondii:7   Min.   :2020  
+    ##  Acanthis flammea   :0   1st Qu.:2020  
+    ##  Accipiter cooperii :0   Median :2020  
+    ##  Accipiter gentilis :0   Mean   :2021  
+    ##  Accipiter striatus :0   3rd Qu.:2022  
+    ##  Actitis macularius :0   Max.   :2022  
+    ##  (Other)            :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-119.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Empidonax wrightii:2   Min.   :2013  
+    ##  Acanthis flammea  :0   1st Qu.:2013  
+    ##  Accipiter cooperii:0   Median :2013  
+    ##  Accipiter gentilis:0   Mean   :2013  
+    ##  Accipiter striatus:0   3rd Qu.:2013  
+    ##  Actitis macularius:0   Max.   :2013  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-120.png)<!-- -->
+
+    ##                   species    eventDate   
+    ##  Empidonax oberholseri:8   Min.   :2013  
+    ##  Acanthis flammea     :0   1st Qu.:2014  
+    ##  Accipiter cooperii   :0   Median :2014  
+    ##  Accipiter gentilis   :0   Mean   :2017  
+    ##  Accipiter striatus   :0   3rd Qu.:2021  
+    ##  Actitis macularius   :0   Max.   :2023  
+    ##  (Other)              :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-121.png)<!-- -->
+
+    ##                    species      eventDate   
+    ##  Empidonax occidentalis:129   Min.   :1994  
+    ##  Acanthis flammea      :  0   1st Qu.:2015  
+    ##  Accipiter cooperii    :  0   Median :2019  
+    ##  Accipiter gentilis    :  0   Mean   :2017  
+    ##  Accipiter striatus    :  0   3rd Qu.:2021  
+    ##  Actitis macularius    :  0   Max.   :2023  
+    ##  (Other)               :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-122.png)<!-- -->
+
+    ##                               species    eventDate   
+    ##  Empidonax difficilis/occidentalis:1   Min.   :2015  
+    ##  Acanthis flammea                 :0   1st Qu.:2015  
+    ##  Accipiter cooperii               :0   Median :2015  
+    ##  Accipiter gentilis               :0   Mean   :2015  
+    ##  Accipiter striatus               :0   3rd Qu.:2015  
+    ##  Actitis macularius               :0   Max.   :2015  
+    ##  (Other)                          :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-123.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Sayornis phoebe   :283   Min.   :1991  
+    ##  Acanthis flammea  :  0   1st Qu.:2015  
+    ##  Accipiter cooperii:  0   Median :2018  
+    ##  Accipiter gentilis:  0   Mean   :2016  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-124.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Sayornis saya     :220   Min.   :1945  
+    ##  Acanthis flammea  :  0   1st Qu.:2013  
+    ##  Accipiter cooperii:  0   Median :2017  
+    ##  Accipiter gentilis:  0   Mean   :2015  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-125.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Myiarchus crinitus:379   Min.   :1986  
+    ##  Acanthis flammea  :  0   1st Qu.:2016  
+    ##  Accipiter cooperii:  0   Median :2018  
+    ##  Accipiter gentilis:  0   Mean   :2017  
+    ##  Accipiter striatus:  0   3rd Qu.:2021  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-126.png)<!-- -->
+
+    ##                 species     eventDate   
+    ##  Tyrannus vociferans:40   Min.   :1984  
+    ##  Acanthis flammea   : 0   1st Qu.:2013  
+    ##  Accipiter cooperii : 0   Median :2016  
+    ##  Accipiter gentilis : 0   Mean   :2015  
+    ##  Accipiter striatus : 0   3rd Qu.:2020  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-127.png)<!-- -->
+
+    ##                 species      eventDate   
+    ##  Tyrannus verticalis:381   Min.   :1975  
+    ##  Acanthis flammea   :  0   1st Qu.:2015  
+    ##  Accipiter cooperii :  0   Median :2018  
+    ##  Accipiter gentilis :  0   Mean   :2016  
+    ##  Accipiter striatus :  0   3rd Qu.:2020  
+    ##  Actitis macularius :  0   Max.   :2023  
+    ##  (Other)            :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-128.png)<!-- -->
+
+    ##                            species    eventDate   
+    ##  Tyrannus vociferans/verticalis:2   Min.   :2012  
+    ##  Acanthis flammea              :0   1st Qu.:2014  
+    ##  Accipiter cooperii            :0   Median :2017  
+    ##  Accipiter gentilis            :0   Mean   :2017  
+    ##  Accipiter striatus            :0   3rd Qu.:2020  
+    ##  Actitis macularius            :0   Max.   :2022  
+    ##  (Other)                       :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-129.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Tyrannus tyrannus :743   Min.   :1959  
+    ##  Acanthis flammea  :  0   1st Qu.:2017  
+    ##  Accipiter cooperii:  0   Median :2019  
+    ##  Accipiter gentilis:  0   Mean   :2017  
+    ##  Accipiter striatus:  0   3rd Qu.:2021  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-130.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Vireo bellii      :29   Min.   :1984  
+    ##  Acanthis flammea  : 0   1st Qu.:2015  
+    ##  Accipiter cooperii: 0   Median :2018  
+    ##  Accipiter gentilis: 0   Mean   :2016  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-131.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Vireo cassinii    :16   Min.   :2013  
+    ##  Acanthis flammea  : 0   1st Qu.:2014  
+    ##  Accipiter cooperii: 0   Median :2014  
+    ##  Accipiter gentilis: 0   Mean   :2015  
+    ##  Accipiter striatus: 0   3rd Qu.:2017  
+    ##  Actitis macularius: 0   Max.   :2018  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-132.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Vireo solitarius  :2   Min.   :2017  
+    ##  Acanthis flammea  :0   1st Qu.:2017  
+    ##  Accipiter cooperii:0   Median :2017  
+    ##  Accipiter gentilis:0   Mean   :2017  
+    ##  Accipiter striatus:0   3rd Qu.:2017  
+    ##  Actitis macularius:0   Max.   :2017  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-133.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Vireo plumbeus    :122   Min.   :2004  
+    ##  Acanthis flammea  :  0   1st Qu.:2010  
+    ##  Accipiter cooperii:  0   Median :2015  
+    ##  Accipiter gentilis:  0   Mean   :2015  
+    ##  Accipiter striatus:  0   3rd Qu.:2018  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-134.png)<!-- -->
+
+    ##                     species    eventDate   
+    ##  Vireo cassinii/plumbeus:1   Min.   :2021  
+    ##  Acanthis flammea       :0   1st Qu.:2021  
+    ##  Accipiter cooperii     :0   Median :2021  
+    ##  Accipiter gentilis     :0   Mean   :2021  
+    ##  Accipiter striatus     :0   3rd Qu.:2021  
+    ##  Actitis macularius     :0   Max.   :2021  
+    ##  (Other)                :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-135.png)<!-- -->
+
+    ##                  species    eventDate   
+    ##  Vireo philadelphicus:1   Min.   :2022  
+    ##  Acanthis flammea    :0   1st Qu.:2022  
+    ##  Accipiter cooperii  :0   Median :2022  
+    ##  Accipiter gentilis  :0   Mean   :2022  
+    ##  Accipiter striatus  :0   3rd Qu.:2022  
+    ##  Actitis macularius  :0   Max.   :2022  
+    ##  (Other)             :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-136.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Vireo gilvus      :106   Min.   :1901  
+    ##  Acanthis flammea  :  0   1st Qu.:2015  
+    ##  Accipiter cooperii:  0   Median :2018  
+    ##  Accipiter gentilis:  0   Mean   :2015  
+    ##  Accipiter striatus:  0   3rd Qu.:2021  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-137.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Vireo olivaceus   :444   Min.   :1975  
+    ##  Acanthis flammea  :  0   1st Qu.:2016  
+    ##  Accipiter cooperii:  0   Median :2019  
+    ##  Accipiter gentilis:  0   Mean   :2017  
+    ##  Accipiter striatus:  0   3rd Qu.:2021  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-138.png)<!-- -->
+
+    ##                 species      eventDate   
+    ##  Lanius ludovicianus:148   Min.   :1981  
+    ##  Acanthis flammea   :  0   1st Qu.:2014  
+    ##  Accipiter cooperii :  0   Median :2018  
+    ##  Accipiter gentilis :  0   Mean   :2016  
+    ##  Accipiter striatus :  0   3rd Qu.:2021  
+    ##  Actitis macularius :  0   Max.   :2023  
+    ##  (Other)            :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-139.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Lanius borealis   :13   Min.   :2014  
+    ##  Acanthis flammea  : 0   1st Qu.:2014  
+    ##  Accipiter cooperii: 0   Median :2021  
+    ##  Accipiter gentilis: 0   Mean   :2018  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2021  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-140.png)<!-- -->
+
+    ##                       species     eventDate   
+    ##  Gymnorhinus cyanocephalus:23   Min.   :1986  
+    ##  Acanthis flammea         : 0   1st Qu.:1988  
+    ##  Accipiter cooperii       : 0   Median :2017  
+    ##  Accipiter gentilis       : 0   Mean   :2006  
+    ##  Accipiter striatus       : 0   3rd Qu.:2020  
+    ##  Actitis macularius       : 0   Max.   :2022  
+    ##  (Other)                  : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-141.png)<!-- -->
+
+    ##                 species      eventDate   
+    ##  Cyanocitta cristata:995   Min.   :1975  
+    ##  Acanthis flammea   :  0   1st Qu.:2015  
+    ##  Accipiter cooperii :  0   Median :2018  
+    ##  Accipiter gentilis :  0   Mean   :2017  
+    ##  Accipiter striatus :  0   3rd Qu.:2020  
+    ##  Actitis macularius :  0   Max.   :2023  
+    ##  (Other)            :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-142.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Pica hudsonia     :152   Min.   :1971  
+    ##  Acanthis flammea  :  0   1st Qu.:2016  
+    ##  Accipiter cooperii:  0   Median :2020  
+    ##  Accipiter gentilis:  0   Mean   :2016  
+    ##  Accipiter striatus:  0   3rd Qu.:2021  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-143.png)<!-- -->
+
+    ##                  species     eventDate   
+    ##  Nucifraga columbiana:16   Min.   :2017  
+    ##  Acanthis flammea    : 0   1st Qu.:2017  
+    ##  Accipiter cooperii  : 0   Median :2017  
+    ##  Accipiter gentilis  : 0   Mean   :2017  
+    ##  Accipiter striatus  : 0   3rd Qu.:2017  
+    ##  Actitis macularius  : 0   Max.   :2017  
+    ##  (Other)             : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-144.png)<!-- -->
+
+    ##                   species       eventDate   
+    ##  Corvus brachyrhynchos:1250   Min.   :1975  
+    ##  Acanthis flammea     :   0   1st Qu.:2015  
+    ##  Accipiter cooperii   :   0   Median :2017  
+    ##  Accipiter gentilis   :   0   Mean   :2017  
+    ##  Accipiter striatus   :   0   3rd Qu.:2020  
+    ##  Actitis macularius   :   0   Max.   :2023  
+    ##  (Other)              :   0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-145.png)<!-- -->
+
+    ##                  species       eventDate   
+    ##  Poecile atricapillus:1790   Min.   :1971  
+    ##  Acanthis flammea    :   0   1st Qu.:2015  
+    ##  Accipiter cooperii  :   0   Median :2018  
+    ##  Accipiter gentilis  :   0   Mean   :2017  
+    ##  Accipiter striatus  :   0   3rd Qu.:2020  
+    ##  Actitis macularius  :   0   Max.   :2023  
+    ##  (Other)             :   0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-146.png)<!-- -->
+
+    ##                  species      eventDate   
+    ##  Eremophila alpestris:281   Min.   :1946  
+    ##  Acanthis flammea    :  0   1st Qu.:2016  
+    ##  Accipiter cooperii  :  0   Median :2019  
+    ##  Accipiter gentilis  :  0   Mean   :2015  
+    ##  Accipiter striatus  :  0   3rd Qu.:2021  
+    ##  Actitis macularius  :  0   Max.   :2023  
+    ##  (Other)             :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-147.png)<!-- -->
+
+    ##                        species      eventDate   
+    ##  Stelgidopteryx serripennis:196   Min.   :1975  
+    ##  Acanthis flammea          :  0   1st Qu.:2012  
+    ##  Accipiter cooperii        :  0   Median :2018  
+    ##  Accipiter gentilis        :  0   Mean   :2015  
+    ##  Accipiter striatus        :  0   3rd Qu.:2020  
+    ##  Actitis macularius        :  0   Max.   :2023  
+    ##  (Other)                   :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-148.png)<!-- -->
+
+    ##                 species      eventDate   
+    ##  Tachycineta bicolor:228   Min.   :1975  
+    ##  Acanthis flammea   :  0   1st Qu.:2017  
+    ##  Accipiter cooperii :  0   Median :2020  
+    ##  Accipiter gentilis :  0   Mean   :2018  
+    ##  Accipiter striatus :  0   3rd Qu.:2021  
+    ##  Actitis macularius :  0   Max.   :2023  
+    ##  (Other)            :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-149.png)<!-- -->
+
+    ##                    species      eventDate   
+    ##  Tachycineta thalassina:247   Min.   :1984  
+    ##  Acanthis flammea      :  0   1st Qu.:2015  
+    ##  Accipiter cooperii    :  0   Median :2018  
+    ##  Accipiter gentilis    :  0   Mean   :2016  
+    ##  Accipiter striatus    :  0   3rd Qu.:2020  
+    ##  Actitis macularius    :  0   Max.   :2023  
+    ##  (Other)               :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-150.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Riparia riparia   :28   Min.   :1975  
+    ##  Acanthis flammea  : 0   1st Qu.:2013  
+    ##  Accipiter cooperii: 0   Median :2018  
+    ##  Accipiter gentilis: 0   Mean   :2015  
+    ##  Accipiter striatus: 0   3rd Qu.:2021  
+    ##  Actitis macularius: 0   Max.   :2022  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-151.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Hirundo rustica   :534   Min.   :1984  
+    ##  Acanthis flammea  :  0   1st Qu.:2015  
+    ##  Accipiter cooperii:  0   Median :2018  
+    ##  Accipiter gentilis:  0   Mean   :2017  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-152.png)<!-- -->
+
+    ##                      species      eventDate   
+    ##  Petrochelidon pyrrhonota:180   Min.   :1975  
+    ##  Acanthis flammea        :  0   1st Qu.:2015  
+    ##  Accipiter cooperii      :  0   Median :2018  
+    ##  Accipiter gentilis      :  0   Mean   :2016  
+    ##  Accipiter striatus      :  0   3rd Qu.:2020  
+    ##  Actitis macularius      :  0   Max.   :2023  
+    ##  (Other)                 :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-153.png)<!-- -->
+
+    ##                 species     eventDate   
+    ##  Corthylio calendula:84   Min.   :2003  
+    ##  Acanthis flammea   : 0   1st Qu.:2015  
+    ##  Accipiter cooperii : 0   Median :2016  
+    ##  Accipiter gentilis : 0   Mean   :2016  
+    ##  Accipiter striatus : 0   3rd Qu.:2018  
+    ##  Actitis macularius : 0   Max.   :2022  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-154.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Regulus satrapa   :5   Min.   :2017  
+    ##  Acanthis flammea  :0   1st Qu.:2017  
+    ##  Accipiter cooperii:0   Median :2017  
+    ##  Accipiter gentilis:0   Mean   :2018  
+    ##  Accipiter striatus:0   3rd Qu.:2017  
+    ##  Actitis macularius:0   Max.   :2022  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-155.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Sitta canadensis  :902   Min.   :1975  
+    ##  Acanthis flammea  :  0   1st Qu.:2015  
+    ##  Accipiter cooperii:  0   Median :2017  
+    ##  Accipiter gentilis:  0   Mean   :2016  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-156.png)<!-- -->
+
+    ##                species       eventDate   
+    ##  Sitta carolinensis:1077   Min.   :1975  
+    ##  Acanthis flammea  :   0   1st Qu.:2015  
+    ##  Accipiter cooperii:   0   Median :2017  
+    ##  Accipiter gentilis:   0   Mean   :2017  
+    ##  Accipiter striatus:   0   3rd Qu.:2020  
+    ##  Actitis macularius:   0   Max.   :2023  
+    ##  (Other)           :   0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-157.png)<!-- -->
+
+    ##                species       eventDate   
+    ##  Sitta pygmaea     :1123   Min.   :1975  
+    ##  Acanthis flammea  :   0   1st Qu.:2015  
+    ##  Accipiter cooperii:   0   Median :2017  
+    ##  Accipiter gentilis:   0   Mean   :2017  
+    ##  Accipiter striatus:   0   3rd Qu.:2020  
+    ##  Actitis macularius:   0   Max.   :2023  
+    ##  (Other)           :   0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-158.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Certhia americana :105   Min.   :1986  
+    ##  Acanthis flammea  :  0   1st Qu.:2010  
+    ##  Accipiter cooperii:  0   Median :2016  
+    ##  Accipiter gentilis:  0   Mean   :2014  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2022  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-159.png)<!-- -->
+
+    ##                 species     eventDate   
+    ##  Polioptila caerulea:85   Min.   :2013  
+    ##  Acanthis flammea   : 0   1st Qu.:2017  
+    ##  Accipiter cooperii : 0   Median :2019  
+    ##  Accipiter gentilis : 0   Mean   :2019  
+    ##  Accipiter striatus : 0   3rd Qu.:2021  
+    ##  Actitis macularius : 0   Max.   :2023  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-160.png)<!-- -->
+
+    ##                  species      eventDate   
+    ##  Salpinctes obsoletus:228   Min.   :1984  
+    ##  Acanthis flammea    :  0   1st Qu.:2015  
+    ##  Accipiter cooperii  :  0   Median :2018  
+    ##  Accipiter gentilis  :  0   Mean   :2016  
+    ##  Accipiter striatus  :  0   3rd Qu.:2020  
+    ##  Actitis macularius  :  0   Max.   :2023  
+    ##  (Other)             :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-161.png)<!-- -->
+
+    ##                species       eventDate   
+    ##  Troglodytes aedon :1394   Min.   :1975  
+    ##  Acanthis flammea  :   0   1st Qu.:2015  
+    ##  Accipiter cooperii:   0   Median :2018  
+    ##  Accipiter gentilis:   0   Mean   :2017  
+    ##  Accipiter striatus:   0   3rd Qu.:2020  
+    ##  Actitis macularius:   0   Max.   :2023  
+    ##  (Other)           :   0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-162.png)<!-- -->
+
+    ##                   species    eventDate   
+    ##  Troglodytes pacificus:4   Min.   :2017  
+    ##  Acanthis flammea     :0   1st Qu.:2017  
+    ##  Accipiter cooperii   :0   Median :2017  
+    ##  Accipiter gentilis   :0   Mean   :2017  
+    ##  Accipiter striatus   :0   3rd Qu.:2017  
+    ##  Actitis macularius   :0   Max.   :2017  
+    ##  (Other)              :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-163.png)<!-- -->
+
+    ##                  species    eventDate   
+    ##  Troglodytes hiemalis:2   Min.   :2018  
+    ##  Acanthis flammea    :0   1st Qu.:2018  
+    ##  Accipiter cooperii  :0   Median :2018  
+    ##  Accipiter gentilis  :0   Mean   :2018  
+    ##  Accipiter striatus  :0   3rd Qu.:2018  
+    ##  Actitis macularius  :0   Max.   :2018  
+    ##  (Other)             :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-164.png)<!-- -->
+
+    ##                   species    eventDate   
+    ##  Cistothorus palustris:5   Min.   :2020  
+    ##  Acanthis flammea     :0   1st Qu.:2020  
+    ##  Accipiter cooperii   :0   Median :2021  
+    ##  Accipiter gentilis   :0   Mean   :2021  
+    ##  Accipiter striatus   :0   3rd Qu.:2021  
+    ##  Actitis macularius   :0   Max.   :2022  
+    ##  (Other)              :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-165.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Sturnus vulgaris  :672   Min.   :1975  
+    ##  Acanthis flammea  :  0   1st Qu.:2016  
+    ##  Accipiter cooperii:  0   Median :2018  
+    ##  Accipiter gentilis:  0   Mean   :2017  
+    ##  Accipiter striatus:  0   3rd Qu.:2021  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-166.png)<!-- -->
+
+    ##                    species      eventDate   
+    ##  Dumetella carolinensis:258   Min.   :1996  
+    ##  Acanthis flammea      :  0   1st Qu.:2015  
+    ##  Accipiter cooperii    :  0   Median :2018  
+    ##  Accipiter gentilis    :  0   Mean   :2017  
+    ##  Accipiter striatus    :  0   3rd Qu.:2020  
+    ##  Actitis macularius    :  0   Max.   :2023  
+    ##  (Other)               :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-167.png)<!-- -->
+
+    ##                   species    eventDate   
+    ##  Toxostoma curvirostre:2   Min.   :2016  
+    ##  Acanthis flammea     :0   1st Qu.:2016  
+    ##  Accipiter cooperii   :0   Median :2016  
+    ##  Accipiter gentilis   :0   Mean   :2016  
+    ##  Accipiter striatus   :0   3rd Qu.:2016  
+    ##  Actitis macularius   :0   Max.   :2016  
+    ##  (Other)              :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-168.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Toxostoma rufum   :472   Min.   :1985  
+    ##  Acanthis flammea  :  0   1st Qu.:2016  
+    ##  Accipiter cooperii:  0   Median :2018  
+    ##  Accipiter gentilis:  0   Mean   :2017  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-169.png)<!-- -->
+
+    ##                  species    eventDate   
+    ##  Oreoscoptes montanus:5   Min.   :1901  
+    ##  Acanthis flammea    :0   1st Qu.:2012  
+    ##  Accipiter cooperii  :0   Median :2012  
+    ##  Accipiter gentilis  :0   Mean   :1991  
+    ##  Accipiter striatus  :0   3rd Qu.:2016  
+    ##  Actitis macularius  :0   Max.   :2016  
+    ##  (Other)             :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-170.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Mimus polyglottos :5   Min.   :2018  
+    ##  Acanthis flammea  :0   1st Qu.:2018  
+    ##  Accipiter cooperii:0   Median :2019  
+    ##  Accipiter gentilis:0   Mean   :2019  
+    ##  Accipiter striatus:0   3rd Qu.:2019  
+    ##  Actitis macularius:0   Max.   :2022  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-171.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Sialia sialis     :884   Min.   :1998  
+    ##  Acanthis flammea  :  0   1st Qu.:2015  
+    ##  Accipiter cooperii:  0   Median :2017  
+    ##  Accipiter gentilis:  0   Mean   :2017  
+    ##  Accipiter striatus:  0   3rd Qu.:2019  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-172.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Sialia currucoides:598   Min.   :1984  
+    ##  Acanthis flammea  :  0   1st Qu.:2014  
+    ##  Accipiter cooperii:  0   Median :2017  
+    ##  Accipiter gentilis:  0   Mean   :2015  
+    ##  Accipiter striatus:  0   3rd Qu.:2019  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-173.png)<!-- -->
+
+    ##                         species    eventDate   
+    ##  Sialia sialis x currucoides:1   Min.   :1985  
+    ##  Acanthis flammea           :0   1st Qu.:1985  
+    ##  Accipiter cooperii         :0   Median :1985  
+    ##  Accipiter gentilis         :0   Mean   :1985  
+    ##  Accipiter striatus         :0   3rd Qu.:1985  
+    ##  Actitis macularius         :0   Max.   :1985  
+    ##  (Other)                    :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-174.png)<!-- -->
+
+    ##                 species      eventDate   
+    ##  Myadestes townsendi:152   Min.   :1978  
     ##  Acanthis flammea   :  0   1st Qu.:2015  
     ##  Accipiter cooperii :  0   Median :2017  
-    ##  Accipiter gentilis :  0   Mean   :2017  
+    ##  Accipiter gentilis :  0   Mean   :2016  
     ##  Accipiter striatus :  0   3rd Qu.:2020  
     ##  Actitis macularius :  0   Max.   :2022  
     ##  (Other)            :  0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-99.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-175.png)<!-- -->
+
+    ##                 species    eventDate   
+    ##  Catharus fuscescens:6   Min.   :2009  
+    ##  Acanthis flammea   :0   1st Qu.:2013  
+    ##  Accipiter cooperii :0   Median :2016  
+    ##  Accipiter gentilis :0   Mean   :2016  
+    ##  Accipiter striatus :0   3rd Qu.:2018  
+    ##  Actitis macularius :0   Max.   :2023  
+    ##  (Other)            :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-176.png)<!-- -->
 
     ##                species      eventDate   
-    ##  Dryobates villosus:452   Min.   :1975  
+    ##  Catharus ustulatus:229   Min.   :1973  
+    ##  Acanthis flammea  :  0   1st Qu.:2016  
+    ##  Accipiter cooperii:  0   Median :2018  
+    ##  Accipiter gentilis:  0   Mean   :2017  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-177.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Catharus guttatus :41   Min.   :2010  
+    ##  Acanthis flammea  : 0   1st Qu.:2016  
+    ##  Accipiter cooperii: 0   Median :2017  
+    ##  Accipiter gentilis: 0   Mean   :2017  
+    ##  Accipiter striatus: 0   3rd Qu.:2018  
+    ##  Actitis macularius: 0   Max.   :2022  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-178.png)<!-- -->
+
+    ##                species       eventDate   
+    ##  Turdus migratorius:1777   Min.   :1959  
+    ##  Acanthis flammea  :   0   1st Qu.:2015  
+    ##  Accipiter cooperii:   0   Median :2018  
+    ##  Accipiter gentilis:   0   Mean   :2017  
+    ##  Accipiter striatus:   0   3rd Qu.:2020  
+    ##  Actitis macularius:   0   Max.   :2023  
+    ##  (Other)           :   0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-179.png)<!-- -->
+
+    ##                 species      eventDate   
+    ##  Bombycilla cedrorum:558   Min.   :1984  
+    ##  Acanthis flammea   :  0   1st Qu.:2015  
+    ##  Accipiter cooperii :  0   Median :2018  
+    ##  Accipiter gentilis :  0   Mean   :2017  
+    ##  Accipiter striatus :  0   3rd Qu.:2020  
+    ##  Actitis macularius :  0   Max.   :2023  
+    ##  (Other)            :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-180.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Passer domesticus :71   Min.   :1975  
+    ##  Acanthis flammea  : 0   1st Qu.:2008  
+    ##  Accipiter cooperii: 0   Median :2013  
+    ##  Accipiter gentilis: 0   Mean   :2010  
+    ##  Accipiter striatus: 0   3rd Qu.:2017  
+    ##  Actitis macularius: 0   Max.   :2022  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-181.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Anthus rubescens  :3   Min.   :2017  
+    ##  Acanthis flammea  :0   1st Qu.:2017  
+    ##  Accipiter cooperii:0   Median :2017  
+    ##  Accipiter gentilis:0   Mean   :2019  
+    ##  Accipiter striatus:0   3rd Qu.:2020  
+    ##  Actitis macularius:0   Max.   :2022  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-182.png)<!-- -->
+
+    ##                     species     eventDate   
+    ##  Leucosticte tephrocotis:15   Min.   :2020  
+    ##  Acanthis flammea       : 0   1st Qu.:2020  
+    ##  Accipiter cooperii     : 0   Median :2020  
+    ##  Accipiter gentilis     : 0   Mean   :2020  
+    ##  Accipiter striatus     : 0   3rd Qu.:2020  
+    ##  Actitis macularius     : 0   Max.   :2020  
+    ##  (Other)                : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-183.png)<!-- -->
+
+    ##                  species      eventDate   
+    ##  Haemorhous mexicanus:226   Min.   :2000  
+    ##  Acanthis flammea    :  0   1st Qu.:2015  
+    ##  Accipiter cooperii  :  0   Median :2018  
+    ##  Accipiter gentilis  :  0   Mean   :2017  
+    ##  Accipiter striatus  :  0   3rd Qu.:2020  
+    ##  Actitis macularius  :  0   Max.   :2023  
+    ##  (Other)             :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-184.png)<!-- -->
+
+    ##                  species    eventDate   
+    ##  Haemorhous purpureus:2   Min.   :2014  
+    ##  Acanthis flammea    :0   1st Qu.:2014  
+    ##  Accipiter cooperii  :0   Median :2014  
+    ##  Accipiter gentilis  :0   Mean   :2014  
+    ##  Accipiter striatus  :0   3rd Qu.:2014  
+    ##  Actitis macularius  :0   Max.   :2014  
+    ##  (Other)             :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-185.png)<!-- -->
+
+    ##                 species     eventDate   
+    ##  Haemorhous cassinii:12   Min.   :1985  
+    ##  Acanthis flammea   : 0   1st Qu.:2015  
+    ##  Accipiter cooperii : 0   Median :2017  
+    ##  Accipiter gentilis : 0   Mean   :2012  
+    ##  Accipiter striatus : 0   3rd Qu.:2017  
+    ##  Actitis macularius : 0   Max.   :2020  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-186.png)<!-- -->
+
+    ##                  species    eventDate   
+    ##  Acanthis flammea    :9   Min.   :2015  
+    ##  Accipiter cooperii  :0   1st Qu.:2020  
+    ##  Accipiter gentilis  :0   Median :2021  
+    ##  Accipiter striatus  :0   Mean   :2019  
+    ##  Actitis macularius  :0   3rd Qu.:2021  
+    ##  Aechmophorus clarkii:0   Max.   :2021  
+    ##  (Other)             :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-187.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Loxia curvirostra :939   Min.   :1986  
     ##  Acanthis flammea  :  0   1st Qu.:2015  
     ##  Accipiter cooperii:  0   Median :2017  
+    ##  Accipiter gentilis:  0   Mean   :2016  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-188.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Spinus pinus      :302   Min.   :1985  
+    ##  Acanthis flammea  :  0   1st Qu.:2015  
+    ##  Accipiter cooperii:  0   Median :2018  
+    ##  Accipiter gentilis:  0   Mean   :2017  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-189.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Spinus psaltria   :3   Min.   :2020  
+    ##  Acanthis flammea  :0   1st Qu.:2020  
+    ##  Accipiter cooperii:0   Median :2020  
+    ##  Accipiter gentilis:0   Mean   :2021  
+    ##  Accipiter striatus:0   3rd Qu.:2021  
+    ##  Actitis macularius:0   Max.   :2022  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-190.png)<!-- -->
+
+    ##                species       eventDate   
+    ##  Spinus tristis    :1557   Min.   :1984  
+    ##  Acanthis flammea  :   0   1st Qu.:2015  
+    ##  Accipiter cooperii:   0   Median :2017  
+    ##  Accipiter gentilis:   0   Mean   :2017  
+    ##  Accipiter striatus:   0   3rd Qu.:2020  
+    ##  Actitis macularius:   0   Max.   :2023  
+    ##  (Other)           :   0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-191.png)<!-- -->
+
+    ##                  species    eventDate   
+    ##  Calcarius lapponicus:2   Min.   :2016  
+    ##  Acanthis flammea    :0   1st Qu.:2016  
+    ##  Accipiter cooperii  :0   Median :2016  
+    ##  Accipiter gentilis  :0   Mean   :2016  
+    ##  Accipiter striatus  :0   3rd Qu.:2016  
+    ##  Actitis macularius  :0   Max.   :2016  
+    ##  (Other)             :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-192.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Calcarius ornatus :11   Min.   :1995  
+    ##  Acanthis flammea  : 0   1st Qu.:2013  
+    ##  Accipiter cooperii: 0   Median :2017  
+    ##  Accipiter gentilis: 0   Mean   :2014  
+    ##  Accipiter striatus: 0   3rd Qu.:2019  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-193.png)<!-- -->
+
+    ##                    species    eventDate   
+    ##  Rhynchophanes mccownii:8   Min.   :1995  
+    ##  Acanthis flammea      :0   1st Qu.:2006  
+    ##  Accipiter cooperii    :0   Median :2012  
+    ##  Accipiter gentilis    :0   Mean   :2010  
+    ##  Accipiter striatus    :0   3rd Qu.:2016  
+    ##  Actitis macularius    :0   Max.   :2023  
+    ##  (Other)               :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-194.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Peucaea cassinii  :2   Min.   :2011  
+    ##  Acanthis flammea  :0   1st Qu.:2011  
+    ##  Accipiter cooperii:0   Median :2011  
+    ##  Accipiter gentilis:0   Mean   :2011  
+    ##  Accipiter striatus:0   3rd Qu.:2011  
+    ##  Actitis macularius:0   Max.   :2011  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-195.png)<!-- -->
+
+    ##                   species      eventDate   
+    ##  Ammodramus savannarum:130   Min.   :1986  
+    ##  Acanthis flammea     :  0   1st Qu.:2015  
+    ##  Accipiter cooperii   :  0   Median :2018  
+    ##  Accipiter gentilis   :  0   Mean   :2016  
+    ##  Accipiter striatus   :  0   3rd Qu.:2020  
+    ##  Actitis macularius   :  0   Max.   :2023  
+    ##  (Other)              :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-196.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Spizella passerina:938   Min.   :1959  
+    ##  Acanthis flammea  :  0   1st Qu.:2014  
+    ##  Accipiter cooperii:  0   Median :2016  
+    ##  Accipiter gentilis:  0   Mean   :2015  
+    ##  Accipiter striatus:  0   3rd Qu.:2019  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-197.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Spizella pallida  :258   Min.   :1986  
+    ##  Acanthis flammea  :  0   1st Qu.:2015  
+    ##  Accipiter cooperii:  0   Median :2017  
+    ##  Accipiter gentilis:  0   Mean   :2017  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-198.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Spizella pusilla  :30   Min.   :2011  
+    ##  Acanthis flammea  : 0   1st Qu.:2015  
+    ##  Accipiter cooperii: 0   Median :2017  
+    ##  Accipiter gentilis: 0   Mean   :2017  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2022  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-199.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Spizella breweri  :36   Min.   :1978  
+    ##  Acanthis flammea  : 0   1st Qu.:2012  
+    ##  Accipiter cooperii: 0   Median :2015  
+    ##  Accipiter gentilis: 0   Mean   :2015  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2022  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-200.png)<!-- -->
+
+    ##                  species      eventDate   
+    ##  Chondestes grammacus:768   Min.   :1986  
+    ##  Acanthis flammea    :  0   1st Qu.:2016  
+    ##  Accipiter cooperii  :  0   Median :2019  
+    ##  Accipiter gentilis  :  0   Mean   :2017  
+    ##  Accipiter striatus  :  0   3rd Qu.:2021  
+    ##  Actitis macularius  :  0   Max.   :2023  
+    ##  (Other)             :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-201.png)<!-- -->
+
+    ##                  species     eventDate   
+    ##  Spizelloides arborea:26   Min.   :2013  
+    ##  Acanthis flammea    : 0   1st Qu.:2017  
+    ##  Accipiter cooperii  : 0   Median :2017  
+    ##  Accipiter gentilis  : 0   Mean   :2017  
+    ##  Accipiter striatus  : 0   3rd Qu.:2019  
+    ##  Actitis macularius  : 0   Max.   :2021  
+    ##  (Other)             : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-202.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Passerella iliaca :2   Min.   :2016  
+    ##  Acanthis flammea  :0   1st Qu.:2016  
+    ##  Accipiter cooperii:0   Median :2016  
+    ##  Accipiter gentilis:0   Mean   :2016  
+    ##  Accipiter striatus:0   3rd Qu.:2016  
+    ##  Actitis macularius:0   Max.   :2016  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-203.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Junco sp.         :281   Min.   :1994  
+    ##  Acanthis flammea  :  0   1st Qu.:2015  
+    ##  Accipiter cooperii:  0   Median :2017  
+    ##  Accipiter gentilis:  0   Mean   :2017  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-204.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Junco hyemalis    :130   Min.   :1994  
+    ##  Acanthis flammea  :  0   1st Qu.:2014  
+    ##  Accipiter cooperii:  0   Median :2017  
+    ##  Accipiter gentilis:  0   Mean   :2016  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2022  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-205.png)<!-- -->
+
+    ##                    species      eventDate   
+    ##  Zonotrichia leucophrys:283   Min.   :2009  
+    ##  Acanthis flammea      :  0   1st Qu.:2015  
+    ##  Accipiter cooperii    :  0   Median :2016  
+    ##  Accipiter gentilis    :  0   Mean   :2016  
+    ##  Accipiter striatus    :  0   3rd Qu.:2018  
+    ##  Actitis macularius    :  0   Max.   :2023  
+    ##  (Other)               :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-206.png)<!-- -->
+
+    ##                 species    eventDate   
+    ##  Zonotrichia querula:7   Min.   :2014  
+    ##  Acanthis flammea   :0   1st Qu.:2016  
+    ##  Accipiter cooperii :0   Median :2017  
+    ##  Accipiter gentilis :0   Mean   :2017  
+    ##  Accipiter striatus :0   3rd Qu.:2018  
+    ##  Actitis macularius :0   Max.   :2022  
+    ##  (Other)            :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-207.png)<!-- -->
+
+    ##                    species     eventDate   
+    ##  Zonotrichia albicollis:58   Min.   :2010  
+    ##  Acanthis flammea      : 0   1st Qu.:2015  
+    ##  Accipiter cooperii    : 0   Median :2016  
+    ##  Accipiter gentilis    : 0   Mean   :2016  
+    ##  Accipiter striatus    : 0   3rd Qu.:2018  
+    ##  Actitis macularius    : 0   Max.   :2023  
+    ##  (Other)               : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-208.png)<!-- -->
+
+    ##                 species      eventDate   
+    ##  Pooecetes gramineus:142   Min.   :1984  
+    ##  Acanthis flammea   :  0   1st Qu.:2014  
+    ##  Accipiter cooperii :  0   Median :2018  
+    ##  Accipiter gentilis :  0   Mean   :2016  
+    ##  Accipiter striatus :  0   3rd Qu.:2020  
+    ##  Actitis macularius :  0   Max.   :2023  
+    ##  (Other)            :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-209.png)<!-- -->
+
+    ##                       species     eventDate   
+    ##  Passerculus sandwichensis:46   Min.   :1985  
+    ##  Acanthis flammea         : 0   1st Qu.:2016  
+    ##  Accipiter cooperii       : 0   Median :2017  
+    ##  Accipiter gentilis       : 0   Mean   :2015  
+    ##  Accipiter striatus       : 0   3rd Qu.:2018  
+    ##  Actitis macularius       : 0   Max.   :2021  
+    ##  (Other)                  : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-210.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Centronyx bairdii :15   Min.   :2010  
+    ##  Acanthis flammea  : 0   1st Qu.:2010  
+    ##  Accipiter cooperii: 0   Median :2010  
+    ##  Accipiter gentilis: 0   Mean   :2011  
+    ##  Accipiter striatus: 0   3rd Qu.:2010  
+    ##  Actitis macularius: 0   Max.   :2019  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-211.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Pipilo chlorurus  :2   Min.   :2011  
+    ##  Acanthis flammea  :0   1st Qu.:2011  
+    ##  Accipiter cooperii:0   Median :2011  
+    ##  Accipiter gentilis:0   Mean   :2011  
+    ##  Accipiter striatus:0   3rd Qu.:2011  
+    ##  Actitis macularius:0   Max.   :2011  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-212.png)<!-- -->
+
+    ##                species       eventDate   
+    ##  Pipilo maculatus  :1541   Min.   :1957  
+    ##  Acanthis flammea  :   0   1st Qu.:2015  
+    ##  Accipiter cooperii:   0   Median :2017  
+    ##  Accipiter gentilis:   0   Mean   :2016  
+    ##  Accipiter striatus:   0   3rd Qu.:2020  
+    ##  Actitis macularius:   0   Max.   :2023  
+    ##  (Other)           :   0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-213.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Icteria virens    :596   Min.   :1984  
+    ##  Acanthis flammea  :  0   1st Qu.:2016  
+    ##  Accipiter cooperii:  0   Median :2019  
+    ##  Accipiter gentilis:  0   Mean   :2018  
+    ##  Accipiter striatus:  0   3rd Qu.:2021  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-214.png)<!-- -->
+
+    ##                           species     eventDate   
+    ##  Xanthocephalus xanthocephalus:51   Min.   :2013  
+    ##  Acanthis flammea             : 0   1st Qu.:2016  
+    ##  Accipiter cooperii           : 0   Median :2018  
+    ##  Accipiter gentilis           : 0   Mean   :2018  
+    ##  Accipiter striatus           : 0   3rd Qu.:2019  
+    ##  Actitis macularius           : 0   Max.   :2023  
+    ##  (Other)                      : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-215.png)<!-- -->
+
+    ##                   species     eventDate   
+    ##  Dolichonyx oryzivorus:21   Min.   :1975  
+    ##  Acanthis flammea     : 0   1st Qu.:2017  
+    ##  Accipiter cooperii   : 0   Median :2020  
+    ##  Accipiter gentilis   : 0   Mean   :2015  
+    ##  Accipiter striatus   : 0   3rd Qu.:2021  
+    ##  Actitis macularius   : 0   Max.   :2023  
+    ##  (Other)              : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-216.png)<!-- -->
+
+    ##                species       eventDate   
+    ##  Sturnella neglecta:1169   Min.   :1975  
+    ##  Acanthis flammea  :   0   1st Qu.:2017  
+    ##  Accipiter cooperii:   0   Median :2019  
+    ##  Accipiter gentilis:   0   Mean   :2017  
+    ##  Accipiter striatus:   0   3rd Qu.:2021  
+    ##  Actitis macularius:   0   Max.   :2023  
+    ##  (Other)           :   0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-217.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Sturnella magna   :8   Min.   :2011  
+    ##  Acanthis flammea  :0   1st Qu.:2012  
+    ##  Accipiter cooperii:0   Median :2015  
+    ##  Accipiter gentilis:0   Mean   :2015  
+    ##  Accipiter striatus:0   3rd Qu.:2018  
+    ##  Actitis macularius:0   Max.   :2019  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-218.png)<!-- -->
+
+    ##                      species     eventDate   
+    ##  Sturnella neglecta/magna:25   Min.   :2002  
+    ##  Acanthis flammea        : 0   1st Qu.:2015  
+    ##  Accipiter cooperii      : 0   Median :2017  
+    ##  Accipiter gentilis      : 0   Mean   :2016  
+    ##  Accipiter striatus      : 0   3rd Qu.:2019  
+    ##  Actitis macularius      : 0   Max.   :2023  
+    ##  (Other)                 : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-219.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Icterus bullockii :186   Min.   :1955  
+    ##  Acanthis flammea  :  0   1st Qu.:2018  
+    ##  Accipiter cooperii:  0   Median :2020  
+    ##  Accipiter gentilis:  0   Mean   :2018  
+    ##  Accipiter striatus:  0   3rd Qu.:2021  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-220.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Icterus galbula   :23   Min.   :2011  
+    ##  Acanthis flammea  : 0   1st Qu.:2014  
+    ##  Accipiter cooperii: 0   Median :2015  
+    ##  Accipiter gentilis: 0   Mean   :2017  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-221.png)<!-- -->
+
+    ##                         species    eventDate   
+    ##  Icterus bullockii x galbula:2   Min.   :2021  
+    ##  Acanthis flammea           :0   1st Qu.:2021  
+    ##  Accipiter cooperii         :0   Median :2022  
+    ##  Accipiter gentilis         :0   Mean   :2022  
+    ##  Accipiter striatus         :0   3rd Qu.:2022  
+    ##  Actitis macularius         :0   Max.   :2022  
+    ##  (Other)                    :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-222.png)<!-- -->
+
+    ##                       species    eventDate   
+    ##  Icterus bullockii/galbula:9   Min.   :1986  
+    ##  Acanthis flammea         :0   1st Qu.:2012  
+    ##  Accipiter cooperii       :0   Median :2017  
+    ##  Accipiter gentilis       :0   Mean   :2011  
+    ##  Accipiter striatus       :0   3rd Qu.:2021  
+    ##  Actitis macularius       :0   Max.   :2022  
+    ##  (Other)                  :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-223.png)<!-- -->
+
+    ##                 species      eventDate   
+    ##  Agelaius phoeniceus:614   Min.   :1975  
+    ##  Acanthis flammea   :  0   1st Qu.:2017  
+    ##  Accipiter cooperii :  0   Median :2020  
+    ##  Accipiter gentilis :  0   Mean   :2018  
+    ##  Accipiter striatus :  0   3rd Qu.:2021  
+    ##  Actitis macularius :  0   Max.   :2023  
+    ##  (Other)            :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-224.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Molothrus ater    :461   Min.   :1995  
+    ##  Acanthis flammea  :  0   1st Qu.:2016  
+    ##  Accipiter cooperii:  0   Median :2019  
+    ##  Accipiter gentilis:  0   Mean   :2018  
+    ##  Accipiter striatus:  0   3rd Qu.:2021  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-225.png)<!-- -->
+
+    ##                    species      eventDate   
+    ##  Euphagus cyanocephalus:134   Min.   :1971  
+    ##  Acanthis flammea      :  0   1st Qu.:2013  
+    ##  Accipiter cooperii    :  0   Median :2019  
+    ##  Accipiter gentilis    :  0   Mean   :2015  
+    ##  Accipiter striatus    :  0   3rd Qu.:2020  
+    ##  Actitis macularius    :  0   Max.   :2023  
+    ##  (Other)               :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-226.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Quiscalus quiscula:456   Min.   :1975  
+    ##  Acanthis flammea  :  0   1st Qu.:2016  
+    ##  Accipiter cooperii:  0   Median :2020  
+    ##  Accipiter gentilis:  0   Mean   :2017  
+    ##  Accipiter striatus:  0   3rd Qu.:2021  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-227.png)<!-- -->
+
+    ##                 species    eventDate   
+    ##  Quiscalus mexicanus:4   Min.   :2010  
+    ##  Acanthis flammea   :0   1st Qu.:2010  
+    ##  Accipiter cooperii :0   Median :2014  
+    ##  Accipiter gentilis :0   Mean   :2014  
+    ##  Accipiter striatus :0   3rd Qu.:2019  
+    ##  Actitis macularius :0   Max.   :2019  
+    ##  (Other)            :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-228.png)<!-- -->
+
+    ##                 species      eventDate   
+    ##  Seiurus aurocapilla:286   Min.   :1959  
+    ##  Acanthis flammea   :  0   1st Qu.:2013  
+    ##  Accipiter cooperii :  0   Median :2017  
+    ##  Accipiter gentilis :  0   Mean   :2015  
+    ##  Accipiter striatus :  0   3rd Qu.:2020  
+    ##  Actitis macularius :  0   Max.   :2023  
+    ##  (Other)            :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-229.png)<!-- -->
+
+    ##                     species     eventDate   
+    ##  Parkesia noveboracensis:10   Min.   :1986  
+    ##  Acanthis flammea       : 0   1st Qu.:2011  
+    ##  Accipiter cooperii     : 0   Median :2018  
+    ##  Accipiter gentilis     : 0   Mean   :2011  
+    ##  Accipiter striatus     : 0   3rd Qu.:2018  
+    ##  Actitis macularius     : 0   Max.   :2021  
+    ##  (Other)                : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-230.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Mniotilta varia   :119   Min.   :1984  
+    ##  Acanthis flammea  :  0   1st Qu.:2010  
+    ##  Accipiter cooperii:  0   Median :2017  
+    ##  Accipiter gentilis:  0   Mean   :2014  
+    ##  Accipiter striatus:  0   3rd Qu.:2021  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-231.png)<!-- -->
+
+    ##                   species     eventDate   
+    ##  Leiothlypis peregrina:17   Min.   :2000  
+    ##  Acanthis flammea     : 0   1st Qu.:2013  
+    ##  Accipiter cooperii   : 0   Median :2014  
+    ##  Accipiter gentilis   : 0   Mean   :2014  
+    ##  Accipiter striatus   : 0   3rd Qu.:2020  
+    ##  Actitis macularius   : 0   Max.   :2022  
+    ##  (Other)              : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-232.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Leiothlypis celata:470   Min.   :2009  
+    ##  Acanthis flammea  :  0   1st Qu.:2014  
+    ##  Accipiter cooperii:  0   Median :2016  
+    ##  Accipiter gentilis:  0   Mean   :2016  
+    ##  Accipiter striatus:  0   3rd Qu.:2018  
+    ##  Actitis macularius:  0   Max.   :2022  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-233.png)<!-- -->
+
+    ##                     species     eventDate   
+    ##  Leiothlypis ruficapilla:12   Min.   :2010  
+    ##  Acanthis flammea       : 0   1st Qu.:2013  
+    ##  Accipiter cooperii     : 0   Median :2014  
+    ##  Accipiter gentilis     : 0   Mean   :2015  
+    ##  Accipiter striatus     : 0   3rd Qu.:2018  
+    ##  Actitis macularius     : 0   Max.   :2018  
+    ##  (Other)                : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-234.png)<!-- -->
+
+    ##                   species    eventDate   
+    ##  Leiothlypis virginiae:2   Min.   :2019  
+    ##  Acanthis flammea     :0   1st Qu.:2019  
+    ##  Accipiter cooperii   :0   Median :2019  
+    ##  Accipiter gentilis   :0   Mean   :2019  
+    ##  Accipiter striatus   :0   3rd Qu.:2019  
+    ##  Actitis macularius   :0   Max.   :2019  
+    ##  (Other)              :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-235.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Geothlypis tolmiei:27   Min.   :2010  
+    ##  Acanthis flammea  : 0   1st Qu.:2016  
+    ##  Accipiter cooperii: 0   Median :2017  
+    ##  Accipiter gentilis: 0   Mean   :2017  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2022  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-236.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Geothlypis trichas:142   Min.   :2000  
+    ##  Acanthis flammea  :  0   1st Qu.:2015  
+    ##  Accipiter cooperii:  0   Median :2018  
+    ##  Accipiter gentilis:  0   Mean   :2017  
+    ##  Accipiter striatus:  0   3rd Qu.:2020  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-237.png)<!-- -->
+
+    ##                 species      eventDate   
+    ##  Setophaga ruticilla:410   Min.   :1975  
+    ##  Acanthis flammea   :  0   1st Qu.:2015  
+    ##  Accipiter cooperii :  0   Median :2018  
+    ##  Accipiter gentilis :  0   Mean   :2016  
+    ##  Accipiter striatus :  0   3rd Qu.:2021  
+    ##  Actitis macularius :  0   Max.   :2023  
+    ##  (Other)            :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-238.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Setophaga petechia:749   Min.   :1984  
+    ##  Acanthis flammea  :  0   1st Qu.:2016  
+    ##  Accipiter cooperii:  0   Median :2019  
+    ##  Accipiter gentilis:  0   Mean   :2017  
+    ##  Accipiter striatus:  0   3rd Qu.:2021  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-239.png)<!-- -->
+
+    ##                    species    eventDate   
+    ##  Setophaga pensylvanica:3   Min.   :2013  
+    ##  Acanthis flammea      :0   1st Qu.:2013  
+    ##  Accipiter cooperii    :0   Median :2013  
+    ##  Accipiter gentilis    :0   Mean   :2016  
+    ##  Accipiter striatus    :0   3rd Qu.:2018  
+    ##  Actitis macularius    :0   Max.   :2023  
+    ##  (Other)               :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-240.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Setophaga striata :22   Min.   :2003  
+    ##  Acanthis flammea  : 0   1st Qu.:2010  
+    ##  Accipiter cooperii: 0   Median :2014  
+    ##  Accipiter gentilis: 0   Mean   :2014  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2021  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-241.png)<!-- -->
+
+    ##                    species    eventDate   
+    ##  Setophaga caerulescens:2   Min.   :2021  
+    ##  Acanthis flammea      :0   1st Qu.:2021  
+    ##  Accipiter cooperii    :0   Median :2021  
+    ##  Accipiter gentilis    :0   Mean   :2021  
+    ##  Accipiter striatus    :0   3rd Qu.:2021  
+    ##  Actitis macularius    :0   Max.   :2021  
+    ##  (Other)               :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-242.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Setophaga palmarum:8   Min.   :2009  
+    ##  Acanthis flammea  :0   1st Qu.:2014  
+    ##  Accipiter cooperii:0   Median :2017  
+    ##  Accipiter gentilis:0   Mean   :2016  
+    ##  Accipiter striatus:0   3rd Qu.:2018  
+    ##  Actitis macularius:0   Max.   :2019  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-243.png)<!-- -->
+
+    ##                         species      eventDate   
+    ##  Setophaga coronata/auduboni:143   Min.   :1985  
+    ##  Acanthis flammea           :  0   1st Qu.:2014  
+    ##  Accipiter cooperii         :  0   Median :2018  
+    ##  Accipiter gentilis         :  0   Mean   :2016  
+    ##  Accipiter striatus         :  0   3rd Qu.:2020  
+    ##  Actitis macularius         :  0   Max.   :2023  
+    ##  (Other)                    :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-244.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Setophaga coronata:408   Min.   :1985  
+    ##  Acanthis flammea  :  0   1st Qu.:2014  
+    ##  Accipiter cooperii:  0   Median :2016  
     ##  Accipiter gentilis:  0   Mean   :2016  
     ##  Accipiter striatus:  0   3rd Qu.:2019  
     ##  Actitis macularius:  0   Max.   :2022  
     ##  (Other)           :  0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-100.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-245.png)<!-- -->
+
+    ##                 species     eventDate   
+    ##  Setophaga townsendi:21   Min.   :2014  
+    ##  Acanthis flammea   : 0   1st Qu.:2014  
+    ##  Accipiter cooperii : 0   Median :2015  
+    ##  Accipiter gentilis : 0   Mean   :2016  
+    ##  Accipiter striatus : 0   3rd Qu.:2017  
+    ##  Actitis macularius : 0   Max.   :2021  
+    ##  (Other)            : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-246.png)<!-- -->
 
     ##                species      eventDate   
-    ##  Colaptes auratus  :649   Min.   :1975  
-    ##  Acanthis flammea  :  0   1st Qu.:2015  
-    ##  Accipiter cooperii:  0   Median :2017  
+    ##  Cardellina pusilla:404   Min.   :2010  
+    ##  Acanthis flammea  :  0   1st Qu.:2014  
+    ##  Accipiter cooperii:  0   Median :2016  
     ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2021  
+    ##  Accipiter striatus:  0   3rd Qu.:2018  
+    ##  Actitis macularius:  0   Max.   :2022  
     ##  (Other)           :  0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-101.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-247.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Piranga rubra     :2   Min.   :2021  
+    ##  Acanthis flammea  :0   1st Qu.:2021  
+    ##  Accipiter cooperii:0   Median :2021  
+    ##  Accipiter gentilis:0   Mean   :2021  
+    ##  Accipiter striatus:0   3rd Qu.:2021  
+    ##  Actitis macularius:0   Max.   :2021  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-248.png)<!-- -->
+
+    ##                 species      eventDate   
+    ##  Piranga ludoviciana:343   Min.   :1984  
+    ##  Acanthis flammea   :  0   1st Qu.:2014  
+    ##  Accipiter cooperii :  0   Median :2017  
+    ##  Accipiter gentilis :  0   Mean   :2015  
+    ##  Accipiter striatus :  0   3rd Qu.:2020  
+    ##  Actitis macularius :  0   Max.   :2023  
+    ##  (Other)            :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-249.png)<!-- -->
+
+    ##                   species     eventDate   
+    ##  Cardinalis cardinalis:11   Min.   :2012  
+    ##  Acanthis flammea     : 0   1st Qu.:2015  
+    ##  Accipiter cooperii   : 0   Median :2018  
+    ##  Accipiter gentilis   : 0   Mean   :2018  
+    ##  Accipiter striatus   : 0   3rd Qu.:2021  
+    ##  Actitis macularius   : 0   Max.   :2023  
+    ##  (Other)              : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-250.png)<!-- -->
+
+    ##                     species    eventDate   
+    ##  Pheucticus ludovicianus:8   Min.   :2009  
+    ##  Acanthis flammea       :0   1st Qu.:2018  
+    ##  Accipiter cooperii     :0   Median :2021  
+    ##  Accipiter gentilis     :0   Mean   :2018  
+    ##  Accipiter striatus     :0   3rd Qu.:2021  
+    ##  Actitis macularius     :0   Max.   :2022  
+    ##  (Other)                :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-251.png)<!-- -->
+
+    ##                       species      eventDate   
+    ##  Pheucticus melanocephalus:553   Min.   :1955  
+    ##  Acanthis flammea         :  0   1st Qu.:2015  
+    ##  Accipiter cooperii       :  0   Median :2019  
+    ##  Accipiter gentilis       :  0   Mean   :2016  
+    ##  Accipiter striatus       :  0   3rd Qu.:2021  
+    ##  Actitis macularius       :  0   Max.   :2023  
+    ##  (Other)                  :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-252.png)<!-- -->
+
+    ##                                      species    eventDate   
+    ##  Pheucticus ludovicianus x melanocephalus:1   Min.   :2018  
+    ##  Acanthis flammea                        :0   1st Qu.:2018  
+    ##  Accipiter cooperii                      :0   Median :2018  
+    ##  Accipiter gentilis                      :0   Mean   :2018  
+    ##  Accipiter striatus                      :0   3rd Qu.:2018  
+    ##  Actitis macularius                      :0   Max.   :2018  
+    ##  (Other)                                 :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-253.png)<!-- -->
+
+    ##                                    species    eventDate   
+    ##  Pheucticus ludovicianus/melanocephalus:5   Min.   :2013  
+    ##  Acanthis flammea                      :0   1st Qu.:2018  
+    ##  Accipiter cooperii                    :0   Median :2020  
+    ##  Accipiter gentilis                    :0   Mean   :2018  
+    ##  Accipiter striatus                    :0   3rd Qu.:2020  
+    ##  Actitis macularius                    :0   Max.   :2021  
+    ##  (Other)                               :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-254.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Passerina caerulea:55   Min.   :1969  
+    ##  Acanthis flammea  : 0   1st Qu.:2015  
+    ##  Accipiter cooperii: 0   Median :2020  
+    ##  Accipiter gentilis: 0   Mean   :2016  
+    ##  Accipiter striatus: 0   3rd Qu.:2022  
+    ##  Actitis macularius: 0   Max.   :2023  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-255.png)<!-- -->
+
+    ##                species      eventDate   
+    ##  Passerina amoena  :133   Min.   :1965  
+    ##  Acanthis flammea  :  0   1st Qu.:2015  
+    ##  Accipiter cooperii:  0   Median :2018  
+    ##  Accipiter gentilis:  0   Mean   :2017  
+    ##  Accipiter striatus:  0   3rd Qu.:2021  
+    ##  Actitis macularius:  0   Max.   :2023  
+    ##  (Other)           :  0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-256.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Passerina cyanea  :48   Min.   :1991  
+    ##  Acanthis flammea  : 0   1st Qu.:2013  
+    ##  Accipiter cooperii: 0   Median :2015  
+    ##  Accipiter gentilis: 0   Mean   :2014  
+    ##  Accipiter striatus: 0   3rd Qu.:2019  
+    ##  Actitis macularius: 0   Max.   :2022  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-257.png)<!-- -->
+
+    ##                       species    eventDate   
+    ##  Passerina amoena x cyanea:6   Min.   :2006  
+    ##  Acanthis flammea         :0   1st Qu.:2014  
+    ##  Accipiter cooperii       :0   Median :2019  
+    ##  Accipiter gentilis       :0   Mean   :2016  
+    ##  Accipiter striatus       :0   3rd Qu.:2020  
+    ##  Actitis macularius       :0   Max.   :2022  
+    ##  (Other)                  :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-258.png)<!-- -->
+
+    ##                     species     eventDate   
+    ##  Passerina amoena/cyanea:13   Min.   :2014  
+    ##  Acanthis flammea       : 0   1st Qu.:2015  
+    ##  Accipiter cooperii     : 0   Median :2015  
+    ##  Accipiter gentilis     : 0   Mean   :2017  
+    ##  Accipiter striatus     : 0   3rd Qu.:2020  
+    ##  Actitis macularius     : 0   Max.   :2023  
+    ##  (Other)                : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-259.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Spiza americana   :59   Min.   :1996  
+    ##  Acanthis flammea  : 0   1st Qu.:2017  
+    ##  Accipiter cooperii: 0   Median :2020  
+    ##  Accipiter gentilis: 0   Mean   :2017  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2022  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-260.png)<!-- -->
+
+    ##                species     eventDate   
+    ##  Aix sponsa        :61   Min.   :2009  
+    ##  Acanthis flammea  : 0   1st Qu.:2014  
+    ##  Accipiter cooperii: 0   Median :2017  
+    ##  Accipiter gentilis: 0   Mean   :2017  
+    ##  Accipiter striatus: 0   3rd Qu.:2020  
+    ##  Actitis macularius: 0   Max.   :2021  
+    ##  (Other)           : 0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-261.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Selasphorus rufus :2   Min.   :2013  
+    ##  Acanthis flammea  :0   1st Qu.:2013  
+    ##  Accipiter cooperii:0   Median :2013  
+    ##  Accipiter gentilis:0   Mean   :2013  
+    ##  Accipiter striatus:0   3rd Qu.:2013  
+    ##  Actitis macularius:0   Max.   :2013  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-262.png)<!-- -->
+
+    ##                species    eventDate   
+    ##  Asio otus         :3   Min.   :2010  
+    ##  Acanthis flammea  :0   1st Qu.:2012  
+    ##  Accipiter cooperii:0   Median :2015  
+    ##  Accipiter gentilis:0   Mean   :2015  
+    ##  Accipiter striatus:0   3rd Qu.:2018  
+    ##  Actitis macularius:0   Max.   :2021  
+    ##  (Other)           :0
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-263.png)<!-- -->
 
     ##                species      eventDate   
     ##  Falco sparverius  :271   Min.   :1985  
@@ -5204,359 +7553,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius:  0   Max.   :2022  
     ##  (Other)           :  0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-102.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Falco columbarius :6   Min.   :2014  
-    ##  Acanthis flammea  :0   1st Qu.:2016  
-    ##  Accipiter cooperii:0   Median :2017  
-    ##  Accipiter gentilis:0   Mean   :2017  
-    ##  Accipiter striatus:0   3rd Qu.:2018  
-    ##  Actitis macularius:0   Max.   :2020  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-103.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Falco peregrinus  :4   Min.   :2016  
-    ##  Acanthis flammea  :0   1st Qu.:2016  
-    ##  Accipiter cooperii:0   Median :2016  
-    ##  Accipiter gentilis:0   Mean   :2017  
-    ##  Accipiter striatus:0   3rd Qu.:2017  
-    ##  Actitis macularius:0   Max.   :2020  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-104.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Falco mexicanus   :30   Min.   :1935  
-    ##  Acanthis flammea  : 0   1st Qu.:2010  
-    ##  Accipiter cooperii: 0   Median :2018  
-    ##  Accipiter gentilis: 0   Mean   :2010  
-    ##  Accipiter striatus: 0   3rd Qu.:2019  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-105.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Contopus cooperi  :7   Min.   :2010  
-    ##  Acanthis flammea  :0   1st Qu.:2015  
-    ##  Accipiter cooperii:0   Median :2018  
-    ##  Accipiter gentilis:0   Mean   :2017  
-    ##  Accipiter striatus:0   3rd Qu.:2019  
-    ##  Actitis macularius:0   Max.   :2020  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-106.png)<!-- -->
-
-    ##                 species      eventDate   
-    ##  Contopus sordidulus:380   Min.   :1959  
-    ##  Acanthis flammea   :  0   1st Qu.:2015  
-    ##  Accipiter cooperii :  0   Median :2018  
-    ##  Accipiter gentilis :  0   Mean   :2016  
-    ##  Accipiter striatus :  0   3rd Qu.:2020  
-    ##  Actitis macularius :  0   Max.   :2023  
-    ##  (Other)            :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-107.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Contopus virens   :2   Min.   :2009  
-    ##  Acanthis flammea  :0   1st Qu.:2012  
-    ##  Accipiter cooperii:0   Median :2014  
-    ##  Accipiter gentilis:0   Mean   :2014  
-    ##  Accipiter striatus:0   3rd Qu.:2017  
-    ##  Actitis macularius:0   Max.   :2020  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-108.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Empidonax alnorum :1   Min.   :2021  
-    ##  Acanthis flammea  :0   1st Qu.:2021  
-    ##  Accipiter cooperii:0   Median :2021  
-    ##  Accipiter gentilis:0   Mean   :2021  
-    ##  Accipiter striatus:0   3rd Qu.:2021  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-109.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Empidonax traillii:17   Min.   :2010  
-    ##  Acanthis flammea  : 0   1st Qu.:2016  
-    ##  Accipiter cooperii: 0   Median :2018  
-    ##  Accipiter gentilis: 0   Mean   :2018  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-110.png)<!-- -->
-
-    ##                 species    eventDate   
-    ##  Empidonax hammondii:3   Min.   :2020  
-    ##  Acanthis flammea   :0   1st Qu.:2020  
-    ##  Accipiter cooperii :0   Median :2020  
-    ##  Accipiter gentilis :0   Mean   :2021  
-    ##  Accipiter striatus :0   3rd Qu.:2021  
-    ##  Actitis macularius :0   Max.   :2022  
-    ##  (Other)            :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-111.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Empidonax wrightii:1   Min.   :2013  
-    ##  Acanthis flammea  :0   1st Qu.:2013  
-    ##  Accipiter cooperii:0   Median :2013  
-    ##  Accipiter gentilis:0   Mean   :2013  
-    ##  Accipiter striatus:0   3rd Qu.:2013  
-    ##  Actitis macularius:0   Max.   :2013  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-112.png)<!-- -->
-
-    ##                   species    eventDate   
-    ##  Empidonax oberholseri:4   Min.   :2013  
-    ##  Acanthis flammea     :0   1st Qu.:2014  
-    ##  Accipiter cooperii   :0   Median :2014  
-    ##  Accipiter gentilis   :0   Mean   :2016  
-    ##  Accipiter striatus   :0   3rd Qu.:2016  
-    ##  Actitis macularius   :0   Max.   :2021  
-    ##  (Other)              :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-113.png)<!-- -->
-
-    ##                    species     eventDate   
-    ##  Empidonax occidentalis:60   Min.   :1994  
-    ##  Acanthis flammea      : 0   1st Qu.:2015  
-    ##  Accipiter cooperii    : 0   Median :2019  
-    ##  Accipiter gentilis    : 0   Mean   :2017  
-    ##  Accipiter striatus    : 0   3rd Qu.:2020  
-    ##  Actitis macularius    : 0   Max.   :2021  
-    ##  (Other)               : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-114.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Empidonax minimus :35   Min.   :2007  
-    ##  Acanthis flammea  : 0   1st Qu.:2015  
-    ##  Accipiter cooperii: 0   Median :2018  
-    ##  Accipiter gentilis: 0   Mean   :2017  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-115.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Sayornis phoebe   :135   Min.   :1991  
-    ##  Acanthis flammea  :  0   1st Qu.:2015  
-    ##  Accipiter cooperii:  0   Median :2018  
-    ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2021  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-116.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Sayornis saya     :97   Min.   :1945  
-    ##  Acanthis flammea  : 0   1st Qu.:2013  
-    ##  Accipiter cooperii: 0   Median :2016  
-    ##  Accipiter gentilis: 0   Mean   :2014  
-    ##  Accipiter striatus: 0   3rd Qu.:2019  
-    ##  Actitis macularius: 0   Max.   :2023  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-117.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Myiarchus crinitus:167   Min.   :1986  
-    ##  Acanthis flammea  :  0   1st Qu.:2016  
-    ##  Accipiter cooperii:  0   Median :2018  
-    ##  Accipiter gentilis:  0   Mean   :2017  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2023  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-118.png)<!-- -->
-
-    ##                 species     eventDate   
-    ##  Tyrannus vociferans:18   Min.   :1984  
-    ##  Acanthis flammea   : 0   1st Qu.:2013  
-    ##  Accipiter cooperii : 0   Median :2016  
-    ##  Accipiter gentilis : 0   Mean   :2014  
-    ##  Accipiter striatus : 0   3rd Qu.:2020  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-119.png)<!-- -->
-
-    ##                 species      eventDate   
-    ##  Tyrannus verticalis:177   Min.   :1975  
-    ##  Acanthis flammea   :  0   1st Qu.:2014  
-    ##  Accipiter cooperii :  0   Median :2018  
-    ##  Accipiter gentilis :  0   Mean   :2015  
-    ##  Accipiter striatus :  0   3rd Qu.:2020  
-    ##  Actitis macularius :  0   Max.   :2023  
-    ##  (Other)            :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-120.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Tyrannus tyrannus :334   Min.   :1959  
-    ##  Acanthis flammea  :  0   1st Qu.:2016  
-    ##  Accipiter cooperii:  0   Median :2018  
-    ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2023  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-121.png)<!-- -->
-
-    ##                 species     eventDate   
-    ##  Lanius ludovicianus:67   Min.   :1981  
-    ##  Acanthis flammea   : 0   1st Qu.:2014  
-    ##  Accipiter cooperii : 0   Median :2018  
-    ##  Accipiter gentilis : 0   Mean   :2016  
-    ##  Accipiter striatus : 0   3rd Qu.:2020  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-122.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Lanius borealis   :7   Min.   :2014  
-    ##  Acanthis flammea  :0   1st Qu.:2015  
-    ##  Accipiter cooperii:0   Median :2021  
-    ##  Accipiter gentilis:0   Mean   :2018  
-    ##  Accipiter striatus:0   3rd Qu.:2021  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-123.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Vireo bellii      :13   Min.   :2008  
-    ##  Acanthis flammea  : 0   1st Qu.:2015  
-    ##  Accipiter cooperii: 0   Median :2018  
-    ##  Accipiter gentilis: 0   Mean   :2017  
-    ##  Accipiter striatus: 0   3rd Qu.:2019  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-124.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Vireo cassinii    :8   Min.   :2013  
-    ##  Acanthis flammea  :0   1st Qu.:2014  
-    ##  Accipiter cooperii:0   Median :2014  
-    ##  Accipiter gentilis:0   Mean   :2015  
-    ##  Accipiter striatus:0   3rd Qu.:2017  
-    ##  Actitis macularius:0   Max.   :2018  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-125.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Vireo solitarius  :1   Min.   :2017  
-    ##  Acanthis flammea  :0   1st Qu.:2017  
-    ##  Accipiter cooperii:0   Median :2017  
-    ##  Accipiter gentilis:0   Mean   :2017  
-    ##  Accipiter striatus:0   3rd Qu.:2017  
-    ##  Actitis macularius:0   Max.   :2017  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-126.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Vireo plumbeus    :60   Min.   :2004  
-    ##  Acanthis flammea  : 0   1st Qu.:2010  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2014  
-    ##  Accipiter striatus: 0   3rd Qu.:2017  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-127.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Vireo gilvus      :46   Min.   :1901  
-    ##  Acanthis flammea  : 0   1st Qu.:2014  
-    ##  Accipiter cooperii: 0   Median :2017  
-    ##  Accipiter gentilis: 0   Mean   :2013  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-128.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Vireo olivaceus   :193   Min.   :1975  
-    ##  Acanthis flammea  :  0   1st Qu.:2015  
-    ##  Accipiter cooperii:  0   Median :2018  
-    ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2021  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-129.png)<!-- -->
-
-    ##                       species     eventDate   
-    ##  Gymnorhinus cyanocephalus:12   Min.   :1986  
-    ##  Acanthis flammea         : 0   1st Qu.:1988  
-    ##  Accipiter cooperii       : 0   Median :2017  
-    ##  Accipiter gentilis       : 0   Mean   :2006  
-    ##  Accipiter striatus       : 0   3rd Qu.:2019  
-    ##  Actitis macularius       : 0   Max.   :2022  
-    ##  (Other)                  : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-130.png)<!-- -->
-
-    ##                 species      eventDate   
-    ##  Cyanocitta cristata:449   Min.   :1975  
-    ##  Acanthis flammea   :  0   1st Qu.:2015  
-    ##  Accipiter cooperii :  0   Median :2017  
-    ##  Accipiter gentilis :  0   Mean   :2016  
-    ##  Accipiter striatus :  0   3rd Qu.:2020  
-    ##  Actitis macularius :  0   Max.   :2021  
-    ##  (Other)            :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-131.png)<!-- -->
-
-    ##                  species    eventDate   
-    ##  Nucifraga columbiana:8   Min.   :2017  
-    ##  Acanthis flammea    :0   1st Qu.:2017  
-    ##  Accipiter cooperii  :0   Median :2017  
-    ##  Accipiter gentilis  :0   Mean   :2017  
-    ##  Accipiter striatus  :0   3rd Qu.:2017  
-    ##  Actitis macularius  :0   Max.   :2017  
-    ##  (Other)             :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-132.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Pica hudsonia     :60   Min.   :1971  
-    ##  Acanthis flammea  : 0   1st Qu.:2016  
-    ##  Accipiter cooperii: 0   Median :2017  
-    ##  Accipiter gentilis: 0   Mean   :2015  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-133.png)<!-- -->
-
-    ##                   species      eventDate   
-    ##  Corvus brachyrhynchos:569   Min.   :1975  
-    ##  Acanthis flammea     :  0   1st Qu.:2014  
-    ##  Accipiter cooperii   :  0   Median :2016  
-    ##  Accipiter gentilis   :  0   Mean   :2016  
-    ##  Accipiter striatus   :  0   3rd Qu.:2019  
-    ##  Actitis macularius   :  0   Max.   :2022  
-    ##  (Other)              :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-134.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-264.png)<!-- -->
 
     ##                species    eventDate   
     ##  Corvus corax      :1   Min.   :2021  
@@ -5567,403 +7564,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius:0   Max.   :2021  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-135.png)<!-- -->
-
-    ##                  species      eventDate   
-    ##  Eremophila alpestris:134   Min.   :1946  
-    ##  Acanthis flammea    :  0   1st Qu.:2015  
-    ##  Accipiter cooperii  :  0   Median :2018  
-    ##  Accipiter gentilis  :  0   Mean   :2015  
-    ##  Accipiter striatus  :  0   3rd Qu.:2020  
-    ##  Actitis macularius  :  0   Max.   :2021  
-    ##  (Other)             :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-136.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Riparia riparia   :13   Min.   :1975  
-    ##  Acanthis flammea  : 0   1st Qu.:2013  
-    ##  Accipiter cooperii: 0   Median :2017  
-    ##  Accipiter gentilis: 0   Mean   :2014  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-137.png)<!-- -->
-
-    ##                 species      eventDate   
-    ##  Tachycineta bicolor:103   Min.   :1975  
-    ##  Acanthis flammea   :  0   1st Qu.:2016  
-    ##  Accipiter cooperii :  0   Median :2019  
-    ##  Accipiter gentilis :  0   Mean   :2017  
-    ##  Accipiter striatus :  0   3rd Qu.:2021  
-    ##  Actitis macularius :  0   Max.   :2021  
-    ##  (Other)            :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-138.png)<!-- -->
-
-    ##                    species      eventDate   
-    ##  Tachycineta thalassina:114   Min.   :1986  
-    ##  Acanthis flammea      :  0   1st Qu.:2014  
-    ##  Accipiter cooperii    :  0   Median :2018  
-    ##  Accipiter gentilis    :  0   Mean   :2015  
-    ##  Accipiter striatus    :  0   3rd Qu.:2020  
-    ##  Actitis macularius    :  0   Max.   :2021  
-    ##  (Other)               :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-139.png)<!-- -->
-
-    ##                        species     eventDate   
-    ##  Stelgidopteryx serripennis:87   Min.   :1975  
-    ##  Acanthis flammea          : 0   1st Qu.:2012  
-    ##  Accipiter cooperii        : 0   Median :2017  
-    ##  Accipiter gentilis        : 0   Mean   :2014  
-    ##  Accipiter striatus        : 0   3rd Qu.:2020  
-    ##  Actitis macularius        : 0   Max.   :2021  
-    ##  (Other)                   : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-140.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Hirundo rustica   :247   Min.   :1986  
-    ##  Acanthis flammea  :  0   1st Qu.:2015  
-    ##  Accipiter cooperii:  0   Median :2018  
-    ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2021  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-141.png)<!-- -->
-
-    ##                      species     eventDate   
-    ##  Petrochelidon pyrrhonota:80   Min.   :1975  
-    ##  Acanthis flammea        : 0   1st Qu.:2015  
-    ##  Accipiter cooperii      : 0   Median :2018  
-    ##  Accipiter gentilis      : 0   Mean   :2015  
-    ##  Accipiter striatus      : 0   3rd Qu.:2020  
-    ##  Actitis macularius      : 0   Max.   :2021  
-    ##  (Other)                 : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-142.png)<!-- -->
-
-    ##                  species      eventDate   
-    ##  Poecile atricapillus:825   Min.   :1971  
-    ##  Acanthis flammea    :  0   1st Qu.:2015  
-    ##  Accipiter cooperii  :  0   Median :2017  
-    ##  Accipiter gentilis  :  0   Mean   :2016  
-    ##  Accipiter striatus  :  0   3rd Qu.:2020  
-    ##  Actitis macularius  :  0   Max.   :2022  
-    ##  (Other)             :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-143.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Sitta canadensis  :423   Min.   :1975  
-    ##  Acanthis flammea  :  0   1st Qu.:2015  
-    ##  Accipiter cooperii:  0   Median :2017  
-    ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2022  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-144.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Sitta carolinensis:494   Min.   :1975  
-    ##  Acanthis flammea  :  0   1st Qu.:2014  
-    ##  Accipiter cooperii:  0   Median :2017  
-    ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2022  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-145.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Sitta pygmaea     :519   Min.   :1975  
-    ##  Acanthis flammea  :  0   1st Qu.:2014  
-    ##  Accipiter cooperii:  0   Median :2017  
-    ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2022  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-146.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Certhia americana :51   Min.   :1986  
-    ##  Acanthis flammea  : 0   1st Qu.:2010  
-    ##  Accipiter cooperii: 0   Median :2016  
-    ##  Accipiter gentilis: 0   Mean   :2014  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2022  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-147.png)<!-- -->
-
-    ##                  species      eventDate   
-    ##  Salpinctes obsoletus:101   Min.   :1984  
-    ##  Acanthis flammea    :  0   1st Qu.:2013  
-    ##  Accipiter cooperii  :  0   Median :2017  
-    ##  Accipiter gentilis  :  0   Mean   :2015  
-    ##  Accipiter striatus  :  0   3rd Qu.:2020  
-    ##  Actitis macularius  :  0   Max.   :2023  
-    ##  (Other)             :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-148.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Troglodytes aedon :632   Min.   :1975  
-    ##  Acanthis flammea  :  0   1st Qu.:2014  
-    ##  Accipiter cooperii:  0   Median :2017  
-    ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2021  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-149.png)<!-- -->
-
-    ##                   species    eventDate   
-    ##  Troglodytes pacificus:2   Min.   :2017  
-    ##  Acanthis flammea     :0   1st Qu.:2017  
-    ##  Accipiter cooperii   :0   Median :2017  
-    ##  Accipiter gentilis   :0   Mean   :2017  
-    ##  Accipiter striatus   :0   3rd Qu.:2017  
-    ##  Actitis macularius   :0   Max.   :2017  
-    ##  (Other)              :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-150.png)<!-- -->
-
-    ##                  species    eventDate   
-    ##  Troglodytes hiemalis:1   Min.   :2018  
-    ##  Acanthis flammea    :0   1st Qu.:2018  
-    ##  Accipiter cooperii  :0   Median :2018  
-    ##  Accipiter gentilis  :0   Mean   :2018  
-    ##  Accipiter striatus  :0   3rd Qu.:2018  
-    ##  Actitis macularius  :0   Max.   :2018  
-    ##  (Other)             :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-151.png)<!-- -->
-
-    ##                   species    eventDate   
-    ##  Cistothorus palustris:2   Min.   :2020  
-    ##  Acanthis flammea     :0   1st Qu.:2020  
-    ##  Accipiter cooperii   :0   Median :2020  
-    ##  Accipiter gentilis   :0   Mean   :2020  
-    ##  Accipiter striatus   :0   3rd Qu.:2021  
-    ##  Actitis macularius   :0   Max.   :2021  
-    ##  (Other)              :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-152.png)<!-- -->
-
-    ##                 species     eventDate   
-    ##  Polioptila caerulea:38   Min.   :2013  
-    ##  Acanthis flammea   : 0   1st Qu.:2016  
-    ##  Accipiter cooperii : 0   Median :2019  
-    ##  Accipiter gentilis : 0   Mean   :2018  
-    ##  Accipiter striatus : 0   3rd Qu.:2020  
-    ##  Actitis macularius : 0   Max.   :2022  
-    ##  (Other)            : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-153.png)<!-- -->
-
-    ##                 species     eventDate   
-    ##  Corthylio calendula:39   Min.   :2003  
-    ##  Acanthis flammea   : 0   1st Qu.:2014  
-    ##  Accipiter cooperii : 0   Median :2016  
-    ##  Accipiter gentilis : 0   Mean   :2016  
-    ##  Accipiter striatus : 0   3rd Qu.:2018  
-    ##  Actitis macularius : 0   Max.   :2022  
-    ##  (Other)            : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-154.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Regulus satrapa   :3   Min.   :2017  
-    ##  Acanthis flammea  :0   1st Qu.:2017  
-    ##  Accipiter cooperii:0   Median :2017  
-    ##  Accipiter gentilis:0   Mean   :2019  
-    ##  Accipiter striatus:0   3rd Qu.:2020  
-    ##  Actitis macularius:0   Max.   :2022  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-155.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Sialia sialis     :423   Min.   :1998  
-    ##  Acanthis flammea  :  0   1st Qu.:2015  
-    ##  Accipiter cooperii:  0   Median :2017  
-    ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2018  
-    ##  Actitis macularius:  0   Max.   :2022  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-156.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Sialia currucoides:288   Min.   :1984  
-    ##  Acanthis flammea  :  0   1st Qu.:2014  
-    ##  Accipiter cooperii:  0   Median :2017  
-    ##  Accipiter gentilis:  0   Mean   :2015  
-    ##  Accipiter striatus:  0   3rd Qu.:2019  
-    ##  Actitis macularius:  0   Max.   :2022  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-157.png)<!-- -->
-
-    ##                 species     eventDate   
-    ##  Myadestes townsendi:71   Min.   :1986  
-    ##  Acanthis flammea   : 0   1st Qu.:2015  
-    ##  Accipiter cooperii : 0   Median :2017  
-    ##  Accipiter gentilis : 0   Mean   :2016  
-    ##  Accipiter striatus : 0   3rd Qu.:2020  
-    ##  Actitis macularius : 0   Max.   :2022  
-    ##  (Other)            : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-158.png)<!-- -->
-
-    ##                 species    eventDate   
-    ##  Catharus fuscescens:3   Min.   :2009  
-    ##  Acanthis flammea   :0   1st Qu.:2011  
-    ##  Accipiter cooperii :0   Median :2013  
-    ##  Accipiter gentilis :0   Mean   :2013  
-    ##  Accipiter striatus :0   3rd Qu.:2016  
-    ##  Actitis macularius :0   Max.   :2018  
-    ##  (Other)            :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-159.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Catharus ustulatus:108   Min.   :1973  
-    ##  Acanthis flammea  :  0   1st Qu.:2015  
-    ##  Accipiter cooperii:  0   Median :2018  
-    ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2022  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-160.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Catharus guttatus :20   Min.   :2010  
-    ##  Acanthis flammea  : 0   1st Qu.:2016  
-    ##  Accipiter cooperii: 0   Median :2017  
-    ##  Accipiter gentilis: 0   Mean   :2017  
-    ##  Accipiter striatus: 0   3rd Qu.:2018  
-    ##  Actitis macularius: 0   Max.   :2022  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-161.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Turdus migratorius:806   Min.   :1959  
-    ##  Acanthis flammea  :  0   1st Qu.:2015  
-    ##  Accipiter cooperii:  0   Median :2017  
-    ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2022  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-162.png)<!-- -->
-
-    ##                    species      eventDate   
-    ##  Dumetella carolinensis:116   Min.   :1996  
-    ##  Acanthis flammea      :  0   1st Qu.:2014  
-    ##  Accipiter cooperii    :  0   Median :2018  
-    ##  Accipiter gentilis    :  0   Mean   :2017  
-    ##  Accipiter striatus    :  0   3rd Qu.:2020  
-    ##  Actitis macularius    :  0   Max.   :2022  
-    ##  (Other)               :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-163.png)<!-- -->
-
-    ##                   species    eventDate   
-    ##  Toxostoma curvirostre:1   Min.   :2016  
-    ##  Acanthis flammea     :0   1st Qu.:2016  
-    ##  Accipiter cooperii   :0   Median :2016  
-    ##  Accipiter gentilis   :0   Mean   :2016  
-    ##  Accipiter striatus   :0   3rd Qu.:2016  
-    ##  Actitis macularius   :0   Max.   :2016  
-    ##  (Other)              :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-164.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Toxostoma rufum   :217   Min.   :1985  
-    ##  Acanthis flammea  :  0   1st Qu.:2015  
-    ##  Accipiter cooperii:  0   Median :2018  
-    ##  Accipiter gentilis:  0   Mean   :2017  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2022  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-165.png)<!-- -->
-
-    ##                  species    eventDate   
-    ##  Oreoscoptes montanus:3   Min.   :1901  
-    ##  Acanthis flammea    :0   1st Qu.:1956  
-    ##  Accipiter cooperii  :0   Median :2012  
-    ##  Accipiter gentilis  :0   Mean   :1976  
-    ##  Accipiter striatus  :0   3rd Qu.:2014  
-    ##  Actitis macularius  :0   Max.   :2016  
-    ##  (Other)             :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-166.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Mimus polyglottos :2   Min.   :2018  
-    ##  Acanthis flammea  :0   1st Qu.:2018  
-    ##  Accipiter cooperii:0   Median :2018  
-    ##  Accipiter gentilis:0   Mean   :2018  
-    ##  Accipiter striatus:0   3rd Qu.:2019  
-    ##  Actitis macularius:0   Max.   :2019  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-167.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Sturnus vulgaris  :295   Min.   :1975  
-    ##  Acanthis flammea  :  0   1st Qu.:2016  
-    ##  Accipiter cooperii:  0   Median :2018  
-    ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2021  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-168.png)<!-- -->
-
-    ##                 species      eventDate   
-    ##  Bombycilla cedrorum:267   Min.   :1986  
-    ##  Acanthis flammea   :  0   1st Qu.:2015  
-    ##  Accipiter cooperii :  0   Median :2018  
-    ##  Accipiter gentilis :  0   Mean   :2016  
-    ##  Accipiter striatus :  0   3rd Qu.:2020  
-    ##  Actitis macularius :  0   Max.   :2022  
-    ##  (Other)            :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-169.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Passer domesticus :34   Min.   :1975  
-    ##  Acanthis flammea  : 0   1st Qu.:2008  
-    ##  Accipiter cooperii: 0   Median :2013  
-    ##  Accipiter gentilis: 0   Mean   :2010  
-    ##  Accipiter striatus: 0   3rd Qu.:2017  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-170.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Anthus rubescens  :1   Min.   :2017  
-    ##  Acanthis flammea  :0   1st Qu.:2017  
-    ##  Accipiter cooperii:0   Median :2017  
-    ##  Accipiter gentilis:0   Mean   :2017  
-    ##  Accipiter striatus:0   3rd Qu.:2017  
-    ##  Actitis macularius:0   Max.   :2017  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-171.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-265.png)<!-- -->
 
     ##                species    eventDate   
     ##  Anthus spragueii  :2   Min.   :1920  
@@ -5974,7 +7575,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius:0   Max.   :2010  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-172.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-266.png)<!-- -->
 
     ##                        species    eventDate   
     ##  Coccothraustes vespertinus:8   Min.   :1993  
@@ -5985,172 +7586,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius        :0   Max.   :2020  
     ##  (Other)                   :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-173.png)<!-- -->
-
-    ##                     species    eventDate   
-    ##  Leucosticte tephrocotis:7   Min.   :2020  
-    ##  Acanthis flammea       :0   1st Qu.:2020  
-    ##  Accipiter cooperii     :0   Median :2020  
-    ##  Accipiter gentilis     :0   Mean   :2020  
-    ##  Accipiter striatus     :0   3rd Qu.:2020  
-    ##  Actitis macularius     :0   Max.   :2020  
-    ##  (Other)                :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-174.png)<!-- -->
-
-    ##                  species      eventDate   
-    ##  Haemorhous mexicanus:100   Min.   :2000  
-    ##  Acanthis flammea    :  0   1st Qu.:2014  
-    ##  Accipiter cooperii  :  0   Median :2017  
-    ##  Accipiter gentilis  :  0   Mean   :2017  
-    ##  Accipiter striatus  :  0   3rd Qu.:2020  
-    ##  Actitis macularius  :  0   Max.   :2021  
-    ##  (Other)             :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-175.png)<!-- -->
-
-    ##                  species    eventDate   
-    ##  Haemorhous purpureus:1   Min.   :2014  
-    ##  Acanthis flammea    :0   1st Qu.:2014  
-    ##  Accipiter cooperii  :0   Median :2014  
-    ##  Accipiter gentilis  :0   Mean   :2014  
-    ##  Accipiter striatus  :0   3rd Qu.:2014  
-    ##  Actitis macularius  :0   Max.   :2014  
-    ##  (Other)             :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-176.png)<!-- -->
-
-    ##                 species    eventDate   
-    ##  Haemorhous cassinii:6   Min.   :1985  
-    ##  Acanthis flammea   :0   1st Qu.:2016  
-    ##  Accipiter cooperii :0   Median :2017  
-    ##  Accipiter gentilis :0   Mean   :2012  
-    ##  Accipiter striatus :0   3rd Qu.:2017  
-    ##  Actitis macularius :0   Max.   :2020  
-    ##  (Other)            :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-177.png)<!-- -->
-
-    ##                  species    eventDate   
-    ##  Acanthis flammea    :5   Min.   :2015  
-    ##  Accipiter cooperii  :0   1st Qu.:2020  
-    ##  Accipiter gentilis  :0   Median :2021  
-    ##  Accipiter striatus  :0   Mean   :2020  
-    ##  Actitis macularius  :0   3rd Qu.:2021  
-    ##  Aechmophorus clarkii:0   Max.   :2021  
-    ##  (Other)             :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-178.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Loxia curvirostra :450   Min.   :1986  
-    ##  Acanthis flammea  :  0   1st Qu.:2015  
-    ##  Accipiter cooperii:  0   Median :2017  
-    ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2022  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-179.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Spinus pinus      :148   Min.   :1985  
-    ##  Acanthis flammea  :  0   1st Qu.:2015  
-    ##  Accipiter cooperii:  0   Median :2018  
-    ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2021  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-180.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Spinus psaltria   :1   Min.   :2020  
-    ##  Acanthis flammea  :0   1st Qu.:2020  
-    ##  Accipiter cooperii:0   Median :2020  
-    ##  Accipiter gentilis:0   Mean   :2020  
-    ##  Accipiter striatus:0   3rd Qu.:2020  
-    ##  Actitis macularius:0   Max.   :2020  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-181.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Spinus tristis    :726   Min.   :1984  
-    ##  Acanthis flammea  :  0   1st Qu.:2015  
-    ##  Accipiter cooperii:  0   Median :2017  
-    ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2021  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-182.png)<!-- -->
-
-    ##                  species    eventDate   
-    ##  Calcarius lapponicus:1   Min.   :2016  
-    ##  Acanthis flammea    :0   1st Qu.:2016  
-    ##  Accipiter cooperii  :0   Median :2016  
-    ##  Accipiter gentilis  :0   Mean   :2016  
-    ##  Accipiter striatus  :0   3rd Qu.:2016  
-    ##  Actitis macularius  :0   Max.   :2016  
-    ##  (Other)             :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-183.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Calcarius ornatus :5   Min.   :1995  
-    ##  Acanthis flammea  :0   1st Qu.:2013  
-    ##  Accipiter cooperii:0   Median :2017  
-    ##  Accipiter gentilis:0   Mean   :2013  
-    ##  Accipiter striatus:0   3rd Qu.:2018  
-    ##  Actitis macularius:0   Max.   :2020  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-184.png)<!-- -->
-
-    ##                    species    eventDate   
-    ##  Rhynchophanes mccownii:3   Min.   :1995  
-    ##  Acanthis flammea      :0   1st Qu.:2002  
-    ##  Accipiter cooperii    :0   Median :2010  
-    ##  Accipiter gentilis    :0   Mean   :2006  
-    ##  Accipiter striatus    :0   3rd Qu.:2012  
-    ##  Actitis macularius    :0   Max.   :2014  
-    ##  (Other)               :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-185.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Peucaea cassinii  :1   Min.   :2011  
-    ##  Acanthis flammea  :0   1st Qu.:2011  
-    ##  Accipiter cooperii:0   Median :2011  
-    ##  Accipiter gentilis:0   Mean   :2011  
-    ##  Accipiter striatus:0   3rd Qu.:2011  
-    ##  Actitis macularius:0   Max.   :2011  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-186.png)<!-- -->
-
-    ##                   species     eventDate   
-    ##  Ammodramus savannarum:64   Min.   :1986  
-    ##  Acanthis flammea     : 0   1st Qu.:2015  
-    ##  Accipiter cooperii   : 0   Median :2018  
-    ##  Accipiter gentilis   : 0   Mean   :2016  
-    ##  Accipiter striatus   : 0   3rd Qu.:2020  
-    ##  Actitis macularius   : 0   Max.   :2021  
-    ##  (Other)              : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-187.png)<!-- -->
-
-    ##                  species      eventDate   
-    ##  Chondestes grammacus:356   Min.   :1986  
-    ##  Acanthis flammea    :  0   1st Qu.:2015  
-    ##  Accipiter cooperii  :  0   Median :2018  
-    ##  Accipiter gentilis  :  0   Mean   :2017  
-    ##  Accipiter striatus  :  0   3rd Qu.:2020  
-    ##  Actitis macularius  :  0   Max.   :2023  
-    ##  (Other)             :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-188.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-267.png)<!-- -->
 
     ##                     species      eventDate   
     ##  Calamospiza melanocorys:128   Min.   :1901  
@@ -6161,150 +7597,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius     :  0   Max.   :2021  
     ##  (Other)                :  0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-189.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Spizella passerina:438   Min.   :1959  
-    ##  Acanthis flammea  :  0   1st Qu.:2014  
-    ##  Accipiter cooperii:  0   Median :2016  
-    ##  Accipiter gentilis:  0   Mean   :2015  
-    ##  Accipiter striatus:  0   3rd Qu.:2018  
-    ##  Actitis macularius:  0   Max.   :2022  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-190.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Spizella pallida  :126   Min.   :1986  
-    ##  Acanthis flammea  :  0   1st Qu.:2014  
-    ##  Accipiter cooperii:  0   Median :2017  
-    ##  Accipiter gentilis:  0   Mean   :2017  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2021  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-191.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Spizella pusilla  :14   Min.   :2011  
-    ##  Acanthis flammea  : 0   1st Qu.:2015  
-    ##  Accipiter cooperii: 0   Median :2016  
-    ##  Accipiter gentilis: 0   Mean   :2017  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-192.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Spizella breweri  :18   Min.   :2008  
-    ##  Acanthis flammea  : 0   1st Qu.:2013  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2015  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-193.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Passerella iliaca :1   Min.   :2016  
-    ##  Acanthis flammea  :0   1st Qu.:2016  
-    ##  Accipiter cooperii:0   Median :2016  
-    ##  Accipiter gentilis:0   Mean   :2016  
-    ##  Accipiter striatus:0   3rd Qu.:2016  
-    ##  Actitis macularius:0   Max.   :2016  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-194.png)<!-- -->
-
-    ##                  species     eventDate   
-    ##  Spizelloides arborea:13   Min.   :2013  
-    ##  Acanthis flammea    : 0   1st Qu.:2017  
-    ##  Accipiter cooperii  : 0   Median :2017  
-    ##  Accipiter gentilis  : 0   Mean   :2017  
-    ##  Accipiter striatus  : 0   3rd Qu.:2019  
-    ##  Actitis macularius  : 0   Max.   :2021  
-    ##  (Other)             : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-195.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Junco hyemalis    :165   Min.   :1994  
-    ##  Acanthis flammea  :  0   1st Qu.:2014  
-    ##  Accipiter cooperii:  0   Median :2016  
-    ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2021  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-196.png)<!-- -->
-
-    ##                    species      eventDate   
-    ##  Zonotrichia leucophrys:132   Min.   :2009  
-    ##  Acanthis flammea      :  0   1st Qu.:2014  
-    ##  Accipiter cooperii    :  0   Median :2016  
-    ##  Accipiter gentilis    :  0   Mean   :2016  
-    ##  Accipiter striatus    :  0   3rd Qu.:2017  
-    ##  Actitis macularius    :  0   Max.   :2022  
-    ##  (Other)               :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-197.png)<!-- -->
-
-    ##                 species    eventDate   
-    ##  Zonotrichia querula:3   Min.   :2014  
-    ##  Acanthis flammea   :0   1st Qu.:2016  
-    ##  Accipiter cooperii :0   Median :2017  
-    ##  Accipiter gentilis :0   Mean   :2016  
-    ##  Accipiter striatus :0   3rd Qu.:2018  
-    ##  Actitis macularius :0   Max.   :2018  
-    ##  (Other)            :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-198.png)<!-- -->
-
-    ##                    species     eventDate   
-    ##  Zonotrichia albicollis:28   Min.   :2010  
-    ##  Acanthis flammea      : 0   1st Qu.:2015  
-    ##  Accipiter cooperii    : 0   Median :2016  
-    ##  Accipiter gentilis    : 0   Mean   :2016  
-    ##  Accipiter striatus    : 0   3rd Qu.:2018  
-    ##  Actitis macularius    : 0   Max.   :2021  
-    ##  (Other)               : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-199.png)<!-- -->
-
-    ##                 species     eventDate   
-    ##  Pooecetes gramineus:64   Min.   :1986  
-    ##  Acanthis flammea   : 0   1st Qu.:2014  
-    ##  Accipiter cooperii : 0   Median :2017  
-    ##  Accipiter gentilis : 0   Mean   :2016  
-    ##  Accipiter striatus : 0   3rd Qu.:2020  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-200.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Centronyx bairdii :7   Min.   :2010  
-    ##  Acanthis flammea  :0   1st Qu.:2010  
-    ##  Accipiter cooperii:0   Median :2010  
-    ##  Accipiter gentilis:0   Mean   :2011  
-    ##  Accipiter striatus:0   3rd Qu.:2010  
-    ##  Actitis macularius:0   Max.   :2019  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-201.png)<!-- -->
-
-    ##                       species     eventDate   
-    ##  Passerculus sandwichensis:24   Min.   :1985  
-    ##  Acanthis flammea         : 0   1st Qu.:2016  
-    ##  Accipiter cooperii       : 0   Median :2017  
-    ##  Accipiter gentilis       : 0   Mean   :2015  
-    ##  Accipiter striatus       : 0   3rd Qu.:2018  
-    ##  Actitis macularius       : 0   Max.   :2021  
-    ##  (Other)                  : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-202.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-268.png)<!-- -->
 
     ##                species     eventDate   
     ##  Melospiza melodia :36   Min.   :1986  
@@ -6315,7 +7608,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius: 0   Max.   :2021  
     ##  (Other)           : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-203.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-269.png)<!-- -->
 
     ##                 species      eventDate   
     ##  Melospiza lincolnii:133   Min.   :2011  
@@ -6326,7 +7619,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius :  0   Max.   :2022  
     ##  (Other)            :  0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-204.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-270.png)<!-- -->
 
     ##                 species    eventDate   
     ##  Melospiza georgiana:7   Min.   :2014  
@@ -6337,29 +7630,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius :0   Max.   :2021  
     ##  (Other)            :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-205.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Pipilo chlorurus  :1   Min.   :2011  
-    ##  Acanthis flammea  :0   1st Qu.:2011  
-    ##  Accipiter cooperii:0   Median :2011  
-    ##  Accipiter gentilis:0   Mean   :2011  
-    ##  Accipiter striatus:0   3rd Qu.:2011  
-    ##  Actitis macularius:0   Max.   :2011  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-206.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Pipilo maculatus  :715   Min.   :1957  
-    ##  Acanthis flammea  :  0   1st Qu.:2014  
-    ##  Accipiter cooperii:  0   Median :2017  
-    ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2023  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-207.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-271.png)<!-- -->
 
     ##                     species    eventDate   
     ##  Pipilo erythrophthalmus:2   Min.   :1955  
@@ -6370,62 +7641,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius     :0   Max.   :1955  
     ##  (Other)                :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-208.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Icteria virens    :261   Min.   :1999  
-    ##  Acanthis flammea  :  0   1st Qu.:2015  
-    ##  Accipiter cooperii:  0   Median :2018  
-    ##  Accipiter gentilis:  0   Mean   :2017  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2023  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-209.png)<!-- -->
-
-    ##                           species     eventDate   
-    ##  Xanthocephalus xanthocephalus:24   Min.   :2013  
-    ##  Acanthis flammea             : 0   1st Qu.:2016  
-    ##  Accipiter cooperii           : 0   Median :2018  
-    ##  Accipiter gentilis           : 0   Mean   :2018  
-    ##  Accipiter striatus           : 0   3rd Qu.:2019  
-    ##  Actitis macularius           : 0   Max.   :2021  
-    ##  (Other)                      : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-210.png)<!-- -->
-
-    ##                   species    eventDate   
-    ##  Dolichonyx oryzivorus:8   Min.   :1975  
-    ##  Acanthis flammea     :0   1st Qu.:2016  
-    ##  Accipiter cooperii   :0   Median :2019  
-    ##  Accipiter gentilis   :0   Mean   :2013  
-    ##  Accipiter striatus   :0   3rd Qu.:2020  
-    ##  Actitis macularius   :0   Max.   :2021  
-    ##  (Other)              :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-211.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Sturnella magna   :4   Min.   :2011  
-    ##  Acanthis flammea  :0   1st Qu.:2012  
-    ##  Accipiter cooperii:0   Median :2015  
-    ##  Accipiter gentilis:0   Mean   :2015  
-    ##  Accipiter striatus:0   3rd Qu.:2018  
-    ##  Actitis macularius:0   Max.   :2019  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-212.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Sturnella neglecta:516   Min.   :1975  
-    ##  Acanthis flammea  :  0   1st Qu.:2016  
-    ##  Accipiter cooperii:  0   Median :2019  
-    ##  Accipiter gentilis:  0   Mean   :2017  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2023  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-213.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-272.png)<!-- -->
 
     ##                species     eventDate   
     ##  Icterus spurius   :84   Min.   :1985  
@@ -6436,172 +7652,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius: 0   Max.   :2021  
     ##  (Other)           : 0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-214.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Icterus bullockii :74   Min.   :1955  
-    ##  Acanthis flammea  : 0   1st Qu.:2017  
-    ##  Accipiter cooperii: 0   Median :2020  
-    ##  Accipiter gentilis: 0   Mean   :2016  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2022  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-215.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Icterus galbula   :9   Min.   :2011  
-    ##  Acanthis flammea  :0   1st Qu.:2014  
-    ##  Accipiter cooperii:0   Median :2015  
-    ##  Accipiter gentilis:0   Mean   :2016  
-    ##  Accipiter striatus:0   3rd Qu.:2016  
-    ##  Actitis macularius:0   Max.   :2020  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-216.png)<!-- -->
-
-    ##                 species      eventDate   
-    ##  Agelaius phoeniceus:261   Min.   :1975  
-    ##  Acanthis flammea   :  0   1st Qu.:2016  
-    ##  Accipiter cooperii :  0   Median :2019  
-    ##  Accipiter gentilis :  0   Mean   :2017  
-    ##  Accipiter striatus :  0   3rd Qu.:2020  
-    ##  Actitis macularius :  0   Max.   :2021  
-    ##  (Other)            :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-217.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Molothrus ater    :200   Min.   :1995  
-    ##  Acanthis flammea  :  0   1st Qu.:2015  
-    ##  Accipiter cooperii:  0   Median :2018  
-    ##  Accipiter gentilis:  0   Mean   :2017  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2021  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-218.png)<!-- -->
-
-    ##                    species     eventDate   
-    ##  Euphagus cyanocephalus:58   Min.   :1971  
-    ##  Acanthis flammea      : 0   1st Qu.:2012  
-    ##  Accipiter cooperii    : 0   Median :2018  
-    ##  Accipiter gentilis    : 0   Mean   :2014  
-    ##  Accipiter striatus    : 0   3rd Qu.:2020  
-    ##  Actitis macularius    : 0   Max.   :2021  
-    ##  (Other)               : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-219.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Quiscalus quiscula:187   Min.   :1975  
-    ##  Acanthis flammea  :  0   1st Qu.:2015  
-    ##  Accipiter cooperii:  0   Median :2018  
-    ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2021  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-220.png)<!-- -->
-
-    ##                 species    eventDate   
-    ##  Quiscalus mexicanus:2   Min.   :2010  
-    ##  Acanthis flammea   :0   1st Qu.:2012  
-    ##  Accipiter cooperii :0   Median :2014  
-    ##  Accipiter gentilis :0   Mean   :2014  
-    ##  Accipiter striatus :0   3rd Qu.:2017  
-    ##  Actitis macularius :0   Max.   :2019  
-    ##  (Other)            :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-221.png)<!-- -->
-
-    ##                 species      eventDate   
-    ##  Seiurus aurocapilla:133   Min.   :1959  
-    ##  Acanthis flammea   :  0   1st Qu.:2013  
-    ##  Accipiter cooperii :  0   Median :2017  
-    ##  Accipiter gentilis :  0   Mean   :2014  
-    ##  Accipiter striatus :  0   3rd Qu.:2019  
-    ##  Actitis macularius :  0   Max.   :2021  
-    ##  (Other)            :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-222.png)<!-- -->
-
-    ##                     species    eventDate   
-    ##  Parkesia noveboracensis:5   Min.   :1986  
-    ##  Acanthis flammea       :0   1st Qu.:2011  
-    ##  Accipiter cooperii     :0   Median :2018  
-    ##  Accipiter gentilis     :0   Mean   :2011  
-    ##  Accipiter striatus     :0   3rd Qu.:2018  
-    ##  Actitis macularius     :0   Max.   :2021  
-    ##  (Other)                :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-223.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Mniotilta varia   :53   Min.   :1986  
-    ##  Acanthis flammea  : 0   1st Qu.:2010  
-    ##  Accipiter cooperii: 0   Median :2016  
-    ##  Accipiter gentilis: 0   Mean   :2013  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-224.png)<!-- -->
-
-    ##                   species    eventDate   
-    ##  Leiothlypis peregrina:8   Min.   :2000  
-    ##  Acanthis flammea     :0   1st Qu.:2013  
-    ##  Accipiter cooperii   :0   Median :2014  
-    ##  Accipiter gentilis   :0   Mean   :2014  
-    ##  Accipiter striatus   :0   3rd Qu.:2018  
-    ##  Actitis macularius   :0   Max.   :2021  
-    ##  (Other)              :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-225.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Leiothlypis celata:221   Min.   :2009  
-    ##  Acanthis flammea  :  0   1st Qu.:2014  
-    ##  Accipiter cooperii:  0   Median :2016  
-    ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2018  
-    ##  Actitis macularius:  0   Max.   :2022  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-226.png)<!-- -->
-
-    ##                     species    eventDate   
-    ##  Leiothlypis ruficapilla:6   Min.   :2010  
-    ##  Acanthis flammea       :0   1st Qu.:2013  
-    ##  Accipiter cooperii     :0   Median :2014  
-    ##  Accipiter gentilis     :0   Mean   :2015  
-    ##  Accipiter striatus     :0   3rd Qu.:2018  
-    ##  Actitis macularius     :0   Max.   :2018  
-    ##  (Other)                :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-227.png)<!-- -->
-
-    ##                   species    eventDate   
-    ##  Leiothlypis virginiae:1   Min.   :2019  
-    ##  Acanthis flammea     :0   1st Qu.:2019  
-    ##  Accipiter cooperii   :0   Median :2019  
-    ##  Accipiter gentilis   :0   Mean   :2019  
-    ##  Accipiter striatus   :0   3rd Qu.:2019  
-    ##  Actitis macularius   :0   Max.   :2019  
-    ##  (Other)              :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-228.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Geothlypis tolmiei:13   Min.   :2010  
-    ##  Acanthis flammea  : 0   1st Qu.:2016  
-    ##  Accipiter cooperii: 0   Median :2017  
-    ##  Accipiter gentilis: 0   Mean   :2017  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-229.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-273.png)<!-- -->
 
     ##                species    eventDate   
     ##  Geothlypis formosa:1   Min.   :2022  
@@ -6612,95 +7663,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius:0   Max.   :2022  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-230.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Geothlypis trichas:67   Min.   :2000  
-    ##  Acanthis flammea  : 0   1st Qu.:2014  
-    ##  Accipiter cooperii: 0   Median :2017  
-    ##  Accipiter gentilis: 0   Mean   :2017  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2022  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-231.png)<!-- -->
-
-    ##                 species      eventDate   
-    ##  Setophaga ruticilla:186   Min.   :1975  
-    ##  Acanthis flammea   :  0   1st Qu.:2015  
-    ##  Accipiter cooperii :  0   Median :2018  
-    ##  Accipiter gentilis :  0   Mean   :2015  
-    ##  Accipiter striatus :  0   3rd Qu.:2020  
-    ##  Actitis macularius :  0   Max.   :2023  
-    ##  (Other)            :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-232.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Setophaga petechia:331   Min.   :1984  
-    ##  Acanthis flammea  :  0   1st Qu.:2015  
-    ##  Accipiter cooperii:  0   Median :2018  
-    ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2020  
-    ##  Actitis macularius:  0   Max.   :2021  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-233.png)<!-- -->
-
-    ##                    species    eventDate   
-    ##  Setophaga pensylvanica:1   Min.   :2013  
-    ##  Acanthis flammea      :0   1st Qu.:2013  
-    ##  Accipiter cooperii    :0   Median :2013  
-    ##  Accipiter gentilis    :0   Mean   :2013  
-    ##  Accipiter striatus    :0   3rd Qu.:2013  
-    ##  Actitis macularius    :0   Max.   :2013  
-    ##  (Other)               :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-234.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Setophaga striata :11   Min.   :2003  
-    ##  Acanthis flammea  : 0   1st Qu.:2010  
-    ##  Accipiter cooperii: 0   Median :2014  
-    ##  Accipiter gentilis: 0   Mean   :2014  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-235.png)<!-- -->
-
-    ##                    species    eventDate   
-    ##  Setophaga caerulescens:1   Min.   :2021  
-    ##  Acanthis flammea      :0   1st Qu.:2021  
-    ##  Accipiter cooperii    :0   Median :2021  
-    ##  Accipiter gentilis    :0   Mean   :2021  
-    ##  Accipiter striatus    :0   3rd Qu.:2021  
-    ##  Actitis macularius    :0   Max.   :2021  
-    ##  (Other)               :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-236.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Setophaga palmarum:5   Min.   :2009  
-    ##  Acanthis flammea  :0   1st Qu.:2016  
-    ##  Accipiter cooperii:0   Median :2018  
-    ##  Accipiter gentilis:0   Mean   :2016  
-    ##  Accipiter striatus:0   3rd Qu.:2019  
-    ##  Actitis macularius:0   Max.   :2019  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-237.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Setophaga coronata:251   Min.   :1985  
-    ##  Acanthis flammea  :  0   1st Qu.:2014  
-    ##  Accipiter cooperii:  0   Median :2016  
-    ##  Accipiter gentilis:  0   Mean   :2015  
-    ##  Accipiter striatus:  0   3rd Qu.:2019  
-    ##  Actitis macularius:  0   Max.   :2022  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-238.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-274.png)<!-- -->
 
     ##                species    eventDate   
     ##  Setophaga auduboni:4   Min.   :2021  
@@ -6711,128 +7674,7 @@ districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
     ##  Actitis macularius:0   Max.   :2022  
     ##  (Other)           :0
 
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-239.png)<!-- -->
-
-    ##                 species     eventDate   
-    ##  Setophaga townsendi:10   Min.   :2014  
-    ##  Acanthis flammea   : 0   1st Qu.:2014  
-    ##  Accipiter cooperii : 0   Median :2015  
-    ##  Accipiter gentilis : 0   Mean   :2016  
-    ##  Accipiter striatus : 0   3rd Qu.:2016  
-    ##  Actitis macularius : 0   Max.   :2021  
-    ##  (Other)            : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-240.png)<!-- -->
-
-    ##                species      eventDate   
-    ##  Cardellina pusilla:198   Min.   :2010  
-    ##  Acanthis flammea  :  0   1st Qu.:2014  
-    ##  Accipiter cooperii:  0   Median :2016  
-    ##  Accipiter gentilis:  0   Mean   :2016  
-    ##  Accipiter striatus:  0   3rd Qu.:2018  
-    ##  Actitis macularius:  0   Max.   :2022  
-    ##  (Other)           :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-241.png)<!-- -->
-
-    ##                species    eventDate   
-    ##  Piranga rubra     :1   Min.   :2021  
-    ##  Acanthis flammea  :0   1st Qu.:2021  
-    ##  Accipiter cooperii:0   Median :2021  
-    ##  Accipiter gentilis:0   Mean   :2021  
-    ##  Accipiter striatus:0   3rd Qu.:2021  
-    ##  Actitis macularius:0   Max.   :2021  
-    ##  (Other)           :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-242.png)<!-- -->
-
-    ##                 species      eventDate   
-    ##  Piranga ludoviciana:160   Min.   :1984  
-    ##  Acanthis flammea   :  0   1st Qu.:2014  
-    ##  Accipiter cooperii :  0   Median :2016  
-    ##  Accipiter gentilis :  0   Mean   :2015  
-    ##  Accipiter striatus :  0   3rd Qu.:2018  
-    ##  Actitis macularius :  0   Max.   :2022  
-    ##  (Other)            :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-243.png)<!-- -->
-
-    ##                   species    eventDate   
-    ##  Cardinalis cardinalis:6   Min.   :2012  
-    ##  Acanthis flammea     :0   1st Qu.:2015  
-    ##  Accipiter cooperii   :0   Median :2016  
-    ##  Accipiter gentilis   :0   Mean   :2017  
-    ##  Accipiter striatus   :0   3rd Qu.:2020  
-    ##  Actitis macularius   :0   Max.   :2021  
-    ##  (Other)              :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-244.png)<!-- -->
-
-    ##                     species    eventDate   
-    ##  Pheucticus ludovicianus:3   Min.   :2009  
-    ##  Acanthis flammea       :0   1st Qu.:2015  
-    ##  Accipiter cooperii     :0   Median :2021  
-    ##  Accipiter gentilis     :0   Mean   :2017  
-    ##  Accipiter striatus     :0   3rd Qu.:2021  
-    ##  Actitis macularius     :0   Max.   :2021  
-    ##  (Other)                :0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-245.png)<!-- -->
-
-    ##                       species      eventDate   
-    ##  Pheucticus melanocephalus:249   Min.   :1955  
-    ##  Acanthis flammea         :  0   1st Qu.:2014  
-    ##  Accipiter cooperii       :  0   Median :2018  
-    ##  Accipiter gentilis       :  0   Mean   :2015  
-    ##  Accipiter striatus       :  0   3rd Qu.:2020  
-    ##  Actitis macularius       :  0   Max.   :2021  
-    ##  (Other)                  :  0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-246.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Passerina caerulea:26   Min.   :1969  
-    ##  Acanthis flammea  : 0   1st Qu.:2014  
-    ##  Accipiter cooperii: 0   Median :2020  
-    ##  Accipiter gentilis: 0   Mean   :2015  
-    ##  Accipiter striatus: 0   3rd Qu.:2021  
-    ##  Actitis macularius: 0   Max.   :2022  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-247.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Passerina amoena  :61   Min.   :1965  
-    ##  Acanthis flammea  : 0   1st Qu.:2015  
-    ##  Accipiter cooperii: 0   Median :2017  
-    ##  Accipiter gentilis: 0   Mean   :2015  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-248.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Passerina cyanea  :24   Min.   :1991  
-    ##  Acanthis flammea  : 0   1st Qu.:2013  
-    ##  Accipiter cooperii: 0   Median :2015  
-    ##  Accipiter gentilis: 0   Mean   :2014  
-    ##  Accipiter striatus: 0   3rd Qu.:2017  
-    ##  Actitis macularius: 0   Max.   :2021  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-249.png)<!-- -->
-
-    ##                species     eventDate   
-    ##  Spiza americana   :30   Min.   :1996  
-    ##  Acanthis flammea  : 0   1st Qu.:2017  
-    ##  Accipiter cooperii: 0   Median :2020  
-    ##  Accipiter gentilis: 0   Mean   :2017  
-    ##  Accipiter striatus: 0   3rd Qu.:2020  
-    ##  Actitis macularius: 0   Max.   :2022  
-    ##  (Other)           : 0
-
-![](appendix_1_files/figure-gfm/unnamed-chunk-11-250.png)<!-- -->
+![](appendix_1_files/figure-gfm/unnamed-chunk-11-275.png)<!-- -->
 
 # Missing
 
@@ -6919,12 +7761,12 @@ ne_nf_gbif <- read_csv(paste0(filepath,"ne_natl_forest_birds.csv")) %>%
   unique()
 ```
 
-    ## Rows: 29707 Columns: 9
+    ## Rows: 64305 Columns: 6
     ## ── Column specification ────────────────────────────────────────────────────────
     ## Delimiter: ","
-    ## chr  (4): species, locality, english, district
-    ## dbl  (4): individualCount, decimalLongitude, decimalLatitude, order
-    ## dttm (1): eventDate
+    ## chr  (3): species, individualCount, district
+    ## dbl  (2): decimalLongitude, decimalLatitude
+    ## date (1): eventDate
     ## 
     ## ℹ Use `spec()` to retrieve the full column specification for this data.
     ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
@@ -6955,7 +7797,7 @@ index <- which(is.na(comp_years$GBIF))
 comp_years[index,c("Species","SciName")]
 ```
 
-    ## # A tibble: 84 × 2
+    ## # A tibble: 83 × 2
     ##    Species                   SciName              
     ##    <fct>                     <fct>                
     ##  1 Common Loon               Gavia immer          
@@ -6968,7 +7810,7 @@ comp_years[index,c("Species","SciName")]
     ##  8 Green-winged Teal         Anas carolinensis    
     ##  9 Canvasback                Aythya vasilineria   
     ## 10 Red-breasted Merganser    Mergus serrator      
-    ## # ℹ 74 more rows
+    ## # ℹ 73 more rows
 
 Most of these species are water birds. Many species were missing from
 the direct GBIF download, for reasons that are unknown. These include
@@ -6982,17 +7824,17 @@ index <- which(is.na(comp_years$Bray))
 comp_years[index,c("Species","SciName")]
 ```
 
-    ## # A tibble: 24 × 2
-    ##    Species SciName              
-    ##    <fct>   <fct>                
-    ##  1 <NA>    Branta hutchinsii    
-    ##  2 <NA>    Cygnus buccinator    
-    ##  3 <NA>    Anas crecca          
-    ##  4 <NA>    Aythya americana     
-    ##  5 <NA>    Aythya collaris      
-    ##  6 <NA>    Aythya marila        
-    ##  7 <NA>    Bucephala clangula   
-    ##  8 <NA>    Streptopelia decaocto
-    ##  9 <NA>    Chordeiles minor     
-    ## 10 <NA>    Antrostomus vociferus
-    ## # ℹ 14 more rows
+    ## # A tibble: 39 × 2
+    ##    Species SciName                      
+    ##    <fct>   <fct>                        
+    ##  1 <NA>    Branta hutchinsii            
+    ##  2 <NA>    Cygnus buccinator            
+    ##  3 <NA>    Cygnus buccinator/columbianus
+    ##  4 <NA>    Spatula discors/cyanoptera   
+    ##  5 <NA>    Anas crecca                  
+    ##  6 <NA>    Aythya valisineria           
+    ##  7 <NA>    Aythya americana             
+    ##  8 <NA>    Aythya collaris              
+    ##  9 <NA>    Aythya marila                
+    ## 10 <NA>    Bucephala clangula           
+    ## # ℹ 29 more rows

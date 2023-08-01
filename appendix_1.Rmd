@@ -18,6 +18,49 @@ library(data.table)
 ```{r,eval=F}
 gbif <- read.delim(paste0(filepath,"0104629-230530130749713.csv"),sep = "\t")
 
+# remove unclassifiable
+gbif$species[which(gbif$species=="Junco hyemalis"&
+        gbif$infraspecificEpithet=="")] <- "Junco sp."
+
+gbif$species[which(gbif$species=="Setophaga coronata"&
+        gbif$infraspecificEpithet=="")] <- "Setophaga coronata/auduboni"
+
+# split some taxa for better resolution
+ssp_rename <- function(genus,from,to){
+  index <- which(gbif$infraspecificEpithet==from&
+                   gbif$species%like%genus)
+  if(length(index)<1){
+    print(paste0("No matches for ",from))
+  }else{
+    gbif$species[index] <- to
+    print(paste0(from," changed to ",to))
+  }
+}
+
+sp_list <-  c("Junco","hyemalis","Junco hyemalis",
+             "Junco","oreganus","Junco oreganus",
+             "Junco","aikeni","Junco aikeni",
+             "Junco","mearnsi","Junco mearnsi",
+             "Junco","cismontanus","Junco cismontanus",
+             "Junco","caniceps","Junco caniceps",
+             "Junco","shufeldti",
+                    "Junco oreganus",
+             "Junco","montanus",
+                    "Junco oreganus",
+             "Setophaga","coronata","Setophaga coronata",
+             "Setophaga","","Setophaga coronata/auduboni")
+
+renamer <- matrix(data=sp_list,
+       nrow=(length(sp_list)/3),ncol=3,
+       byrow = T) %>% as.data.frame()
+colnames(renamer) <- c("genus","from","to")
+
+for(i in 1:nrow(renamer)){
+  ssp_rename(genus = renamer$genus[i],
+             from = renamer$from[i],
+             to = renamer$to[i])
+}
+
 # reduce to relevant columns
 # all have coords??
 
@@ -75,14 +118,100 @@ gbif <- gbif[-which(gbif$species==""),]
 
 write_csv(gbif,paste0(filepath,"reduced_gbif.csv"))
 ```
-```{r}
-# note some longitudes are wrong; remove anything over 0
 
-gbif <- read_csv(paste0(filepath,"reduced_gbif.csv"))%>%
-  filter(decimalLongitude < 0)
+We are also going to import and reformat eBird data. Note that for *Junco*, we are only using populations predesignated to subspecies since roughly 57% of western *Junco* are *hyemalis* in Nebraska; thus, we can't make broad assumptions. To contrast, 98% in eastern Nebraska are *hyemalis*.
+
+```{r,eval=F}
+# reformat eBird data
+# add to ensure nothing is missing in GBIF!
+# first run revealed some data lacking
+
+ebird <- read.delim(paste0(filepath,
+                           "ebd_US-NE_relJun-2023/ebd_US-NE_relJun-2023.txt"),
+                    sep = "\t",quote="")
+
+# remove unknowns
+`%notlike%` <- Negate(`%like%`)
+ebird <- ebird[which(ebird$SCIENTIFIC.NAME%notlike%"sp."),]
+
+# split some taxa for better resolution
+ssp_rename <- function(from,to){
+  index <- which(ebird$SUBSPECIES.SCIENTIFIC.NAME==from)
+  if(length(index)<1){
+    print(paste0("No matches for ",from))
+  }else{
+    ebird$SCIENTIFIC.NAME[index] <- to
+    print(paste0(from," changed to ",to))
+  }
+}
+
+# remove unclassifiable
+ebird$SCIENTIFIC.NAME[which(ebird$SCIENTIFIC.NAME=="Junco hyemalis"&
+        ebird$SUBSPECIES.SCIENTIFIC.NAME=="")] <- "Junco sp."
+
+index <- which(ebird$SCIENTIFIC.NAME=="Setophaga coronata"&
+        ebird$SUBSPECIES.SCIENTIFIC.NAME=="")
+
+ebird$SCIENTIFIC.NAME[index] <- "Setophaga coronata/auduboni"
+
+sp_list <-  c("Junco hyemalis hyemalis/carolinensis","Junco hyemalis",
+             "Junco hyemalis [oreganus Group]","Junco oreganus",
+             "Junco hyemalis aikeni","Junco aikeni",
+             "Junco hyemalis mearnsi","Junco mearnsi",
+             "Junco hyemalis cismontanus","Junco cismontanus",
+             "Junco hyemalis caniceps","Junco caniceps",
+             "Junco hyemalis hyemalis/carolinensis/cismontanus",
+                    "Junco hyemalis/cismontanus",
+             "Junco hyemalis oreganus x mearnsi",
+                    "Junco hyemalis oreganus x mearnsi",
+             "Junco hyemalis mearnsi x aikeni",
+                    "Junco hyemalis mearnsi x aikeni",
+             "Setophaga coronata coronata","Setophaga coronata",
+             "Setophaga coronata auduboni","Setophaga auduboni",
+             "Setophaga coronata coronata x auduboni",
+                    "Setophaga coronata coronata x auduboni")
+
+renamer <- matrix(data=sp_list,
+       nrow=(length(sp_list)/2),ncol=2,
+       byrow = T) %>% as.data.frame()
+colnames(renamer) <- c("from","to")
+
+for(i in 1:nrow(renamer)){
+  ssp_rename(from = renamer$from[i],
+             to = renamer$to[i])
+}
+
+# reduce to relevant columns
+# all have coords??
+
+ebird <- ebird[order(ebird$TAXONOMIC.ORDER),]
+
+ebird <- ebird%>%
+  select(SCIENTIFIC.NAME, OBSERVATION.COUNT,
+         LONGITUDE, LATITUDE, OBSERVATION.DATE) %>%
+  unique()%>%
+  rename("species" = SCIENTIFIC.NAME,
+         "individualCount" = OBSERVATION.COUNT, "decimalLongitude" = LONGITUDE,
+         "decimalLatitude" = LATITUDE, "eventDate" = OBSERVATION.DATE)%>%
+  unique()
+
+write_csv(ebird,paste0(filepath,"reduced_ebird.csv"))
 ```
 
 ```{r,eval=F}
+# note some longitudes are wrong; remove anything over 0
+# locality columns causing problems for ebird
+
+gbif <- read_csv(paste0(filepath,"reduced_gbif.csv"))%>%
+  filter(decimalLongitude < 0) %>%
+  select(-order,-english,-locality)
+
+ebird <- read_csv(paste0(filepath,"reduced_ebird.csv"),quote="")
+
+gbif <- rbind(ebird,gbif) %>%
+  unique()
+
+rm(ebird)
 # load shapefile
 
 nf <- vect(paste0(filepath,"S_USA.AdministrativeForest/S_USA.AdministrativeForest.shp"))
@@ -128,7 +257,6 @@ write_csv(ne_nf_gbif,paste0(filepath,"ne_natl_forest_birds.csv"))
 ne_nf_gbif <- read_csv(paste0(filepath,"ne_natl_forest_birds.csv"))
 
 ne_nf_gbif$species <- as.factor(ne_nf_gbif$species)
-ne_nf_gbif$locality <- as.factor(ne_nf_gbif$locality)
 ne_nf_gbif$eventDate <- as.Date(ne_nf_gbif$eventDate)
 ne_nf_gbif$district <- as.factor(ne_nf_gbif$district)
 ```
