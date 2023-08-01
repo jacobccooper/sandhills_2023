@@ -1,10 +1,10 @@
 ---
-title: "Appendix 1: 30 years of change in the birds of the Nebraska National Forest"
+title: "Appendix 1: An update to the Birds of the Nebraska National Forest"
 output: github_document
 ---
 
 ```{r,echo=F}
-filepath <- "~/Dropbox/Manuscripts/bessey/"
+filepath <- "~/Dropbox/Manuscripts/sandhills_2023/"
 ```
 
 ```{r}
@@ -223,3 +223,59 @@ Species|Collection|Locality|Year|Note
 Many thanks to Dr. Brett Benz, Dr. Ben Winger, and Dr. Kristof Zykowski for the specimen information.
 
 I'm including *Sialia* in the study for now - hoping to confirm.
+
+# 1993 to 2023
+
+We can also combine the lists from 1993 and 2023 to understand what has changed.
+
+```{r,echo=F}
+rm(list=ls())
+filepath <- "~/Dropbox/Manuscripts/sandhills_2023/"
+```
+
+```{r}
+bray <- read_csv(paste0(filepath,"Bray_Sandhills_Species.csv"))
+
+bray$Species <- as.factor(bray$Species)
+bray$SciName <- as.factor(bray$SciName)
+bray$Bray <- as.factor(bray$Bray)
+
+ne_nf_gbif <- read_csv(paste0(filepath,"ne_natl_forest_birds.csv")) %>%
+  filter(district == "Bessey") %>%
+  select(species) %>%
+  rename("SciName" = species) %>%
+  unique()
+
+ne_nf_gbif$GBIF <- "GBIF"
+
+ne_nf_gbif$SciName <- as.factor(ne_nf_gbif$SciName)
+ne_nf_gbif$GBIF <- as.factor(ne_nf_gbif$GBIF)
+
+# length(unique(bray$Species))
+# length(unique(ne_nf_gbif$species))
+```
+
+The length of the list derived from Bray is `r length(unique(bray$Species))` spp., whereas the list derived from GBIF is `r length(unique(ne_nf_gbif$species))` spp.
+
+```{r}
+comp_years <- bray %>%
+  full_join(ne_nf_gbif,by = "SciName")
+```
+
+```{r}
+# species recorded by Bray not in GBIF
+
+index <- which(is.na(comp_years$GBIF))
+
+comp_years[index,c("Species","SciName")]
+```
+
+Most of these species are water birds. Many species were missing from the direct GBIF download, for reasons that are unknown. These include *Astur cooperii*.
+
+```{r}
+# species recorded by GBIF not in Bray
+
+index <- which(is.na(comp_years$Bray))
+
+comp_years[index,c("Species","SciName")]
+```

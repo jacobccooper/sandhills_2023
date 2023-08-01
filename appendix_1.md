@@ -1,5 +1,4 @@
-Appendix 1: 30 years of change in the birds of the Nebraska National
-Forest
+Appendix 1: An update to the Birds of the Nebraska National Forest
 ================
 
 ``` r
@@ -6890,3 +6889,110 @@ Many thanks to Dr. Brett Benz, Dr. Ben Winger, and Dr. Kristof Zykowski
 for the specimen information.
 
 I’m including *Sialia* in the study for now - hoping to confirm.
+
+# 1993 to 2023
+
+We can also combine the lists from 1993 and 2023 to understand what has
+changed.
+
+``` r
+bray <- read_csv(paste0(filepath,"Bray_Sandhills_Species.csv"))
+```
+
+    ## Rows: 255 Columns: 4
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## chr (4): Species, SciName, Bray, Notes
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
+bray$Species <- as.factor(bray$Species)
+bray$SciName <- as.factor(bray$SciName)
+bray$Bray <- as.factor(bray$Bray)
+
+ne_nf_gbif <- read_csv(paste0(filepath,"ne_natl_forest_birds.csv")) %>%
+  filter(district == "Bessey") %>%
+  select(species) %>%
+  rename("SciName" = species) %>%
+  unique()
+```
+
+    ## Rows: 29707 Columns: 9
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## chr  (4): species, locality, english, district
+    ## dbl  (4): individualCount, decimalLongitude, decimalLatitude, order
+    ## dttm (1): eventDate
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
+ne_nf_gbif$GBIF <- "GBIF"
+
+ne_nf_gbif$SciName <- as.factor(ne_nf_gbif$SciName)
+ne_nf_gbif$GBIF <- as.factor(ne_nf_gbif$GBIF)
+
+# length(unique(bray$Species))
+# length(unique(ne_nf_gbif$species))
+```
+
+The length of the list derived from Bray is 255 spp., whereas the list
+derived from GBIF is 0 spp.
+
+``` r
+comp_years <- bray %>%
+  full_join(ne_nf_gbif,by = "SciName")
+```
+
+``` r
+# species recorded by Bray not in GBIF
+
+index <- which(is.na(comp_years$GBIF))
+
+comp_years[index,c("Species","SciName")]
+```
+
+    ## # A tibble: 84 × 2
+    ##    Species                   SciName              
+    ##    <fct>                     <fct>                
+    ##  1 Common Loon               Gavia immer          
+    ##  2 Horned Grebe              Podiceps auritus     
+    ##  3 American Bittern          Botaurus letiginosus 
+    ##  4 Great Egret               Ardea alba           
+    ##  5 Black-crowned Night-Heron Nycticorax nycticorax
+    ##  6 Snow Goose                Anser caerulescens   
+    ##  7 Brant                     Branta bernicla      
+    ##  8 Green-winged Teal         Anas carolinensis    
+    ##  9 Canvasback                Aythya vasilineria   
+    ## 10 Red-breasted Merganser    Mergus serrator      
+    ## # ℹ 74 more rows
+
+Most of these species are water birds. Many species were missing from
+the direct GBIF download, for reasons that are unknown. These include
+*Astur cooperii*.
+
+``` r
+# species recorded by GBIF not in Bray
+
+index <- which(is.na(comp_years$Bray))
+
+comp_years[index,c("Species","SciName")]
+```
+
+    ## # A tibble: 24 × 2
+    ##    Species SciName              
+    ##    <fct>   <fct>                
+    ##  1 <NA>    Branta hutchinsii    
+    ##  2 <NA>    Cygnus buccinator    
+    ##  3 <NA>    Anas crecca          
+    ##  4 <NA>    Aythya americana     
+    ##  5 <NA>    Aythya collaris      
+    ##  6 <NA>    Aythya marila        
+    ##  7 <NA>    Bucephala clangula   
+    ##  8 <NA>    Streptopelia decaocto
+    ##  9 <NA>    Chordeiles minor     
+    ## 10 <NA>    Antrostomus vociferus
+    ## # ℹ 14 more rows
