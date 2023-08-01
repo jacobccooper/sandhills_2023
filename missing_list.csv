@@ -1,0 +1,181 @@
+gbifID,institutionCode,catalogNumber,species,locality,decimalLongitude,decimalLatitude,year,right,keep
+3056262719,USGS,,Agelaius tricolor,,-102.582138,42.068306,1932,NA,FALSE
+4028946657,iNaturalist,147541259,Aix galericulata,,-96.625988,40.777092,2017,NA,FALSE
+3042316364,UNSM,16013,Alopochen aegyptiaca,,-96.731956,40.262745,1988,NA,FALSE
+3042320090,UNSM,10082,Amadina fasciata,"in Lincoln, City Zoo",-96.679645,40.800036,NA,NA,FALSE
+3042320095,UNSM,10081,Amandava amandava,"in Lincoln, City Zoo",-96.679645,40.800036,NA,NA,FALSE
+3042323087,UNSM,14447,Amazona albifrons,"in Omaha, Henry Doorly Zoo",-95.925708,41.227055,1984,NA,FALSE
+3042317397,UNSM,10904,Amazona leucocephala,Hunter,-96.96353,42.221987,1901,NA,FALSE
+1699067518,PBDB,,Anchigyps voorhiesi,"centre of NE quarter of NE quarter of NW quarter of Sec. 8, Township 28 N, range 7W",-98.242775,42.335556,NA,NA,FALSE
+2223273405,CLO,OBS686389619,Anser brachyrhynchus,Harvard WPA,-98.17325,40.6203,2006,NA,FALSE
+2980961554,iNaturalist,62831429,Anser cygnoides,,-96.1417,41.218637,2020,NA,FALSE
+2626307985,iNaturalist,46090433,Anser cygnoides,,-98.33715,40.918244,2020,NA,FALSE
+2611290229,iNaturalist,43606769,Anser cygnoides,,-96.141922,41.217025,2020,NA,FALSE
+2626538561,iNaturalist,45618600,Anser cygnoides,,-96.141811,41.217242,2020,NA,FALSE
+4127022417,iNaturalist,163668376,Anser erythropus,,-95.97857,41.303838,2021,NA,FALSE
+3124537778,iNaturalist,79829485,Anser indicus,,-96.537487,41.446696,2020,NA,FALSE
+1987391881,UMMZ,65018,Anthus spinoletta,Kearney,-99.081764,40.702213,1914,Anthus rubescens,FALSE
+3042320136,UNSM,10079,Ara ararauna,"in Lincoln, Folsom Children's Zoo",-96.679645,40.800036,NA,NA,FALSE
+3042322356,UNSM,13837,Ara macao,"in Lincoln, Pet Store",-96.672134,40.805494,1981,NA,FALSE
+3042316272,UNSM,16025,Ara severus,Lincoln,-96.666992,40.799999,1989,NA,FALSE
+1698222866,PBDB,,Aramornis longurio,Stonehouse Draw,-103.800003,42.400002,NA,NA,FALSE
+3042327632,UNSM,15112,Aratinga acuticaudata,"Lincoln, Pet store",-96.672134,40.805494,1985,NA,FALSE
+3042326624,UNSM,16251,Ardeotis kori,"in Omaha, Henry Doorly Zoo",-95.925708,41.227055,1989,NA,FALSE
+3042323285,UNSM,14399,Balearica pavonina,"in Omaha, Henry Doorly Zoo",-95.925708,41.227055,1983,NA,FALSE
+1698896724,PBDB,,Bathornis veredus,,-103.566666,42.783333,NA,NA,FALSE
+3042323885,UNSM,15962,Branta sandvicensis,"3-1/2 mi. S., 3 mi. W. Dannebrog , T13N, R12W, Sec. 29 center",-98.720484,41.068351,1987,NA,FALSE
+3042323894,UNSM,15961,Branta sandvicensis,"3-1/2 mi. S., 3 mi. W. Dannebrog , T13N, R12W, Sec. 29 center",-98.720484,41.068351,1987,NA,FALSE
+3042322193,UNSM,14777,Brotogeris pyrrhoptera,"in Lincoln, The Pet Connection (pet store)",-96.672134,40.805494,1985,NA,FALSE
+1698786458,PBDB,,Burhinus lucorum,Stonehouse Draw,-103.800003,42.400002,NA,NA,FALSE
+1698696624,PBDB,,Buteo typhoius,5 mi SE of Agate and 1.5 mi ESE of Carnegie Hill,-103.800003,42.400002,NA,NA,FALSE
+2626428080,iNaturalist,46554475,Cairina moschata,,-96.166722,41.255535,2020,NA,FALSE
+2626414698,iNaturalist,46377200,Cairina moschata,,-96.18584,41.239386,2020,NA,FALSE
+2626472149,iNaturalist,46763117,Cairina moschata,,-98.3352,40.918398,2020,NA,FALSE
+2465299957,iNaturalist,36003794,Cairina moschata,,-96.186219,41.238859,2019,NA,FALSE
+3058885725,iNaturalist,70585328,Cairina moschata,,-96.185466,41.239374,2021,NA,FALSE
+2626526346,iNaturalist,46620455,Cairina moschata,,-98.334913,40.918799,2020,NA,FALSE
+3860639543,iNaturalist,120420071,Cairina moschata,,-98.860122,40.669549,2022,NA,FALSE
+3109078715,iNaturalist,75055716,Cairina moschata,,-97.413759,41.994199,2021,NA,FALSE
+3008467385,iNaturalist,48016365,Cairina moschata,,-98.860237,40.669473000000004,2020,NA,FALSE
+3860014598,iNaturalist,119273381,Cairina moschata,,-97.463142,41.343945,2022,NA,FALSE
+3042318409,UNSM,6094,Callipepla californica,Enola,-97.464223,41.902852,1940,NA,FALSE
+3042315470,UNSM,17148,Callonetta leucophrys,"in Lincoln, Folsom Children's Zoo",-96.679645,40.800036,1994,NA,FALSE
+2597493468,Musée des Confluences,MHNL.41011562,Calocitta colliei,Amérique du Nord / États-Unis,-97.206771,40.621106,NA,NA,FALSE
+2597494845,Musée des Confluences,MHNL.41013247,Cardinalis sinuatus,Amérique du Nord / États-Unis,-97.206771,40.621106,NA,NA,FALSE
+3042316804,UNSM,17224,Chloephaga picta,"in Lincoln, Folsom Children's Zoo",-96.679645,40.800036,1995,NA,FALSE
+3042324452,UNSM,17993,Chloephaga picta,"in Lincoln, Folsom Children's Zoo",-96.679645,40.800036,2001,NA,FALSE
+3042323170,UNSM,14400,Ciconia ciconia,"in Omaha, Henry Doorly Zoo",-95.925708,41.227055,1984,NA,FALSE
+3042328068,UNSM,15027,Ciconia ciconia,"in Omaha, Henry Doorly Zoo",-95.925708,41.227055,1985,NA,FALSE
+3042326055,UNSM,14193,Ciconia nigra,"in Lincoln, Folsom Children's Zoo",-96.679645,40.800036,1962,NA,FALSE
+3042318166,UNSM,18227,Coloeus monedula,"in Lincoln, UNL city campus, Kamil's laboratroy",-96.701188,40.819655,2002,NA,FALSE
+3042318168,UNSM,18226,Coloeus monedula,"in Lincoln, UNL city campus, Kamil's laboratroy",-96.701188,40.819655,2002,NA,FALSE
+3042318173,UNSM,18239,Coloeus monedula,"in Lincoln, UNL city campus, Kamil's laboratroy",-96.701188,40.819655,2002,NA,FALSE
+1698222861,PBDB,,Conuropsis fratercula,Stonehouse Draw,-103.800003,42.400002,NA,NA,FALSE
+2597493030,Musée des Confluences,MHNL.41011026,Cossypha caffra,Amérique du Nord / États-Unis,-97.206771,40.621106,NA,NA,FALSE
+2597493076,Musée des Confluences,MHNL.41011024,Cossypha humeralis,Amérique du Nord / États-Unis,-97.206771,40.621106,NA,NA,FALSE
+2597493095,Musée des Confluences,MHNL.41011027,Cossypha natalensis,Amérique du Nord / États-Unis,-97.206771,40.621106,NA,NA,FALSE
+3042320113,UNSM,10060,Coturnix coturnix,Beatrice,-96.747307,40.269001,1958,NA,FALSE
+3042320173,UNSM,11388,Coturnix coturnix,Beatrice,-96.747307,40.269001,1958,NA,FALSE
+3042320177,UNSM,10056,Coturnix coturnix,"Capitol Beach, Lincoln",-96.74037,40.822903,1958,NA,FALSE
+3042322417,UNSM,5917,Coturnix coturnix,Beatrice,-96.747307,40.269001,1958,NA,FALSE
+3042322423,UNSM,5921,Coturnix coturnix,Beatrice,-96.747307,40.269001,1958,NA,FALSE
+3042326911,UNSM,7807,Coturnix coturnix,Beatrice,-96.747307,40.269001,1958,NA,FALSE
+3042327017,UNSM,7898,Coturnix coturnix,"Game Farm, Beatrice",-96.747307,40.269001,1958,NA,FALSE
+3042322802,UNSM,12369,Coturnix ypsilophora,"in Lincoln, Folsom Children's Zoo",-96.679645,40.800036,1969,NA,FALSE
+3042325219,UNSM,17848,Crithagra mozambica,"in Lincoln, 724 Glenarbor Circle",-96.709803,40.752453,2000,NA,FALSE
+3042326214,UNSM,16782,Crithagra mozambica,in Lincoln,-96.672134,40.805494,1989,NA,FALSE
+3042326235,UNSM,16789,Crithagra mozambica,in Lincoln,-96.672134,40.805494,1992,NA,FALSE
+3042327804,UNSM,17743,Crithagra mozambica,"in Lincoln, 724 Glenarbor Circle",-96.709803,40.752453,2000,NA,FALSE
+3042327840,UNSM,17700,Crithagra mozambica,"in Lincoln, 724 Glenarbor Circle",-96.709803,40.752453,1999,NA,FALSE
+3042323719,UNSM,13389,Cyanocorax yncas,"in Lincoln, Municipal Zoo",-96.679645,40.800036,1974,NA,FALSE
+3042325220,UNSM,16517,Cyanoliseus patagonus,"in Omaha, 1398 Greenfield Road",-96.13352,41.171838,1979,NA,FALSE
+3042323020,UNSM,14488,Cygnus atratus,"in Omaha, Henry Doorly Zoo",-95.925708,41.227055,1984,NA,FALSE
+3042324330,UNSM,16689,Cygnus melancoryphus,"in Lincoln, Folsom Children's Zoo",-96.679645,40.800036,1991,NA,FALSE
+3042317243,UNSM,18018,Dendrocygna viduata,"in Lincoln, Folsom Children's Zoo",-96.679645,40.800036,2000,NA,FALSE
+3042317262,UNSM,18017,Dendrocygna viduata,"in Lincoln, Folsom Children's Zoo",-96.679645,40.800036,2000,NA,FALSE
+1699081339,PBDB,,Dissourodes milleri,,-100.800003,42.799999,NA,NA,FALSE
+3042322040,UNSM,13475,Dromaius novaehollandiae,"In Lincoln, Folsom Children's Zoo",-96.679645,40.800036,1973,NA,FALSE
+3042323623,UNSM,13402,Dromaius novaehollandiae,"In Lincoln, Folsom Children's Zoo",-96.679645,40.800036,1975,NA,FALSE
+3042326655,UNSM,7867,Dromaius novaehollandiae,"In Lincoln, Folsom Children's Zoo",-96.679645,40.800036,NA,NA,FALSE
+65475077,CLO,OBS16750025,Dryobates scalaris,69144 Keystone,-101.607544,41.304146,2000,NA,FALSE
+3042316197,UNSM,16073,Eclectus roratus,Lincoln,-96.666992,40.799999,1989,NA,FALSE
+3042321197,UNSM,11538,Estrilda melpoda,"in Lincoln, City Zoo",-96.679645,40.800036,NA,NA,FALSE
+3042327605,UNSM,15110,Estrilda melpoda,"in Lincoln, The Pet Connection (pet store)",-96.672134,40.805494,1985,NA,FALSE
+3042327627,UNSM,15111,Estrilda melpoda,"in Lincoln, The Pet Connection (pet store)",-96.672134,40.805494,1985,NA,FALSE
+3042317252,UNSM,18013,Eudocimus ruber,"in Lincoln, Folsom Children's Zoo",-96.679645,40.800036,2000,NA,FALSE
+3042326061,UNSM,14194,Eudocimus ruber,"in Lincoln, Folsom Children's Zoo",-96.679645,40.800036,NA,NA,FALSE
+3042322176,UNSM,14773,Eudromia elegans,"in Omaha, Henry Doorly Zoo",-95.925708,41.227055,1985,NA,FALSE
+3042322201,UNSM,14775,Eudromia elegans,"in Omaha, Henry Doorly Zoo",-95.925708,41.227055,1985,NA,FALSE
+3042322194,UNSM,14774,Eudromia elegans,"in Omaha, Henry Doorly Zoo",-95.925708,41.227055,1985,NA,FALSE
+3042323012,UNSM,14485,Eudromia elegans,"in Omaha, Henry Doorly Zoo",-95.925708,41.227055,1984,NA,FALSE
+3042323011,UNSM,14486,Eudromia elegans,"in Omaha, Henry Doorly Zoo",-95.925708,41.227055,1983,NA,FALSE
+3042323010,UNSM,14487,Eudromia elegans,"in Omaha, Henry Doorly Zoo",-95.925708,41.227055,1983,NA,FALSE
+1698712688,PBDB,,Falco ramenta,Stonehouse Draw,-103.800003,42.400002,NA,NA,FALSE
+1698712600,PBDB,,Falco ramenta,,-103.800003,42.400002,NA,NA,FALSE
+1698712647,PBDB,,Falco ramenta,"approximately 8 km east of Crawford, NE1/4, SE1/4 sec. 4, T31N, R47W (Becker 1986)",-102.849998,42.683334,NA,NA,FALSE
+1698712689,PBDB,,Falco ramenta,"Antelope Draw, SE 1/4 sec 33 and SW 1/4 sec 34 T26N R55W",-103.732651,42.1856,NA,NA,FALSE
+2597493621,Musée des Confluences,MHNL.41011806,Francolinus erckelii,Amérique du Nord / États-Unis,-97.206771,40.621106,NA,NA,FALSE
+2597493265,Musée des Confluences,MHNL.41011247,Francolinus pondicerianus,Amérique du Nord / États-Unis,-97.206771,40.621106,NA,NA,FALSE
+4096644516,iNaturalist,156331013,Gallus gallus,,-102.969906,42.830894,2023,NA,FALSE
+4096638495,iNaturalist,156329925,Gallus gallus,,-102.969906,42.830894,2023,NA,FALSE
+3773270523,iNaturalist,116315659,Gallus gallus,,-97.09924,40.922868,2022,NA,FALSE
+3784737957,iNaturalist,117096605,Gallus gallus,,-103.005881,42.832949,2022,NA,FALSE
+4096926541,iNaturalist,156331803,Gallus gallus,,-102.969906,42.830894,2023,NA,FALSE
+3874034073,iNaturalist,126032495,Gallus gallus,,-102.969388,42.831048,2022,NA,FALSE
+1698696720,PBDB,,Geranoaetus contortus,Olcott Hill,-103.800003,42.400002,NA,NA,FALSE
+3042319883,UNSM,11459,Gracula religiosa,Lincoln,-96.666992,40.799999,1954,NA,FALSE
+2597493026,Musée des Confluences,MHNL.41011054,Hesperiphona abeillei,Amérique du Nord / États-Unis,-97.206771,40.621106,NA,NA,FALSE
+2597493065,Musée des Confluences,MHNL.41011051,Hesperiphona abeillei,Amérique du Nord / États-Unis,-97.206771,40.621106,NA,NA,FALSE
+3055944560,USGS,,Larus heermanni,,-102.582138,42.068306,1933,NA,FALSE
+4091778812,iNaturalist,154642614,Larus occidentalis,,-103.483483,41.918984,2023,NA,FALSE
+3042327635,UNSM,16444,Leucopsar rothschildi,"in Lincoln, Folsom Children's Zoo",-96.679645,40.800036,1992,NA,FALSE
+3042321456,UNSM,11475,Lonchura castaneothorax,"in Lincoln, City Zoo",-96.679645,40.800036,NA,NA,FALSE
+1987382257,UMMZ,55186,Megascops kennicottii,Kearney,-99.081764,40.702213,1925,NA,FALSE
+1987381984,UMMZ,55187,Megascops kennicottii,Kearney,-99.081764,40.702213,1925,NA,FALSE
+3042321923,UNSM,13528,Melopsittacus undulatus,Hickman,-96.627374,40.623008,1977,NA,FALSE
+3042321925,UNSM,13521,Melopsittacus undulatus,Hickman,-96.627374,40.623008,1977,NA,FALSE
+3042328065,UNSM,15021,Melopsittacus undulatus,in Lincoln,-96.672134,40.805494,1985,NA,FALSE
+3042323050,UNSM,14476,Myiopsitta monachus,"in Omaha, Henry Doorly Zoo",-95.925708,41.227055,1984,NA,FALSE
+3042326593,UNSM,16277,Neophema splendida,in Lincoln,-96.672134,40.805494,1988,NA,FALSE
+3042326606,UNSM,16278,Neophema splendida,in Lincoln,-96.672134,40.805494,1988,NA,FALSE
+1698223723,PBDB,,Neophrontops vetustus,Stonehouse Draw,-103.800003,42.400002,NA,NA,FALSE
+3042323647,UNSM,14717,Numida meleagris,North Platte,-100.771225,41.135799,NA,NA,FALSE
+2803096056,iNaturalist,50721592,Numida meleagris,,-98.478021,40.545709,2020,NA,FALSE
+3042323784,UNSM,15992,Nymphicus hollandicus,Lincoln,-96.666992,40.799999,1988,NA,FALSE
+3042327634,UNSM,15113,Nymphicus hollandicus,"in Lincoln, pet store",-96.672134,40.805494,1985,NA,FALSE
+2597493526,Musée des Confluences,MHNL.41011407,Oreortyx pictus,Amérique du Nord / États-Unis,-97.206771,40.621106,NA,NA,FALSE
+1698696740,PBDB,,Ortalis tantala,3 mi E of Agate coordinate based on Agate Fossil Beds National Monument,-103.866669,42.416668,NA,NA,FALSE
+1698696695,PBDB,,Palaealectoris incertus,3 mi E of Agate coordinate based on Agate Fossil Beds National Monument,-103.866669,42.416668,NA,NA,FALSE
+1698696825,PBDB,,Palaeastur atavus,5 mi SE of Agate and 1.5 mi ESE of Carnegie Hill,-103.800003,42.400002,NA,NA,FALSE
+1698696727,PBDB,,Paractiornis perpusillus,3 mi E of Agate coordinate based on Agate Fossil Beds National Monument,-103.866669,42.416668,NA,NA,FALSE
+2729180217,CLO,OBS717147608,Passer montanus,Scott Raach Hatchery,-97.44799,41.90498,2007,NA,FALSE
+1794953620,CLO,OBS550909136,Passer montanus,Lake Enola,-97.447945,41.90507,2007,NA,FALSE
+2109951959,CLO,OBS556103422,Passer montanus,Madison Scott Raasch Pond,-97.448326,41.90518,2007,NA,FALSE
+1699190296,PBDB,,Phasianus mioceanus,S of Bayard,-103.099998,41.700001,NA,NA,FALSE
+3042317127,UNSM,18022,Phoenicopterus chilensis,"in Lincoln, Folsom Children's Zoo",-96.679645,40.800036,2000,NA,FALSE
+3042321466,UNSM,11481,Phoenicopterus chilensis,"in Lincoln, Folsom Children's Zoo",-96.679645,40.800036,1963,NA,FALSE
+3042323313,UNSM,14369,Phoenicopterus chilensis,"in Omaha, Henry Doorly Zoo",-95.925708,41.227055,1983,NA,FALSE
+3042319936,UNSM,11462,Phoenicopterus ruber,"in Lincoln, Folsom Children's Zoo",-96.679645,40.800036,1964,NA,FALSE
+3042323058,UNSM,14443,Phoenicopterus ruber,"in Omaha, Henry Doorly Zoo",-95.925708,41.227055,1984,NA,FALSE
+3042323263,UNSM,14386,Phoenicopterus ruber,"in Omaha, Henry Doorly Zoo",-95.925708,41.227055,1983,NA,FALSE
+3042323725,UNSM,13388,Phoenicopterus ruber,"in Lincoln, Folsom Children's Zoo",-96.679645,40.800036,1973,NA,FALSE
+1039536910,YPM,YPM ORN 001936,Picoides arcticus,,-96.6667,40.8,1895,NA,FALSE
+3042324874,UNSM,15299,Platycercus eximius,Lincoln,-96.666992,40.799999,1985,NA,FALSE
+3042325553,UNSM,15590,Platycercus eximius,"in Lincoln, The Pet Connection (pet store)",-96.672134,40.805494,1985,NA,FALSE
+3042322815,UNSM,12368,Ploceus velatus,"Lincoln, Antelope Park Zoo",-96.679645,40.800036,1969,NA,FALSE
+3042324386,UNSM,17998,Podargus strigoides,"in Lincoln, Folsom Children's Zoo",-96.679645,40.800036,2001,NA,FALSE
+65675283,CLO,OBS16647136,Poecile carolinensis,68144 Omaha,-96.11484,41.236134,2000,NA,FALSE
+65675288,CLO,OBS16647491,Poecile carolinensis,68137 Omaha,-96.122025,41.20284,2000,NA,FALSE
+3042327610,UNSM,15115,Poephila acuticauda,"in Lincoln, The Pet Connection (pet store)",-96.672134,40.805494,1985,NA,FALSE
+3042327997,UNSM,15034,Polytelis anthopeplus,Lincoln,-96.666992,40.799999,1985,NA,FALSE
+3056371932,USGS,,Progne tapera,,-98.519501,40.088902,1923,NA,FALSE
+3056359075,USGS,,Progne tapera,,-98.519508,40.088902,1923,NA,FALSE
+1698736623,PBDB,,Proictinia effera,3 mi E of Agate coordinate based on Agate Fossil Beds National Monument,-103.866669,42.416668,NA,NA,FALSE
+3042317341,UNSM,10942,Psittacus erithacus,Lincoln,-96.666992,40.799999,1914,NA,FALSE
+3042323207,UNSM,14412,Pucrasia macrolopha,"in Omaha, Henry Doorly Zoo",-95.925708,41.227055,1983,NA,FALSE
+3042322041,UNSM,13474,Ramphastos citreolaemus,"in Lincoln, Folsom Children's Zoo",-96.679645,40.800036,1973,NA,FALSE
+3042316174,UNSM,16065,Ramphastos toco,"in Lincoln, Folsom Children's Zoo",-96.679645,40.800036,1989,NA,FALSE
+3042323119,UNSM,14429,Ramphastos toco,"in Omaha, Henry Doorly Zoo",-95.925708,41.227055,1983,NA,FALSE
+3042325796,UNSM,16871,Ramphastos toco,"in Lincoln, Folsom Children's Zoo",-96.679645,40.800036,1989,NA,FALSE
+3042323241,UNSM,13081,Ramphastos tucanus,"in Lincoln, Folsom Children's Zoo",-96.679645,40.800036,1971,NA,FALSE
+3042322154,UNSM,13435,Rhea americana,"in Omaha, Henry Doorly Zoo",-95.925708,41.227055,1976,NA,FALSE
+3042322182,UNSM,13446,Rhea americana,NW Lincoln Air Park (wolbach Game Farm),-96.741486,40.850891,1976,NA,FALSE
+3042322216,UNSM,13427,Rhea americana,"in Omaha, Henry Doorly Zoo",-95.925708,41.227055,1976,NA,FALSE
+3042323088,UNSM,14444,Rhea americana,"in Omaha, Henry Doorly Zoo",-95.925708,41.227055,1984,NA,FALSE
+2597493546,Musée des Confluences,MHNL.41011418,Rhinoptilus cinctus,Amérique du Nord / États-Unis,-97.206771,40.621106,NA,NA,FALSE
+2597493276,Musée des Confluences,MHNL.41011422,Rhinoptilus cinctus,Amérique du Nord / États-Unis,-97.206771,40.621106,NA,NA,FALSE
+896309790,MSB,MSB:Bird:12058,Serinus canaria,5 mi W Lexington,-99.83599,40.775505,1960,NA,FALSE
+3055746447,USGS,,Sialia mexicana,,-102.999908,42.829418,1922,NA,FALSE
+3056372477,USGS,,Sialia mexicana,,-102.999901,42.829418,1922,NA,FALSE
+3042319955,UNSM,11438,Spheniscus demersus,"In Lincoln, Folsom Children's Zoo",-96.679645,40.800036,1955,NA,FALSE
+3042323152,UNSM,14434,Spheniscus demersus,"in Omaha, Henry Doorly Zoo",-95.925708,41.227055,1983,NA,FALSE
+1698790454,PBDB,,Spizaetus tanneri,,-102.400002,41.400002,NA,NA,FALSE
+3042321552,UNSM,13616,Struthio camelus,"in Lincoln, Folsom Children's Zoo",-96.679645,40.800036,1979,NA,FALSE
+3042327639,UNSM,15114,Taeniopygia guttata,"in Lincoln, The Pet Connection (pet store)",-96.672134,40.805494,1985,NA,FALSE
+3042322166,UNSM,14779,Tauraco hartlaubi,"in Omaha, Henry Doorly Zoo",-95.925708,41.227055,1985,NA,FALSE
+3042315468,UNSM,17149,Tauraco leucotis,"in Lincoln, Folsom Children's Zoo",-96.679645,40.800036,1994,NA,FALSE
+3042326156,UNSM,7719,Tyto furcata,Elm Creek,-99.377003,40.720787,1903,NA,FALSE
+1039590658,YPM,YPM ORN 112034,Tyto furcata,"US34, 12 miles e of jct. US6 and US34[i.e 3 miles w of McCook]",-100.6667,40.2,1979,NA,FALSE
+3042322842,UNSM,12371,Urocissa erythroryncha,"in Lincoln, Folsom Children's Zoo",-96.679645,40.800036,1969,NA,FALSE
+1698222862,PBDB,,Urubitinga enecta,Stonehouse Draw,-103.800003,42.400002,NA,NA,FALSE
+3042322085,UNSM,14783,Vanellus spinosus,"in Omaha, Henry Doorly Zoo",-95.925708,41.227055,1985,NA,FALSE

@@ -1,0 +1,225 @@
+---
+title: "Appendix 1: 30 years of change in the birds of the Nebraska National Forest"
+output: github_document
+---
+
+```{r,echo=F}
+filepath <- "~/Dropbox/Manuscripts/bessey/"
+```
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(terra)
+library(data.table)
+```
+
+
+```{r,eval=F}
+gbif <- read.delim(paste0(filepath,"0104629-230530130749713.csv"),sep = "\t")
+
+# reduce to relevant columns
+# all have coords??
+
+gbif <- gbif%>%
+  select(species, locality, individualCount,
+         decimalLongitude, decimalLatitude, eventDate) %>%
+  unique()
+
+taxo_order <- read_csv(paste0(filepath,"sp_list_ne.csv"))
+taxo_order <- taxo_order%>%
+  rename(species = scientific)
+
+gbif <- gbif%>%
+  left_join(taxo_order,by="species")
+
+missing <- gbif$species[which(is.na(gbif$order))]%>%unique()%>%
+  as.data.frame
+# write as file, then put new names
+# write_csv(missing,paste0(filepath,"missing.csv"))
+
+
+# rename missing taxa... there's several of them!
+
+rename_taxon <- function(gbif,wrong,right,keep){
+  index <- which(gbif$species==wrong)
+  if(length(index)<1){
+    return(gbif)
+  }else{
+    if(keep==F){
+      gbif <- gbif[-index,]
+    }else{
+      gbif$species[index] <- right
+    }
+    return(gbif)
+  }
+}
+
+missing <- read_csv(paste0(filepath,"missing.csv"))
+
+for(i in 1:nrow(missing)){
+  right <- missing$right[i]
+  wrong <- missing$wrong[i]
+  keep <- missing$keep[i]
+  gbif <- rename_taxon(gbif=gbif,right=right,wrong=wrong,keep=keep)
+}
+
+# reapply order
+gbif <- gbif%>%
+  select(-order,-english)%>%
+  full_join(taxo_order,by="species")
+
+gbif <- gbif[order(gbif$order),]
+
+gbif <- gbif[-which(gbif$species==""),]
+
+write_csv(gbif,paste0(filepath,"reduced_gbif.csv"))
+```
+```{r}
+# note some longitudes are wrong; remove anything over 0
+
+gbif <- read_csv(paste0(filepath,"reduced_gbif.csv"))%>%
+  filter(decimalLongitude < 0)
+```
+
+```{r,eval=F}
+# load shapefile
+
+nf <- vect(paste0(filepath,"S_USA.AdministrativeForest/S_USA.AdministrativeForest.shp"))
+
+ne_nf <- nf$FORESTNAME[which(nf$FORESTNAME%like%"Nebraska")]
+
+# select NE National Forest
+ne_nf <- nf[which(nf$FORESTNAME==ne_nf)]
+
+# get points in Nebraska NF
+ne_crs <- crs(ne_nf)
+
+gbif_vect <- vect(gbif,geom=c("decimalLongitude","decimalLatitude"),crs = ne_crs)
+
+ne_gbif <- extract(y = gbif_vect,x = ne_nf)
+
+# get non-empty rows
+index <- which(!is.na(ne_gbif$FORESTNAME))
+
+ne_nf_gbif <- gbif[index,]
+
+write_csv(ne_nf_gbif,paste0(filepath,"ne_natl_forest_birds.csv"))
+```
+```{r,eval=F}
+ne_nf_gbif <- read_csv(paste0(filepath,"ne_natl_forest_birds.csv"))
+
+bessey <- which(ne_nf_gbif$decimalLatitude<42.5&ne_nf_gbif$decimalLongitude>-101)
+mackelvie <- which(ne_nf_gbif$decimalLatitude>42.3&ne_nf_gbif$decimalLongitude>-102)
+pine_ridge_oglala <- which(ne_nf_gbif$decimalLatitude>42.3&ne_nf_gbif$decimalLongitude<c(-102))
+
+ne_nf_gbif$district <- "Unknown"
+
+ne_nf_gbif$district[bessey] <- "Bessey"
+ne_nf_gbif$district[mackelvie] <- "MacKelvie"
+ne_nf_gbif$district[pine_ridge_oglala] <- "Pine Ridge / Oglala"
+
+write_csv(ne_nf_gbif,paste0(filepath,"ne_natl_forest_birds.csv"))
+```
+
+# District Summaries
+
+```{r}
+ne_nf_gbif <- read_csv(paste0(filepath,"ne_natl_forest_birds.csv"))
+
+ne_nf_gbif$species <- as.factor(ne_nf_gbif$species)
+ne_nf_gbif$locality <- as.factor(ne_nf_gbif$locality)
+ne_nf_gbif$eventDate <- as.Date(ne_nf_gbif$eventDate)
+ne_nf_gbif$district <- as.factor(ne_nf_gbif$district)
+```
+
+## Bessey
+
+```{r}
+districtR <- function(ne_nf_gbif,district){
+  sub.ne <- ne_nf_gbif[ne_nf_gbif$district==district,]
+  sub.ne$eventDate <- year(sub.ne$eventDate)
+  sp_list <- unique(sub.ne$species)
+  hist(sub.ne$eventDate,main=district,breaks=100,
+       xlab="Year")
+  for(i in 1:length(sp_list)){
+    sp_x <- sp_list[i]
+    sp_ne <- sub.ne[which(sub.ne$species==sp_x),]%>%
+      select(species,eventDate)
+    if(nrow(sp_ne)<1){
+      next
+    }
+    print(summary(sp_ne))
+    hist(sp_ne$eventDate,main=sp_x,breaks=100,
+       xlab="Year")
+  }
+}
+```
+
+```{r}
+districtR(ne_nf_gbif = ne_nf_gbif,district = "Bessey")
+```
+
+## MacKelvie
+
+```{r}
+districtR(ne_nf_gbif = ne_nf_gbif,district = "MacKelvie")
+```
+
+## Pine Ridge / Oglala
+
+```{r}
+districtR(ne_nf_gbif = ne_nf_gbif,district="Pine Ridge / Oglala")
+```
+
+# Missing
+
+What are the missing taxa indicated in this study?
+
+```{r,eval=F}
+# prep GBIF data
+gbif <- read.delim(paste0(filepath,"0104629-230530130749713.csv"),sep = "\t")
+
+# reduce to relevant columns
+# all have coords??
+
+gbif <- gbif%>%
+  select(gbifID, institutionCode, catalogNumber, species, locality,
+         decimalLongitude, decimalLatitude, year) %>%
+  unique()
+
+taxo_order <- read_csv(paste0(filepath,"sp_list_ne.csv"))
+taxo_order <- taxo_order%>%
+  rename(species = scientific)
+
+# get missing taxa
+missing <- read_csv(paste0(filepath,"missing.csv")) %>%
+  filter(keep==F)%>%
+  rename(species = wrong)
+
+miss_tax <- gbif%>%
+  inner_join(missing,"species")
+
+miss_tax <- miss_tax[order(miss_tax$species),]
+
+write_csv(miss_tax,paste0(filepath,"missing_list.csv"))
+```
+
+Many of the taxa that are listed as here but have not been confirmed in the state are exotics or fossil species. One collection appears to have placed all records from North America at the same locality (Musée des Confluences, Lyon) The following merit (brief) following up:
+
+Species|Collection|Locality|Year|Note
+-------|----------|--------|----|----
+*Agelaius tricolor*|USGS|NA|1932|Mis ID?
+*Dryobates scalaris*|Great Backyard Bird Count|69144 Keystone|2000|Mis ID?
+*Larus heermanni*|USGS|NA|1933|Wrong locality?
+*Larus occidentalis*|iNaturalist|NA|Valid record; outside study area
+*Megascops kennicottii*|University of Michigan|Kearney|1925|Two birds; likely misidentified; checked with collection
+*Passer montanus*|Cornell|Several||Multiple records; not accepted? Outside study area
+*Picoides arcticus*|Yale Peabody Museum|Lincoln|1895|Transcription error; refers to Lincoln, Maine
+*Poecile carolinensis*|Cornell|Omaha|2000|Not on state list; ouside study area
+*Progne tapera*|USGS|NA|1923|No details; mis ID?
+*Sialia mexicana*|USGS|Chadron|1922|Recently seen in state; predates current records?
+
+Many thanks to Dr. Brett Benz, Dr. Ben Winger, and Dr. Kristof Zykowski for the specimen information.
+
+I'm including *Sialia* in the study for now - hoping to confirm.
