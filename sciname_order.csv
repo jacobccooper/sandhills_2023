@@ -1,0 +1,276 @@
+SciName,Zimmer_1913,Ford_1957,Bray_1993,GBIF_2023,IOC,English
+Branta bernicla,NA,NA,Hypothetical,NA,276,Brant Goose
+Branta canadensis,NA,NA,Confirmed,GBIF,282,Canada Goose
+Branta hutchinsii,NA,NA,NA,GBIF,291,Cackling Goose
+Anser caerulescens,NA,NA,Confirmed,NA,300,Snow Goose
+Anser albifrons,NA,NA,Confirmed,GBIF,315,Greater White-fronted Goose
+Cygnus buccinator,NA,NA,NA,GBIF,328,Trumpeter Swan
+Aix sponsa,NA,NA,Confirmed,GBIF,399,Wood Duck
+Spatula discors,Confirmed,NA,Confirmed,GBIF,437,Blue-winged Teal
+Spatula clypeata,Confirmed,NA,Confirmed,GBIF,440,Northern Shoveler
+Mareca strepera,Confirmed,NA,Confirmed,GBIF,442,Gadwall
+Mareca americana,NA,NA,Confirmed,GBIF,448,American Wigeon
+Anas platyrhynchos,Confirmed,NA,Confirmed,GBIF,468,Mallard
+Anas acuta,Confirmed,NA,Confirmed,GBIF,489,Northern Pintail
+Anas crecca,Confirmed,NA,Confirmed,GBIF,490,Eurasian Teal
+Aythya valisineria,NA,NA,Confirmed,GBIF,520,Canvasback
+Aythya americana,NA,NA,NA,GBIF,521,Redhead
+Aythya collaris,NA,NA,NA,GBIF,528,Ring-necked Duck
+Aythya marila,NA,NA,NA,GBIF,530,Greater Scaup
+Aythya affinis,Confirmed,NA,Confirmed,GBIF,533,Lesser Scaup
+Bucephala albeola,NA,NA,Confirmed,GBIF,560,Bufflehead
+Bucephala clangula,NA,NA,NA,GBIF,561,Common Goldeneye
+Mergus merganser,Confirmed,NA,Confirmed,GBIF,572,Common Merganser
+Mergus serrator,NA,NA,Confirmed,NA,576,Red-breasted Merganser
+Oxyura jamaicensis,NA,NA,Confirmed,GBIF,583,Ruddy Duck
+Colinus virginianus,Confirmed,NA,Confirmed,GBIF,856,Northern Bobwhite
+Meleagris gallopavo,NA,NA,Confirmed,GBIF,1066,Wild Turkey
+Tympanuchus phasianellus,Confirmed,Confirmed,Confirmed,GBIF,1120,Sharp-tailed Grouse
+Tympanuchus cupido,Confirmed,NA,Confirmed,GBIF,1128,Greater Prairie Chicken
+Perdix perdix,NA,NA,Confirmed,NA,1221,Grey Partridge
+Phasianus colchicus,NA,NA,Confirmed,GBIF,1250,Common Pheasant
+Chordeiles minor,Confirmed,NA,Confirmed,GBIF,1670,Common Nighthawk
+Phalaenoptilus nuttallii,NA,Confirmed,Confirmed,GBIF,1773,Common Poorwill
+Antrostomus carolinensis,NA,NA,Hypothetical,NA,1781,Chuck-will's-widow
+Antrostomus vociferus,NA,NA,NA,GBIF,1799,Eastern Whip-poor-will
+Chaetura pelagica,Confirmed,NA,Confirmed,GBIF,2247,Chimney Swift
+Archilochus colubris,Confirmed,NA,Confirmed,GBIF,2985,Ruby-throated Hummingbird
+Coccyzus americanus,Confirmed,NA,Confirmed,GBIF,3697,Yellow-billed Cuckoo
+Coccyzus erythropthalmus,Confirmed,Confirmed,Confirmed,GBIF,3701,Black-billed Cuckoo
+Columba livia,NA,NA,Confirmed,NA,3931,Rock Dove
+Streptopelia decaocto,NA,NA,NA,GBIF,4090,Eurasian Collared Dove
+Zenaida macroura,Confirmed,NA,Confirmed,GBIF,4420,Mourning Dove
+Rallus limicola,NA,Confirmed,Confirmed,GBIF,5024,Virginia Rail
+Porzana carolina,NA,NA,Confirmed,GBIF,5138,Sora
+Fulica americana,Confirmed,NA,Confirmed,GBIF,5182,American Coot
+Antigone canadensis,Confirmed,NA,Confirmed,GBIF,5360,Sandhill Crane
+Grus americana,NA,NA,Confirmed,NA,5377,Whooping Crane
+Podilymbus podiceps,NA,NA,Confirmed,GBIF,5421,Pied-billed Grebe
+Podiceps auritus,NA,NA,Hypothetical,NA,5446,Horned Grebe
+Podiceps nigricollis,NA,NA,Confirmed,GBIF,5449,Black-necked Grebe
+Recurvirostra americana,NA,NA,Confirmed,GBIF,5629,American Avocet
+Pluvialis dominica,NA,NA,NA,GBIF,5687,American Golden Plover
+Charadrius semipalmatus,NA,NA,Confirmed,NA,5700,Semipalmated Plover
+Charadrius vociferus,Confirmed,NA,Confirmed,GBIF,5711,Killdeer
+Bartramia longicauda,Confirmed,NA,Confirmed,GBIF,5834,Upland Sandpiper
+Numenius americanus,Confirmed,NA,Confirmed,GBIF,5848,Long-billed Curlew
+Calidris himantopus,NA,NA,Confirmed,NA,5895,Stilt Sandpiper
+Calidris bairdii,Confirmed,NA,Confirmed,NA,5921,Baird's Sandpiper
+Calidris minutilla,Confirmed,NA,Confirmed,GBIF,5923,Least Sandpiper
+Calidris fuscicollis,Confirmed,NA,Confirmed,NA,5924,White-rumped Sandpiper
+Calidris subruficollis,Confirmed,NA,Confirmed,NA,5925,Buff-breasted Sandpiper
+Calidris melanotos,Confirmed,NA,Confirmed,NA,5926,Pectoral Sandpiper
+Calidris pusilla,Confirmed,NA,Confirmed,NA,5927,Semipalmated Sandpiper
+Calidris mauri,NA,NA,Confirmed,NA,5928,Western Sandpiper
+Gallinago delicata,Confirmed,NA,Confirmed,GBIF,5975,Wilson's Snipe
+Phalaropus tricolor,NA,NA,Confirmed,NA,5991,Wilson's Phalarope
+Actitis macularius,Confirmed,NA,Confirmed,GBIF,5996,Spotted Sandpiper
+Tringa solitaria,Confirmed,NA,Confirmed,NA,5999,Solitary Sandpiper
+Tringa flavipes,NA,NA,Confirmed,NA,6004,Lesser Yellowlegs
+Tringa melanoleuca,Confirmed,NA,Confirmed,GBIF,6020,Greater Yellowlegs
+Leucophaeus pipixcan,Confirmed,NA,Confirmed,NA,6153,Franklin's Gull
+Larus delawarensis,Confirmed,NA,Confirmed,GBIF,6175,Ring-billed Gull
+Sternula antillarum,NA,NA,Confirmed,NA,6253,Least Tern
+Sterna forsteri,Confirmed,NA,Confirmed,GBIF,6309,Forster's Tern
+Chlidonias niger,Confirmed,NA,Confirmed,GBIF,6319,Black Tern
+Gavia immer,NA,NA,Confirmed,NA,6447,Common Loon
+Nannopterum auritum,NA,NA,Confirmed,GBIF,6898,Double-crested Cormorant
+Plegadis chihi,NA,NA,Confirmed,GBIF,6982,White-faced Ibis
+Botaurus lentiginosus,Confirmed,NA,Confirmed,GBIF,7029,American Bittern
+Nycticorax nycticorax,Confirmed,NA,Confirmed,NA,7062,Black-crowned Night Heron
+Butorides virescens,Confirmed,NA,Confirmed,GBIF,7087,Green Heron
+Ardea herodias,Confirmed,NA,Confirmed,GBIF,7133,Great Blue Heron
+Ardea alba,NA,NA,Confirmed,NA,7151,Great Egret
+Pelecanus erythrorhynchos,Confirmed,NA,Confirmed,GBIF,7210,American White Pelican
+Cathartes aura,Confirmed,NA,Confirmed,GBIF,7235,Turkey Vulture
+Pandion haliaetus,Confirmed,NA,Confirmed,GBIF,7253,Osprey
+Aquila chrysaetos,NA,NA,Confirmed,GBIF,7506,Golden Eagle
+Accipiter striatus,Confirmed,NA,Confirmed,GBIF,7701,Sharp-shinned Hawk
+Accipiter cooperii,NA,NA,Confirmed,GBIF,7712,Cooper's Hawk
+Accipiter gentilis,NA,NA,Confirmed,NA,7726,Eurasian Goshawk
+Circus hudsonius,Confirmed,NA,Confirmed,GBIF,7752,Northern Harrier
+Haliaeetus leucocephalus,NA,NA,Confirmed,GBIF,7786,Bald Eagle
+Buteo lineatus,NA,NA,Hypothetical,NA,7897,Red-shouldered Hawk
+Buteo platypterus,NA,NA,Confirmed,GBIF,7904,Broad-winged Hawk
+Buteo swainsoni,Confirmed,NA,Confirmed,GBIF,7916,Swainson's Hawk
+Buteo jamaicensis,NA,NA,Confirmed,GBIF,7919,Red-tailed Hawk
+Buteo regalis,Confirmed,NA,Confirmed,GBIF,7933,Ferruginous Hawk
+Buteo lagopus,NA,NA,Confirmed,GBIF,7934,Rough-legged Buzzard
+Tyto alba,NA,NA,Confirmed,GBIF,7993,Western Barn Owl
+Aegolius acadicus,NA,NA,Hypothetical,GBIF,8155,Northern Saw-whet Owl
+Athene cunicularia,Confirmed,NA,Confirmed,GBIF,8165,Burrowing Owl
+Asio otus,NA,NA,Confirmed,NA,8426,Long-eared Owl
+Asio flammeus,Confirmed,NA,Confirmed,NA,8442,Short-eared Owl
+Bubo virginianus,NA,NA,Confirmed,GBIF,8463,Great Horned Owl
+Megascops asio,Confirmed,NA,Confirmed,GBIF,8585,Eastern Screech Owl
+Megaceryle alcyon,Confirmed,NA,Confirmed,GBIF,9528,Belted Kingfisher
+Melanerpes lewis,NA,NA,Hypothetical,NA,10393,Lewis's Woodpecker
+Melanerpes erythrocephalus,Confirmed,NA,Confirmed,GBIF,10396,Red-headed Woodpecker
+Melanerpes carolinus,NA,NA,Confirmed,GBIF,10444,Red-bellied Woodpecker
+Sphyrapicus varius,NA,NA,Confirmed,GBIF,10455,Yellow-bellied Sapsucker
+Dryobates pubescens,Confirmed,NA,Confirmed,GBIF,10629,Downy Woodpecker
+Leuconotopicus villosus,Confirmed,NA,Confirmed,GBIF,10715,Hairy Woodpecker
+Colaptes auratus,Confirmed,NA,Confirmed,GBIF,10865,Northern Flicker
+Falco sparverius,Confirmed,NA,Confirmed,GBIF,11254,American Kestrel
+Falco columbarius,Confirmed,NA,Confirmed,GBIF,11292,Merlin
+Falco mexicanus,Confirmed,NA,Confirmed,GBIF,11335,Prairie Falcon
+Falco peregrinus,NA,NA,Confirmed,NA,11336,Peregrine Falcon
+Sayornis phoebe,NA,NA,Confirmed,GBIF,15549,Eastern Phoebe
+Sayornis saya,Confirmed,NA,Confirmed,GBIF,15557,Say's Phoebe
+Contopus cooperi,NA,NA,Confirmed,NA,15568,Olive-sided Flycatcher
+Contopus sordidulus,Confirmed,NA,Confirmed,GBIF,15581,Western Wood Pewee
+Contopus virens,NA,NA,Confirmed,GBIF,15586,Eastern Wood Pewee
+Empidonax flaviventris,NA,NA,Confirmed,NA,15615,Yellow-bellied Flycatcher
+Empidonax traillii,Confirmed,NA,Confirmed,GBIF,15617,Willow Flycatcher
+Empidonax alnorum,NA,NA,Confirmed,GBIF,15622,Alder Flycatcher
+Empidonax minimus,NA,NA,Confirmed,GBIF,15627,Least Flycatcher
+Tyrannus verticalis,Confirmed,NA,Confirmed,GBIF,15977,Western Kingbird
+Tyrannus forficatus,NA,Confirmed,Confirmed,NA,15978,Scissor-tailed Flycatcher
+Tyrannus tyrannus,Confirmed,Confirmed,Confirmed,GBIF,15984,Eastern Kingbird
+Myiarchus crinitus,NA,NA,Confirmed,GBIF,16062,Great Crested Flycatcher
+Lanius ludovicianus,Confirmed,NA,Confirmed,GBIF,18894,Loggerhead Shrike
+Lanius borealis,Confirmed,NA,Confirmed,GBIF,18902,Northern Shrike
+Vireo olivaceus,Confirmed,Confirmed,Confirmed,GBIF,19094,Red-eyed Vireo
+Vireo philadelphicus,NA,NA,Confirmed,GBIF,19119,Philadelphia Vireo
+Vireo gilvus,Confirmed,NA,Confirmed,GBIF,19120,Warbling Vireo
+Vireo flavifrons,NA,NA,Confirmed,GBIF,19155,Yellow-throated Vireo
+Vireo solitarius,NA,NA,Confirmed,NA,19158,Blue-headed Vireo
+Vireo bellii,Confirmed,Confirmed,Confirmed,GBIF,19203,Bell's Vireo
+Perisoreus canadensis,NA,NA,Hypothetical,NA,20004,Canada Jay
+Cyanocitta cristata,Confirmed,NA,Confirmed,GBIF,20094,Blue Jay
+Gymnorhinus cyanocephalus,Hypothetical,NA,Confirmed,NA,20147,Pinyon Jay
+Pica hudsonia,Confirmed,NA,Confirmed,GBIF,20267,Black-billed Magpie
+Nucifraga columbiana,NA,NA,Confirmed,NA,20279,Clark's Nutcracker
+Corvus brachyrhynchos,Confirmed,NA,Confirmed,GBIF,20346,American Crow
+Corvus corax,NA,NA,Hypothetical,NA,20398,Northern Raven
+Bombycilla garrulus,Confirmed,NA,Confirmed,NA,20736,Bohemian Waxwing
+Bombycilla cedrorum,NA,NA,Confirmed,GBIF,20740,Cedar Waxwing
+Poecile atricapillus,Confirmed,NA,Confirmed,GBIF,20957,Black-capped Chickadee
+Eremophila alpestris,Confirmed,Confirmed,Confirmed,GBIF,21553,Horned Lark
+Riparia riparia,Confirmed,NA,Confirmed,GBIF,22171,Sand Martin
+Tachycineta bicolor,Confirmed,NA,Confirmed,GBIF,22193,Tree Swallow
+Stelgidopteryx serripennis,Confirmed,NA,Confirmed,GBIF,22231,Northern Rough-winged Swallow
+Hirundo rustica,Confirmed,NA,Confirmed,GBIF,22312,Barn Swallow
+Petrochelidon pyrrhonota,Confirmed,NA,Confirmed,GBIF,22376,American Cliff Swallow
+Corthylio calendula,Confirmed,NA,Confirmed,GBIF,25525,Ruby-crowned Kinglet
+Regulus satrapa,NA,NA,Confirmed,GBIF,25536,Golden-crowned Kinglet
+Salpinctes obsoletus,Confirmed,NA,Confirmed,NA,25638,Rock Wren
+Cistothorus stellaris,NA,NA,Confirmed,GBIF,25674,Sedge Wren
+Cistothorus palustris,Confirmed,NA,Confirmed,GBIF,25697,Marsh Wren
+Troglodytes hiemalis,NA,NA,Confirmed,NA,25894,Winter Wren
+Troglodytes aedon,Confirmed,NA,Confirmed,GBIF,25913,House Wren
+Polioptila caerulea,NA,NA,NA,GBIF,26114,Blue-grey Gnatcatcher
+Sitta carolinensis,NA,NA,Confirmed,GBIF,26145,White-breasted Nuthatch
+Sitta pygmaea,NA,NA,NA,GBIF,26175,Pygmy Nuthatch
+Sitta canadensis,NA,NA,Confirmed,GBIF,26187,Red-breasted Nuthatch
+Certhia americana,NA,NA,Confirmed,GBIF,26263,Brown Creeper
+Dumetella carolinensis,Confirmed,NA,Confirmed,GBIF,26308,Grey Catbird
+Mimus polyglottos,Hypothetical,NA,Confirmed,NA,26312,Northern Mockingbird
+Toxostoma rufum,Confirmed,NA,Confirmed,GBIF,26357,Brown Thrasher
+Sturnus vulgaris,NA,NA,Confirmed,GBIF,26609,Common Starling
+Sialia currucoides,Confirmed,NA,Confirmed,GBIF,26749,Mountain Bluebird
+Sialia sialis,Confirmed,NA,Confirmed,GBIF,26757,Eastern Bluebird
+Myadestes townsendi,Confirmed,NA,Confirmed,GBIF,26786,Townsend's Solitaire
+Hylocichla mustelina,Confirmed,NA,Extirpated,GBIF,26840,Wood Thrush
+Catharus ustulatus,Confirmed,NA,Confirmed,GBIF,26874,Swainson's Thrush
+Catharus guttatus,NA,NA,Confirmed,GBIF,26885,Hermit Thrush
+Catharus minimus,NA,NA,Confirmed,NA,26908,Grey-cheeked Thrush
+Catharus fuscescens,Confirmed,NA,Confirmed,NA,26912,Veery
+Turdus migratorius,Confirmed,Confirmed,Confirmed,GBIF,27175,American Robin
+Passer domesticus,NA,NA,Confirmed,GBIF,29178,House Sparrow
+Anthus rubescens,NA,NA,Confirmed,GBIF,30190,Buff-bellied Pipit
+Anthus spragueii,NA,NA,Confirmed,NA,30226,Sprague's Pipit
+Pinicola enucleator,NA,NA,Confirmed,NA,30311,Pine Grosbeak
+Haemorhous purpureus,NA,NA,Confirmed,GBIF,30524,Purple Finch
+Haemorhous cassinii,NA,NA,Confirmed,NA,30527,Cassin's Finch
+Haemorhous mexicanus,NA,NA,Confirmed,GBIF,30528,House Finch
+Acanthis flammea,NA,NA,Confirmed,NA,30697,Common Redpoll
+Loxia curvirostra,NA,NA,Confirmed,GBIF,30707,Red Crossbill
+Loxia leucoptera,NA,NA,Confirmed,NA,30728,Two-barred Crossbill
+Spinus tristis,Confirmed,Confirmed,Confirmed,GBIF,30777,American Goldfinch
+Spinus pinus,Confirmed,NA,Confirmed,GBIF,30790,Pine Siskin
+Calcarius lapponicus,NA,NA,Confirmed,GBIF,30930,Lapland Longspur
+Ammodramus savannarum,Confirmed,Confirmed,Confirmed,GBIF,31182,Grasshopper Sparrow
+Chondestes grammacus,Confirmed,Confirmed,Confirmed,GBIF,31242,Lark Sparrow
+Calamospiza melanocorys,Confirmed,NA,Confirmed,GBIF,31246,Lark Bunting
+Spizella passerina,Confirmed,NA,Confirmed,GBIF,31248,Chipping Sparrow
+Spizella pallida,Confirmed,NA,Confirmed,GBIF,31254,Clay-colored Sparrow
+Spizella pusilla,Confirmed,Confirmed,Confirmed,GBIF,31260,Field Sparrow
+Passerella iliaca,NA,NA,Confirmed,NA,31340,Red Fox Sparrow
+Spizelloides arborea,Confirmed,NA,Confirmed,GBIF,31344,American Tree Sparrow
+Junco hyemalis,NA,NA,Confirmed,GBIF,31352,Dark-eyed Junco
+Zonotrichia leucophrys,Confirmed,NA,Confirmed,GBIF,31402,White-crowned Sparrow
+Zonotrichia atricapilla,NA,NA,Confirmed,NA,31408,Golden-crowned Sparrow
+Zonotrichia querula,Confirmed,NA,Confirmed,GBIF,31409,Harris's Sparrow
+Zonotrichia albicollis,NA,NA,Confirmed,GBIF,31410,White-throated Sparrow
+Pooecetes gramineus,Confirmed,NA,Confirmed,GBIF,31422,Vesper Sparrow
+Centronyx henslowii,NA,NA,Hypothetical,NA,31445,Henslow's Sparrow
+Passerculus sandwichensis,NA,NA,Confirmed,GBIF,31449,Savannah Sparrow
+Melospiza melodia,Confirmed,NA,Confirmed,GBIF,31470,Song Sparrow
+Melospiza lincolnii,Confirmed,NA,Confirmed,GBIF,31495,Lincoln's Sparrow
+Melospiza georgiana,NA,NA,Confirmed,GBIF,31499,Swamp Sparrow
+Pipilo maculatus,Confirmed,Confirmed,Confirmed,GBIF,31574,Spotted Towhee
+Pipilo erythrophthalmus,NA,NA,NA,GBIF,31596,Eastern Towhee
+Icteria virens,Confirmed,Confirmed,Confirmed,GBIF,31739,Yellow-breasted Chat
+Xanthocephalus xanthocephalus,Confirmed,NA,Confirmed,GBIF,31745,Yellow-headed Blackbird
+Dolichonyx oryzivorus,NA,NA,Confirmed,GBIF,31747,Bobolink
+Sturnella neglecta,Confirmed,NA,Confirmed,GBIF,31749,Western Meadowlark
+Sturnella magna,Confirmed,NA,Confirmed,GBIF,31752,Eastern Meadowlark
+Icterus bullockii,NA,NA,Confirmed,NA,31863,Bullock's Oriole
+Icterus galbula,Confirmed,NA,Confirmed,GBIF,31874,Baltimore Oriole
+Icterus spurius,Confirmed,Confirmed,Confirmed,GBIF,31907,Orchard Oriole
+Agelaius phoeniceus,Confirmed,NA,Confirmed,GBIF,31935,Red-winged Blackbird
+Molothrus ater,Confirmed,NA,Confirmed,GBIF,31977,Brown-headed Cowbird
+Euphagus carolinus,Confirmed,NA,Confirmed,NA,31989,Rusty Blackbird
+Euphagus cyanocephalus,Confirmed,NA,Confirmed,GBIF,31992,Brewer's Blackbird
+Quiscalus quiscula,Confirmed,NA,Confirmed,GBIF,31994,Common Grackle
+Quiscalus mexicanus,NA,NA,NA,GBIF,32021,Great-tailed Grackle
+Seiurus aurocapilla,Confirmed,NA,Confirmed,GBIF,32092,Ovenbird
+Parkesia motacilla,NA,NA,Hypothetical,NA,32099,Louisiana Waterthrush
+Parkesia noveboracensis,Confirmed,NA,Confirmed,NA,32100,Northern Waterthrush
+Vermivora cyanoptera,NA,NA,Confirmed,NA,32104,Blue-winged Warbler
+Mniotilta varia,Confirmed,Confirmed,Confirmed,GBIF,32106,Black-and-white Warbler
+Leiothlypis peregrina,Confirmed,NA,Confirmed,GBIF,32120,Tennessee Warbler
+Leiothlypis celata,Confirmed,NA,Confirmed,GBIF,32121,Orange-crowned Warbler
+Leiothlypis ruficapilla,NA,NA,Confirmed,GBIF,32128,Nashville Warbler
+Oporornis agilis,NA,NA,Confirmed,NA,32135,Connecticut Warbler
+Geothlypis philadelphia,NA,NA,Confirmed,GBIF,32153,Mourning Warbler
+Geothlypis trichas,Confirmed,Confirmed,Confirmed,GBIF,32170,Common Yellowthroat
+Setophaga citrina,NA,NA,Hypothetical,GBIF,32193,Hooded Warbler
+Setophaga ruticilla,Confirmed,NA,Confirmed,GBIF,32194,American Redstart
+Setophaga tigrina,NA,NA,Confirmed,NA,32196,Cape May Warbler
+Setophaga americana,Confirmed,NA,Confirmed,NA,32198,Northern Parula
+Setophaga castanea,NA,NA,Confirmed,GBIF,32210,Bay-breasted Warbler
+Setophaga fusca,NA,NA,Confirmed,NA,32211,Blackburnian Warbler
+Setophaga petechia,Confirmed,NA,Confirmed,GBIF,32222,Mangrove Warbler
+Setophaga pensylvanica,NA,NA,Confirmed,GBIF,32257,Chestnut-sided Warbler
+Setophaga striata,Confirmed,NA,Confirmed,GBIF,32258,Blackpoll Warbler
+Setophaga palmarum,NA,NA,Confirmed,NA,32262,Palm Warbler
+Setophaga pinus,NA,NA,Confirmed,NA,32266,Pine Warbler
+Setophaga coronata,Confirmed,NA,Confirmed,GBIF,32271,Myrtle Warbler
+Setophaga auduboni,Confirmed,NA,Confirmed,NA,32274,Audubon's Warbler
+Setophaga townsendi,NA,NA,Confirmed,NA,32301,Townsend's Warbler
+Setophaga virens,NA,NA,Confirmed,NA,32304,Black-throated Green Warbler
+Cardellina canadensis,NA,NA,Confirmed,NA,32419,Canada Warbler
+Cardellina pusilla,Confirmed,NA,Confirmed,GBIF,32420,Wilson's Warbler
+Piranga rubra,NA,NA,Confirmed,NA,32506,Summer Tanager
+Piranga olivacea,NA,Confirmed,Extirpated,NA,32513,Scarlet Tanager
+Piranga ludoviciana,NA,NA,Confirmed,NA,32514,Western Tanager
+Pheucticus ludovicianus,NA,NA,Extirpated,GBIF,32578,Rose-breasted Grosbeak
+Pheucticus melanocephalus,Confirmed,Confirmed,Confirmed,GBIF,32579,Black-headed Grosbeak
+Cardinalis cardinalis,Hypothetical,NA,Confirmed,GBIF,32593,Northern Cardinal
+Spiza americana,Confirmed,NA,Confirmed,GBIF,32639,Dickcissel
+Passerina caerulea,Confirmed,NA,Confirmed,GBIF,32660,Blue Grosbeak
+Passerina cyanea,NA,NA,Confirmed,GBIF,32668,Indigo Bunting
+Passerina amoena,Confirmed,NA,Confirmed,GBIF,32669,Lazuli Bunting
+Junco aikeni,Confirmed,NA,Confirmed,NA,31351,White-winged Junco
+Junco oreganus,Confirmed,NA,Confirmed,GBIF,31355,Oregon Junco
+Limnodromus sp.,NA,NA,Confirmed,NA,5931,Dowitcher sp.
+Ammospiza leconteii,NA,NA,Confirmed,NA,31427,LeConte’s Sparrow
+Junco mearnsi,NA,NA,Confirmed,GBIF,31363,Pink-sided Junco
+Icterus bullockii x galbula,NA,NA,Confirmed,GBIF,31864,Bullock’s x Baltimore Oriole
+Coccothraustes vespertinus,NA,NA,Confirmed,GBIF,30286,Evening Grosbeak
+Junco hyemalis/cismontanus,NA,NA,NA,GBIF,31352.5,Slate-colored / Cassiar Junco
+Junco cismontanus,NA,NA,NA,GBIF,31354,Cassiar Junco
+Pipilo maculatus x erythrophthalmus,NA,NA,NA,GBIF,31575,Spotted x Eastern Towhee
+Setophaga coronata/auduboni,NA,NA,NA,GBIF,32276,Myrtle / Audubon’s Warbler

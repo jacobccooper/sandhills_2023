@@ -261,13 +261,13 @@ write_csv(ne_nf_gbif,paste0(filepath,"ne_natl_forest_birds.csv"))
 ne_nf_gbif <- read_csv(paste0(filepath,"ne_natl_forest_birds.csv"))
 
 bessey <- which(ne_nf_gbif$decimalLatitude<42.5&ne_nf_gbif$decimalLongitude>-101)
-mackelvie <- which(ne_nf_gbif$decimalLatitude>42.3&ne_nf_gbif$decimalLongitude>-102)
+mckelvie <- which(ne_nf_gbif$decimalLatitude>42.3&ne_nf_gbif$decimalLongitude>-102)
 pine_ridge_oglala <- which(ne_nf_gbif$decimalLatitude>42.3&ne_nf_gbif$decimalLongitude<c(-102))
 
 ne_nf_gbif$district <- "Unknown"
 
 ne_nf_gbif$district[bessey] <- "Bessey"
-ne_nf_gbif$district[mackelvie] <- "MacKelvie"
+ne_nf_gbif$district[mckelvie] <- "McKelvie"
 ne_nf_gbif$district[pine_ridge_oglala] <- "Pine Ridge / Oglala"
 
 write_csv(ne_nf_gbif,paste0(filepath,"ne_natl_forest_birds.csv"))
@@ -2546,10 +2546,10 @@ districtR(ne_nf_gbif = ne_nf_gbif,district = "Bessey")
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-9-203.png)<!-- -->
 
-## MacKelvie
+## mckelvie
 
 ``` r
-districtR(ne_nf_gbif = ne_nf_gbif,district = "MacKelvie")
+districtR(ne_nf_gbif = ne_nf_gbif,district = "McKelvie")
 ```
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
@@ -7594,20 +7594,103 @@ bessey <- ne_nf_gbif %>%
 
 bessey$Bessey[which(!is.na(bessey$Bessey))] <- "Confirmed"
 
-mackelvie <- ne_nf_gbif %>% 
+mckelvie <- ne_nf_gbif %>% 
   select(SciName,district) %>%
-  filter(district == "MacKelvie")%>%
-  rename("MacKelvie" = district) %>%
+  filter(district == "McKelvie")%>%
+  rename("McKelvie" = district) %>%
   unique()
 
-mackelvie$MacKelvie[which(!is.na(mackelvie$MacKelvie))] <- "Confirmed"
+mckelvie$McKelvie[which(!is.na(mckelvie$McKelvie))] <- "Confirmed"
 
 comp_years <- zimmer %>%
   full_join(ford,by = "SciName") %>%
   full_join(bray,by = "SciName") %>%
   full_join(bessey,by = "SciName")%>%
-  full_join(mackelvie,by = "SciName")%>%
+  full_join(mckelvie,by = "SciName")%>%
   full_join(pr_og,by = "SciName")
 
 write_csv(comp_years,paste0(filepath,"all_sites_compare.csv"))
 ```
+
+# Figures
+
+Here, I document the creation of figures for the manuscript.
+
+``` r
+nf <- vect(paste0(filepath,"S_USA.AdministrativeForest/S_USA.AdministrativeForest.shp"))
+ne_nf <- nf$FORESTNAME[which(nf$FORESTNAME%like%"Nebraska")]
+ne_nf <- nf[which(nf$FORESTNAME==ne_nf)]
+ne_crs <- crs(ne_nf)
+
+# get a map of Nebraska Counties
+county <- vect("~/Dropbox/GIS/Nebraska/County_Boundaries/BND_CountyBoundary_DOT.shp") %>%
+  project(ne_crs)
+
+# crop forest to Nebraska only for map
+# small sliver polygon at border, but ok
+ne_nf2 <- crop(ne_nf,county)
+
+# county shapefile 
+
+plot(ne_nf2,xlab="Longitude",ylab="Latitude")
+plot(county,add=T)
+plot(ne_nf2,col="gray",add=T)
+for(i in 1:length(county)){
+  cr <- county[i]
+  center <- centroids(cr)
+  name <- cr$Cnty_Name
+  if(name=="Morrill"|name=="Garden"){
+    lab <- county[which(county$Cnty_Name=="Scotts Bluff")]%>%
+      centroids()%>%
+      geom()%>%
+      as.data.frame()
+    center1 <- center %>% geom() %>% as.data.frame()
+    lab$x <- center1$x
+    center <- vect(lab,geom=c("x","y"),crs=ne_crs)
+  }
+  text(center,labels=name,halo=T)
+}
+```
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+
+``` r
+# forest size
+# divide up by county
+
+# pine ridge oglala in Dawes, Sioux
+# mckelvie in Cherry
+# bessy in Thomas, Blaine
+
+count_cropper <- function(counties){
+  cr <- county[contains(counties,vars = county$Cnty_Name)]
+  cr_crop <- crop(ne_nf2,cr)
+  plot(cr_crop)
+  return(expanse(cr_crop,unit="km"))
+}
+
+# area of Pine Ridge
+count_cropper(counties = c("Dawes","Sioux"))
+```
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+
+    ## [1] 1436.955
+
+``` r
+# area of McKelvie
+count_cropper(counties = c("Cherry"))
+```
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-20-2.png)<!-- -->
+
+    ## [1] 471.4443
+
+``` r
+# area of Bessey
+count_cropper(counties = c("Thomas","Blaine"))
+```
+
+![](appendix_1_files/figure-gfm/unnamed-chunk-20-3.png)<!-- -->
+
+    ## [1] 365.381
