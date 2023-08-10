@@ -1,0 +1,317 @@
+Species,English.x,SciName,Zimmer 1913,Ford 1957,Bray 1994,GBIF 2023,English.y,Bessey,MacKelvie,Pine Ridge
+0.5,Brant Goose,Branta bernicla,NA,NA,Hypothetical,NA,NA,NA,NA,NA
+1,Canada Goose,Branta canadensis,NA,NA,X,X,NA,1,1,1
+2,Cackling Goose,Branta hutchinsii,NA,NA,NA,X,NA,1,1,1
+3,Snow Goose,Anser caerulescens,NA,NA,X,NA,NA,1,NA,1
+4,Greater White-fronted Goose,Anser albifrons,NA,NA,X,X,NA,1,NA,NA
+5,Trumpeter Swan,Cygnus buccinator,NA,NA,NA,X,NA,1,1,1
+6,Wood Duck,Aix sponsa,NA,NA,X,X,NA,1,1,1
+7,Blue-winged Teal,Spatula discors,X,NA,X,X,NA,1,1,1
+8,Northern Shoveler,Spatula clypeata,X,NA,X,X,NA,1,1,1
+9,Gadwall,Mareca strepera,X,NA,X,X,NA,1,1,1
+10,American Wigeon,Mareca americana,NA,NA,X,X,NA,1,1,1
+11,Mallard,Anas platyrhynchos,X,NA,X,X,NA,1,1,1
+12,Northern Pintail,Anas acuta,X,NA,X,X,NA,1,1,1
+13,Green-winged Teal,Anas crecca,X,NA,X,X,NA,1,1,1
+14,Canvasback,Aythya valisineria,NA,NA,X,X,NA,1,1,1
+15,Redhead,Aythya americana,NA,NA,NA,X,NA,1,1,1
+16,Ring-necked Duck,Aythya collaris,NA,NA,NA,X,NA,1,1,1
+17,Greater Scaup,Aythya marila,NA,NA,NA,X,NA,1,1,NA
+18,Lesser Scaup,Aythya affinis,X,NA,X,X,NA,1,1,1
+19,Bufflehead,Bucephala albeola,NA,NA,X,X,NA,1,1,1
+20,Common Goldeneye,Bucephala clangula,NA,NA,NA,X,NA,1,1,1
+21,Common Merganser,Mergus merganser,X,NA,X,X,NA,1,NA,1
+22,Red-breasted Merganser,Mergus serrator,NA,NA,X,NA,NA,1,NA,NA
+23,Ruddy Duck,Oxyura jamaicensis,NA,NA,X,X,NA,1,1,1
+24,Northern Bobwhite,Colinus virginianus,X,NA,X,X,NA,1,1,1
+25,Wild Turkey,Meleagris gallopavo,NA,NA,X,X,NA,1,1,1
+26,Sharp-tailed Grouse,Tympanuchus phasianellus,X,X,X,X,NA,1,1,1
+27,Greater Prairie-Chicken,Tympanuchus cupido,X,NA,X,X,NA,1,1,NA
+28,Gray Partridge,Perdix perdix,NA,NA,X,NA,NA,1,NA,NA
+29,Ring-necked Pheasant,Phasianus colchicus,NA,NA,X,X,NA,1,1,1
+30,Common Nighthawk,Chordeiles minor,X,NA,X,X,NA,1,1,1
+31,Common Poorwill,Phalaenoptilus nuttallii,NA,X,X,X,NA,1,1,1
+31.5,Chuck-will's-widow,Antrostomus carolinensis,NA,NA,Hypothetical,NA,NA,NA,NA,NA
+32,Eastern Whip-poor-will,Antrostomus vociferus,NA,NA,NA,X,NA,1,NA,NA
+33,Chimney Swift,Chaetura pelagica,X,NA,X,X,NA,1,1,1
+34,Ruby-throated Hummingbird,Archilochus colubris,X,NA,X,X,NA,1,NA,1
+35,Yellow-billed Cuckoo,Coccyzus americanus,X,NA,X,X,NA,1,1,1
+36,Black-billed Cuckoo,Coccyzus erythropthalmus,X,X,X,X,NA,1,NA,NA
+37,Rock Pigeon,Columba livia,NA,NA,X,NA,NA,1,NA,NA
+38,Eurasian Collared-Dove,Streptopelia decaocto,NA,NA,NA,X,NA,1,NA,1
+39,Mourning Dove,Zenaida macroura,X,NA,X,X,NA,1,1,1
+40,Virginia Rail,Rallus limicola,NA,X,X,X,NA,1,1,NA
+41,Sora,Porzana carolina,NA,NA,X,X,NA,1,1,1
+42,American Coot,Fulica americana,X,NA,X,X,NA,1,1,1
+43,Sandhill Crane,Antigone canadensis,X,NA,X,X,NA,1,1,1
+44,Whooping Crane,Grus americana,NA,NA,X,NA,NA,1,NA,NA
+45,Pied-billed Grebe,Podilymbus podiceps,NA,NA,X,X,NA,1,1,1
+45.5,Horned Grebe,Podiceps auritus,NA,NA,Hypothetical,NA,NA,NA,NA,NA
+46,Eared Grebe,Podiceps nigricollis,NA,NA,X,X,NA,1,1,1
+47,American Avocet,Recurvirostra americana,NA,NA,X,X,NA,1,NA,1
+48,American Golden-Plover,Pluvialis dominica,NA,NA,NA,X,NA,1,NA,NA
+49,Semipalmated Plover,Charadrius semipalmatus,NA,NA,X,NA,NA,1,NA,NA
+50,Killdeer,Charadrius vociferus,X,NA,X,X,NA,1,1,1
+51,Upland Sandpiper,Bartramia longicauda,X,NA,X,X,NA,1,1,1
+52,Long-billed Curlew,Numenius americanus,X,NA,X,X,NA,1,1,1
+53,Stilt Sandpiper,Calidris himantopus,NA,NA,X,NA,NA,1,NA,NA
+54,Baird's Sandpiper,Calidris bairdii,X,NA,X,NA,NA,1,NA,1
+55,Least Sandpiper,Calidris minutilla,X,NA,X,X,NA,1,NA,1
+56,White-rumped Sandpiper,Calidris fuscicollis,X,NA,X,NA,NA,1,1,NA
+57,Buff-breasted Sandpiper,Calidris subruficollis,X,NA,X,NA,NA,1,NA,NA
+58,Pectoral Sandpiper,Calidris melanotos,X,NA,X,NA,NA,1,NA,1
+59,Semipalmated Sandpiper,Calidris pusilla,X,NA,X,NA,NA,1,1,1
+60,Western Sandpiper,Calidris mauri,NA,NA,X,NA,NA,1,NA,NA
+61,Dowitcher sp.,Limnodromus sp.,NA,NA,X,NA,NA,1,NA,NA
+62,Wilson's Snipe,Gallinago delicata,X,NA,X,X,NA,1,1,1
+63,Wilson's Phalarope,Phalaropus tricolor,NA,NA,X,NA,NA,1,1,1
+64,Spotted Sandpiper,Actitis macularius,X,NA,X,X,NA,1,1,1
+65,Solitary Sandpiper,Tringa solitaria,X,NA,X,NA,NA,1,1,1
+66,Lesser Yellowlegs,Tringa flavipes,NA,NA,X,NA,NA,1,1,1
+67,Greater Yellowlegs,Tringa melanoleuca,X,NA,X,X,NA,1,1,1
+68,Franklin's Gull,Leucophaeus pipixcan,X,NA,X,NA,NA,1,NA,1
+69,Ring-billed Gull,Larus delawarensis,X,NA,X,X,NA,1,1,1
+70,Least Tern,Sternula antillarum,NA,NA,X,NA,NA,1,NA,NA
+71,Forster's Tern,Sterna forsteri,X,NA,X,X,NA,1,1,NA
+72,Black Tern,Chlidonias niger,X,NA,X,X,NA,1,1,1
+73,Common Loon,Gavia immer,NA,NA,X,NA,NA,1,NA,1
+74,Double-crested Cormorant,Nannopterum auritum,NA,NA,X,X,NA,1,1,1
+75,White-faced Ibis,Plegadis chihi,NA,NA,X,X,NA,1,1,1
+76,American Bittern,Botaurus lentiginosus,X,NA,X,X,NA,1,1,1
+77,Black-crowned Night Heron,Nycticorax nycticorax,X,NA,X,NA,NA,1,NA,1
+78,Green Heron,Butorides virescens,X,NA,X,X,NA,1,NA,NA
+79,Great Blue Heron,Ardea herodias,X,NA,X,X,NA,1,1,1
+80,Great Egret,Ardea alba,NA,NA,X,NA,NA,1,NA,1
+81,American White Pelican,Pelecanus erythrorhynchos,X,NA,X,X,NA,1,1,1
+82,Turkey Vulture,Cathartes aura,X,NA,X,X,NA,1,1,1
+83,Osprey,Pandion haliaetus,X,NA,X,X,NA,1,NA,1
+84,Golden Eagle,Aquila chrysaetos,NA,NA,X,X,NA,1,NA,1
+85,Sharp-shinned Hawk,Accipiter striatus,X,NA,X,X,NA,1,NA,1
+86,Cooper's Hawk,Accipiter cooperii,NA,NA,X,X,NA,1,1,1
+87,American Goshawk,Accipiter atricapillus,NA,NA,X,NA,NA,NA,NA,NA
+88,Northern Harrier,Circus hudsonius,X,NA,X,X,NA,1,1,1
+89,Bald Eagle,Haliaeetus leucocephalus,NA,NA,X,X,NA,1,1,1
+89.5,Red-shouldered Hawk,Buteo lineatus,NA,NA,Hypothetical,NA,NA,NA,NA,NA
+90,Broad-winged Hawk,Buteo platypterus,NA,NA,X,X,NA,1,NA,1
+91,Swainson's Hawk,Buteo swainsoni,X,NA,X,X,NA,1,1,1
+92,Red-tailed Hawk,Buteo jamaicensis,NA,NA,X,X,NA,1,1,1
+93,Ferruginous Hawk,Buteo regalis,X,NA,X,X,NA,1,1,1
+94,Rough-legged Buzzard,Buteo lagopus,NA,NA,X,X,NA,1,NA,1
+95,Barn Owl,Tyto alba,NA,NA,X,X,NA,1,NA,1
+96,Northern Saw-whet Owl,Aegolius acadicus,NA,NA,Hypothetical,X,NA,1,NA,1
+97,Burrowing Owl,Athene cunicularia,X,NA,X,X,NA,1,1,1
+98,Long-eared Owl,Asio otus,NA,NA,X,NA,NA,1,NA,NA
+99,Short-eared Owl,Asio flammeus,X,NA,X,NA,NA,1,NA,1
+100,Great Horned Owl,Bubo virginianus,NA,NA,X,X,NA,1,1,1
+101,Eastern Screech Owl,Megascops asio,X,NA,X,X,NA,1,1,1
+102,Belted Kingfisher,Megaceryle alcyon,X,NA,X,X,NA,1,1,1
+102.5,Lewis's Woodpecker,Melanerpes lewis,NA,NA,Hypothetical,NA,NA,NA,NA,1
+103,Red-headed Woodpecker,Melanerpes erythrocephalus,X,NA,X,X,NA,1,1,1
+104,Red-bellied Woodpecker,Melanerpes carolinus,NA,NA,X,X,NA,1,1,1
+105,Yellow-bellied Sapsucker,Sphyrapicus varius,NA,NA,X,X,NA,1,NA,1
+106,Downy Woodpecker,Dryobates pubescens,X,NA,X,X,NA,1,1,1
+107,Hairy Woodpecker,Leuconotopicus villosus,X,NA,X,X,NA,1,1,1
+108,Northern Flicker,Colaptes auratus,X,NA,X,X,NA,1,1,1
+109,American Kestrel,Falco sparverius,X,NA,X,X,NA,1,1,1
+110,Merlin,Falco columbarius,X,NA,X,X,NA,1,1,1
+111,Prairie Falcon,Falco mexicanus,X,NA,X,X,NA,1,NA,1
+112,Peregrine Falcon,Falco peregrinus,NA,NA,X,NA,NA,1,NA,1
+113,Eastern Phoebe,Sayornis phoebe,NA,NA,X,X,NA,1,1,1
+114,Say's Phoebe,Sayornis saya,X,NA,X,X,NA,1,1,1
+115,Olive-sided Flycatcher,Contopus cooperi,NA,NA,X,NA,NA,1,NA,1
+116,Western Wood Pewee,Contopus sordidulus,X,NA,X,X,NA,1,1,1
+117,Eastern Wood Pewee,Contopus virens,NA,NA,X,X,NA,1,1,1
+118,Yellow-bellied Flycatcher,Empidonax flaviventris,NA,NA,X,NA,NA,1,NA,NA
+119,Willow Flycatcher,Empidonax traillii,X,NA,X,X,NA,1,NA,1
+120,Alder Flycatcher,Empidonax alnorum,NA,NA,X,X,NA,1,NA,1
+121,Least Flycatcher,Empidonax minimus,NA,NA,X,X,NA,1,1,1
+122,Western Kingbird,Tyrannus verticalis,X,NA,X,X,NA,1,1,1
+123,Scissor-tailed Flycatcher,Tyrannus forficatus,NA,X,X,NA,NA,1,NA,NA
+124,Eastern Kingbird,Tyrannus tyrannus,X,X,X,X,NA,1,1,1
+125,Great Crested Flycatcher,Myiarchus crinitus,NA,NA,X,X,NA,1,1,1
+126,Loggerhead Shrike,Lanius ludovicianus,X,NA,X,X,NA,1,1,1
+127,Northern Shrike,Lanius borealis,X,NA,X,X,NA,1,1,1
+128,Red-eyed Vireo,Vireo olivaceus,X,X,X,X,NA,1,1,1
+129,Philadelphia Vireo,Vireo philadelphicus,NA,NA,X,X,NA,1,NA,1
+130,Warbling Vireo,Vireo gilvus,X,NA,X,X,NA,1,1,1
+131,Yellow-throated Vireo,Vireo flavifrons,NA,NA,X,X,NA,1,NA,NA
+132,Blue-headed Vireo,Vireo solitarius,NA,NA,X,NA,NA,1,1,1
+133,Bell's Vireo,Vireo bellii,X,X,X,X,NA,1,1,1
+133.5,Canada Jay,Perisoreus canadensis,NA,NA,Hypothetical,NA,NA,NA,NA,NA
+134,Blue Jay,Cyanocitta cristata,X,NA,X,X,NA,1,1,1
+135,Pinyon Jay,Gymnorhinus cyanocephalus,Hypothetical,NA,X,NA,NA,1,NA,1
+136,Black-billed Magpie,Pica hudsonia,X,NA,X,X,NA,1,1,1
+137,Clark's Nutcracker,Nucifraga columbiana,NA,NA,X,NA,NA,1,NA,1
+138,American Crow,Corvus brachyrhynchos,X,NA,X,X,NA,1,1,1
+138.5,Common Raven,Corvus corax,NA,NA,Hypothetical,NA,NA,NA,NA,NA
+139,Bohemian Waxwing,Bombycilla garrulus,X,NA,X,NA,NA,1,NA,NA
+140,Cedar Waxwing,Bombycilla cedrorum,NA,NA,X,X,NA,1,1,1
+141,Black-capped Chickadee,Poecile atricapillus,X,NA,X,X,NA,1,1,1
+142,Horned Lark,Eremophila alpestris,X,X,X,X,NA,1,1,1
+143,Bank Swallow,Riparia riparia,X,NA,X,X,NA,1,1,1
+144,Tree Swallow,Tachycineta bicolor,X,NA,X,X,NA,1,1,1
+145,Northern Rough-winged Swallow,Stelgidopteryx serripennis,X,NA,X,X,NA,1,1,1
+146,Barn Swallow,Hirundo rustica,X,NA,X,X,NA,1,1,1
+147,Cliff Swallow,Petrochelidon pyrrhonota,X,NA,X,X,NA,1,1,1
+148,Ruby-crowned Kinglet,Corthylio calendula,X,NA,X,X,NA,1,1,1
+149,Golden-crowned Kinglet,Regulus satrapa,NA,NA,X,X,NA,1,NA,1
+150,Rock Wren,Salpinctes obsoletus,X,NA,X,NA,NA,1,NA,1
+151,Sedge Wren,Cistothorus stellaris,NA,NA,X,X,NA,1,1,NA
+152,Marsh Wren,Cistothorus palustris,X,NA,X,X,NA,1,1,1
+153,Winter Wren,Troglodytes hiemalis,NA,NA,X,NA,NA,1,NA,1
+154,House Wren,Troglodytes aedon,X,NA,X,X,NA,1,1,1
+155,Blue-gray Gnatcatcher,Polioptila caerulea,NA,NA,NA,X,NA,1,1,1
+156,White-breasted Nuthatch,Sitta carolinensis,NA,NA,X,X,NA,1,1,1
+157,Pygmy Nuthatch,Sitta pygmaea,NA,NA,NA,X,NA,1,1,1
+158,Red-breasted Nuthatch,Sitta canadensis,NA,NA,X,X,NA,1,1,1
+159,Brown Creeper,Certhia americana,NA,NA,X,X,NA,1,1,1
+160,Gray Catbird,Dumetella carolinensis,X,NA,X,X,NA,1,1,1
+161,Northern Mockingbird,Mimus polyglottos,Hypothetical,NA,X,NA,NA,1,1,1
+162,Brown Thrasher,Toxostoma rufum,X,NA,X,X,NA,1,1,1
+163,European Starling,Sturnus vulgaris,NA,NA,X,X,NA,1,1,1
+164,Mountain Bluebird,Sialia currucoides,X,NA,X,X,NA,1,NA,1
+165,Eastern Bluebird,Sialia sialis,X,NA,X,X,NA,1,1,1
+166,Townsend's Solitaire,Myadestes townsendi,X,NA,X,X,NA,1,1,1
+167,Wood Thrush,Hylocichla mustelina,X,NA,NA,X,NA,1,NA,NA
+168,Swainson's Thrush,Catharus ustulatus,X,NA,X,X,NA,1,1,1
+169,Hermit Thrush,Catharus guttatus,NA,NA,X,X,NA,1,NA,1
+170,Gray-cheeked Thrush,Catharus minimus,NA,NA,X,NA,NA,1,NA,NA
+171,Veery,Catharus fuscescens,X,NA,X,NA,NA,1,NA,1
+172,American Robin,Turdus migratorius,X,X,X,X,NA,1,1,1
+173,House Sparrow,Passer domesticus,NA,NA,X,X,NA,1,1,1
+174,Buff-bellied Pipit,Anthus rubescens,NA,NA,X,X,NA,1,NA,1
+175,Sprague's Pipit,Anthus spragueii,NA,NA,X,NA,NA,1,NA,1
+176,Evening Grosbeak,Coccothraustes vespertinus,NA,NA,X,X,NA,1,NA,1
+177,Pine Grosbeak,Pinicola enucleator,NA,NA,X,NA,NA,1,NA,NA
+178,Purple Finch,Haemorhous purpureus,NA,NA,X,X,NA,1,NA,1
+179,Cassin's Finch,Haemorhous cassinii,NA,NA,X,NA,NA,1,NA,1
+180,House Finch,Haemorhous mexicanus,NA,NA,X,X,NA,1,1,1
+181,Common Redpoll,Acanthis flammea,NA,NA,X,NA,NA,1,NA,1
+182,Red Crossbill,Loxia curvirostra,NA,NA,X,X,NA,1,1,1
+183,White-winged Crossbill,Loxia leucoptera,NA,NA,X,NA,NA,1,NA,NA
+184,American Goldfinch,Spinus tristis,X,X,X,X,NA,1,1,1
+185,Pine Siskin,Spinus pinus,X,NA,X,X,NA,1,1,1
+186,Lapland Longspur,Calcarius lapponicus,NA,NA,X,X,NA,1,NA,1
+187,Grasshopper Sparrow,Ammodramus savannarum,X,X,X,X,NA,1,1,1
+188,Lark Sparrow,Chondestes grammacus,X,X,X,X,NA,1,1,1
+189,Lark Bunting,Calamospiza melanocorys,X,NA,X,X,NA,1,1,1
+190,Chipping Sparrow,Spizella passerina,X,NA,X,X,NA,1,1,1
+191,Clay-colored Sparrow,Spizella pallida,X,NA,X,X,NA,1,1,1
+192,Field Sparrow,Spizella pusilla,X,X,X,X,NA,1,1,1
+193,Fox Sparrow,Passerella iliaca,NA,NA,X,NA,NA,1,NA,1
+194,American Tree Sparrow,Spizelloides arborea,X,NA,X,X,NA,1,1,1
+195,White-winged Junco,Junco aikeni,X,NA,X,NA,NA,NA,NA,NA
+195.1,Slate-colored Junco,Junco hyemalis,NA,NA,X,X,NA,1,1,1
+195.2,Cassiar Junco,Junco cismontanus,NA,NA,NA,X,NA,NA,NA,NA
+195.3,Oregon Junco,Junco oreganus,X,NA,X,X,NA,NA,NA,NA
+195.4,Pink-sided Junco,Junco mearnsi,NA,NA,X,X,NA,NA,NA,NA
+196,White-crowned Sparrow,Zonotrichia leucophrys,X,NA,X,X,NA,1,1,1
+197,Golden-crowned Sparrow,Zonotrichia atricapilla,NA,NA,X,NA,NA,1,NA,NA
+198,Harris's Sparrow,Zonotrichia querula,X,NA,X,X,NA,1,1,1
+199,White-throated Sparrow,Zonotrichia albicollis,NA,NA,X,X,NA,1,1,1
+200,Vesper Sparrow,Pooecetes gramineus,X,NA,X,X,NA,1,1,1
+201,LeConte's Sparrow,Ammospiza leconteii,NA,NA,X,NA,NA,NA,NA,NA
+201.5,Henslow's Sparrow,Centronyx henslowii,NA,NA,Hypothetical,NA,NA,NA,NA,NA
+202,Savannah Sparrow,Passerculus sandwichensis,NA,NA,X,X,NA,1,1,1
+203,Song Sparrow,Melospiza melodia,X,NA,X,X,NA,1,1,1
+204,Lincoln's Sparrow,Melospiza lincolnii,X,NA,X,X,NA,1,1,1
+205,Swamp Sparrow,Melospiza georgiana,NA,NA,X,X,NA,1,1,1
+206,Spotted Towhee,Pipilo maculatus,X,X,X,X,NA,1,1,1
+206.5,Spotted x Eastern Towhee,Pipilo maculatus x erythrophthalmus,NA,NA,NA,X,NA,NA,NA,NA
+207,Eastern Towhee,Pipilo erythrophthalmus,NA,NA,NA,X,NA,1,NA,NA
+208,Yellow-breasted Chat,Icteria virens,X,X,X,X,NA,1,1,1
+209,Yellow-headed Blackbird,Xanthocephalus xanthocephalus,X,NA,X,X,NA,1,1,1
+210,Bobolink,Dolichonyx oryzivorus,NA,NA,X,X,NA,1,1,1
+211,Western Meadowlark,Sturnella neglecta,X,NA,X,X,NA,1,1,1
+212,Eastern Meadowlark,Sturnella magna,X,NA,X,X,NA,1,1,1
+213,Bullock's Oriole,Icterus bullockii,NA,NA,X,NA,NA,1,NA,1
+213.5,Bullock's x Baltimore Oriole,Icterus bullockii x galbula,NA,NA,X,X,NA,NA,NA,NA
+214,Baltimore Oriole,Icterus galbula,X,NA,X,X,NA,1,1,1
+215,Orchard Oriole,Icterus spurius,X,X,X,X,NA,1,1,1
+216,Red-winged Blackbird,Agelaius phoeniceus,X,NA,X,X,NA,1,1,1
+217,Brown-headed Cowbird,Molothrus ater,X,NA,X,X,NA,1,1,1
+218,Rusty Blackbird,Euphagus carolinus,X,NA,X,NA,NA,1,NA,NA
+219,Brewer's Blackbird,Euphagus cyanocephalus,X,NA,X,X,NA,1,NA,1
+220,Common Grackle,Quiscalus quiscula,X,NA,X,X,NA,1,1,1
+221,Great-tailed Grackle,Quiscalus mexicanus,NA,NA,NA,X,NA,1,1,1
+222,Ovenbird,Seiurus aurocapilla,X,NA,X,X,NA,1,1,1
+222.5,Louisiana Waterthrush,Parkesia motacilla,NA,NA,Hypothetical,NA,NA,NA,NA,NA
+223,Northern Waterthrush,Parkesia noveboracensis,X,NA,X,NA,NA,1,1,1
+224,Blue-winged Warbler,Vermivora cyanoptera,NA,NA,X,NA,NA,1,NA,NA
+225,Black-and-white Warbler,Mniotilta varia,X,X,X,X,NA,1,1,1
+226,Tennessee Warbler,Leiothlypis peregrina,X,NA,X,X,NA,1,NA,1
+227,Orange-crowned Warbler,Leiothlypis celata,X,NA,X,X,NA,1,1,1
+228,Nashville Warbler,Leiothlypis ruficapilla,NA,NA,X,X,NA,1,1,1
+229,Connecticut Warbler,Oporornis agilis,NA,NA,X,NA,NA,1,NA,NA
+230,Mourning Warbler,Geothlypis philadelphia,NA,NA,X,X,NA,1,NA,NA
+231,Common Yellowthroat,Geothlypis trichas,X,X,X,X,NA,1,1,1
+232,Hooded Warbler,Setophaga citrina,NA,NA,Hypothetical,X,NA,1,NA,NA
+233,American Redstart,Setophaga ruticilla,X,NA,X,X,NA,1,1,1
+234,Cape May Warbler,Setophaga tigrina,NA,NA,X,NA,NA,1,NA,NA
+235,Northern Parula,Setophaga americana,X,NA,X,NA,NA,1,NA,NA
+236,Bay-breasted Warbler,Setophaga castanea,NA,NA,X,X,NA,1,NA,NA
+237,Blackburnian Warbler,Setophaga fusca,NA,NA,X,NA,NA,1,NA,NA
+238,Mangrove Warbler,Setophaga petechia,X,NA,X,X,NA,1,1,1
+239,Chestnut-sided Warbler,Setophaga pensylvanica,NA,NA,X,X,NA,1,NA,1
+240,Blackpoll Warbler,Setophaga striata,X,NA,X,X,NA,1,NA,1
+241,Palm Warbler,Setophaga palmarum,NA,NA,X,NA,NA,1,NA,1
+242,Pine Warbler,Setophaga pinus,NA,NA,X,NA,NA,1,NA,NA
+243,Myrtle Warbler,Setophaga coronata,X,NA,X,X,NA,1,1,1
+243.5,Audubon's Warbler,Setophaga auduboni,X,NA,X,NA,NA,NA,NA,NA
+244,Townsend's Warbler,Setophaga townsendi,NA,NA,X,NA,NA,1,NA,1
+245,Black-throated Green Warbler,Setophaga virens,NA,NA,X,NA,NA,1,NA,NA
+246,Canada Warbler,Cardellina canadensis,NA,NA,X,NA,NA,1,NA,NA
+247,Wilson's Warbler,Cardellina pusilla,X,NA,X,X,NA,1,1,1
+248,Summer Tanager,Piranga rubra,NA,NA,X,NA,NA,1,NA,1
+249,Scarlet Tanager,Piranga olivacea,NA,X,NA,NA,NA,1,NA,NA
+250,Western Tanager,Piranga ludoviciana,NA,NA,X,NA,NA,1,NA,1
+251,Rose-breasted Grosbeak,Pheucticus ludovicianus,NA,NA,X,X,NA,1,1,1
+252,Black-headed Grosbeak,Pheucticus melanocephalus,X,X,X,X,NA,1,1,1
+253,Northern Cardinal,Cardinalis cardinalis,Hypothetical,NA,X,X,NA,1,1,1
+254,Dickcissel,Spiza americana,X,NA,X,X,NA,1,1,1
+255,Blue Grosbeak,Passerina caerulea,X,NA,X,X,NA,1,1,1
+256,Indigo Bunting,Passerina cyanea,NA,NA,X,X,NA,1,1,1
+257,Lazuli Bunting,Passerina amoena,X,NA,X,X,NA,1,NA,1
+NA,NA,Accipiter gentilis,NA,NA,NA,NA,NA,1,NA,1
+NA,NA,Aechmophorus clarkii,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Aechmophorus occidentalis,NA,NA,NA,NA,NA,NA,1,1
+NA,NA,Aeronautes saxatalis,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Bubo scandiacus,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Bubulcus ibis,NA,NA,NA,NA,NA,NA,1,1
+NA,NA,Calcarius ornatus,NA,NA,NA,NA,NA,NA,1,1
+NA,NA,Centronyx bairdii,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Centronyx leconteii,NA,NA,NA,NA,NA,1,NA,NA
+NA,NA,Empidonax hammondii,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Empidonax oberholseri,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Empidonax occidentalis,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Empidonax wrightii,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Geothlypis tolmiei,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Himantopus mexicanus,NA,NA,NA,NA,NA,NA,1,NA
+NA,NA,Leiothlypis virginiae,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Leucosticte tephrocotis,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Limnodromus scolopaceus,NA,NA,NA,NA,NA,NA,1,1
+NA,NA,Limosa fedoa,NA,NA,NA,NA,NA,NA,1,1
+NA,NA,Lophodytes cucullatus,NA,NA,NA,NA,NA,NA,1,1
+NA,NA,Oreoscoptes montanus,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Peucaea cassinii,NA,NA,NA,NA,NA,NA,1,1
+NA,NA,Phalaropus lobatus,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Picoides dorsalis,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Pipilo chlorurus,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Plegadis falcinellus,NA,NA,NA,NA,NA,NA,1,NA
+NA,NA,Progne subis,NA,NA,NA,NA,NA,NA,1,NA
+NA,NA,Rhynchophanes mccownii,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Selasphorus platycercus,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Selasphorus rufus,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Setophaga caerulescens,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Spatula cyanoptera,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Sphyrapicus nuchalis,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Spinus psaltria,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Spizella breweri,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Strix varia,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Tachycineta thalassina,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Toxostoma curvirostre,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Tringa semipalmata,NA,NA,NA,NA,NA,NA,1,NA
+NA,NA,Troglodytes pacificus,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Tyrannus vociferans,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Vireo cassinii,NA,NA,NA,NA,NA,NA,NA,1
+NA,NA,Vireo plumbeus,NA,NA,NA,NA,NA,NA,NA,1

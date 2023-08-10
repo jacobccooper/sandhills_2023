@@ -5928,7 +5928,7 @@
 ,5926,Pectoral Sandpiper,Calidris melanotos
 ,5927,Semipalmated Sandpiper,Calidris pusilla
 ,5928,Western Sandpiper,Calidris mauri
-,5929,,Limnodromus
+,5929,Dowitcher sp.,Limnodromus sp.
 ,5930,Asian Dowitcher,Limnodromus semipalmatus
 ,5931,Long-billed Dowitcher,Limnodromus scolopaceus
 ,5932,Short-billed Dowitcher,Limnodromus griseus
@@ -7733,7 +7733,7 @@
 ,7731,,    A. g. gentilis
 ,7732,,    A. g. marginatus
 ,7733,,    A. g. arrigonii
-,,American Goshawk,Accipiter atricapillus
+,7733.5,American Goshawk,Accipiter atricapillus
 ,7734,,    A. a. atricapillus
 ,7735,,    A. a. laingi
 ,7736,,    A. a. apache
@@ -26759,7 +26759,7 @@
 ,26762,,    S. s. guatemalae
 ,26763,,    S. s. meridionalis
 ,26764,,    S. s. caribaea
-,26765,,Stizorhina
+,26765,Eastern x Mountain Bluebird,Sialia sialis x currucoides
 ,26766,Finsch's Rufous Thrush,Stizorhina finschi
 ,26767,Fraser's Rufous Thrush,Stizorhina fraseri
 ,26768,,    S. f. fraseri
@@ -31347,12 +31347,13 @@
 ,31347,,Junco
 ,31348,Volcano Junco,Junco vulcani
 ,31349,Guadalupe Junco,Junco insularis
-,31350,Dark-eyed Junco,Junco hyemalis
-,31351,,    J. h. aikeni
-,31352,,    J. h. hyemalis
+,31350,,
+,31351,White-winged Junco,Junco aikeni
+,31352,Slate-colored Junco,Junco hyemalis
 ,31353,,    J. h. carolinensis
-,31354,,    J. h. cismontanus
-,31355,,    J. h. oreganus
+,31354,Cassiar Junco,Junco cismontanus
+,31354.5,Slate-colored/Cassiar Junco,Junco hyemalis/cismontanus
+,31355,Oregon Junco,Junco oreganus
 ,31356,,    J. h. shufeldti
 ,31357,,    J. h. montanus
 ,31358,,    J. h. thurberi
@@ -31360,8 +31361,8 @@
 ,31360,,    J. h. pontilis
 ,31361,,    J. h. townsendi
 ,31362,,    J. h. mutabilis
-,31363,,    J. h. mearnsi
-,31364,,    J. h. caniceps
+,31363,Pink-sided Junco,Junco mearnsi
+,31364,Gray-headed Junco,Junco caniceps
 ,31365,,    J. h. dorsalis
 ,31366,Yellow-eyed Junco,Junco phaeonotus
 ,31367,,    J. p. palliatus
@@ -31598,6 +31599,7 @@
 ,31598,,    P. e. canaster
 ,31599,,    P. e. rileyi
 ,31600,,    P. e. alleni
+,31600.5,Spotted x Eastern Towhee,Pipilo maculatus x erythrophthalmus
 ,31601,Bermuda Towhee,Pipilo naufragus
 ,31602,Collared Towhee,Pipilo ocai
 ,31603,,    P. o. alticola
@@ -31872,6 +31874,7 @@
 ,31872,,    I. p. sclateri
 ,31873,Black-backed Oriole,Icterus abeillei
 ,31874,Baltimore Oriole,Icterus galbula
+,31874.5,Bullock’s x Baltimore Oriole,Icterus bullockii x galbula
 ,31875,Yellow-tailed Oriole,Icterus mesomelas
 ,31876,,    I. m. mesomelas
 ,31877,,    I. m. salvinii
@@ -32269,6 +32272,7 @@
 ,32268,,    S. p. florida
 ,32269,,    S. p. achrustera
 ,32270,,    S. p. chrysoleuca
+,32270.5,Myrtle/Audubon’s Warbler,Setophaga coronata/auduboni
 ,32271,Myrtle Warbler,Setophaga coronata
 ,32272,,    S. c. hooveri
 ,32273,,    S. c. coronata
@@ -32580,7 +32584,7 @@
 ,32579,Black-headed Grosbeak,Pheucticus melanocephalus
 ,32580,,    P. m. maculatus
 ,32581,,    P. m. melanocephalus
-,32582,,Granatellus
+,32582,Rose-breasted x Black-headed Grosbeak,Pheucticus ludovicianus x melanocephalus
 ,32583,Red-breasted Chat,Granatellus venustus
 ,32584,,    G. v. francescae
 ,32585,,    G. v. venustus
@@ -32667,6 +32671,7 @@
 ,32667,,    P. c. lazula
 ,32668,Indigo Bunting,Passerina cyanea
 ,32669,Lazuli Bunting,Passerina amoena
+,32669.5,Lazuli x Indigo Bunting,Passerina amoena x cyanea
 ,32670,Varied Bunting,Passerina versicolor
 ,32671,,    P. v. versicolor
 ,32672,,    P. v. dickeyae

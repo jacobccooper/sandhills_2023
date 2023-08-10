@@ -295,7 +295,7 @@ Spatula discors,1,-103.4976482,42.9198521,2014-06-20,Pine Ridge / Oglala
 Spatula discors,X,-103.427994,42.880411,2015-04-24,Pine Ridge / Oglala
 Spatula discors,3,-100.9054473,42.6448535,2015-05-22,McKelvie
 Spatula discors,1,-100.3056451,41.9020192,2015-05-21,Bessey
-Spatula discors,6,-100.9791183,42.673814900000004,2015-06-19,McKelvie
+Spatula discors,6,-100.9791183,42.6738149,2015-06-19,McKelvie
 Spatula discors,2,-100.9000824,42.6455271,2015-06-13,McKelvie
 Spatula discors,3,-103.58951,42.94285,2015-06-21,Pine Ridge / Oglala
 Spatula discors,5,-103.0042076,42.7448691,2015-08-24,Pine Ridge / Oglala
@@ -510,7 +510,7 @@ Mareca strepera,60,-103.5923624,42.9594691,2011-04-20,Pine Ridge / Oglala
 Mareca strepera,X,-103.427994,42.880411,2015-04-24,Pine Ridge / Oglala
 Mareca strepera,2,-100.9054473,42.6448535,2015-05-22,McKelvie
 Mareca strepera,2,-103.5581846,42.9808975,2015-05-26,Pine Ridge / Oglala
-Mareca strepera,1,-100.9791183,42.673814900000004,2015-06-19,McKelvie
+Mareca strepera,1,-100.9791183,42.6738149,2015-06-19,McKelvie
 Mareca strepera,5,-103.5736942,42.9003129,2016-05-23,Pine Ridge / Oglala
 Mareca strepera,2,-103.5777789,42.8814855,2016-05-24,Pine Ridge / Oglala
 Mareca strepera,10,-100.2983522,41.8992266,2017-04-07,Bessey
@@ -666,7 +666,7 @@ Anas platyrhynchos,2,-100.511384,41.9710414,2015-05-13,Bessey
 Anas platyrhynchos,3,-100.3136146,41.8722806,2015-05-17,Bessey
 Anas platyrhynchos,2,-100.2983522,41.8992266,2015-05-13,Bessey
 Anas platyrhynchos,2,-100.9054473,42.6448535,2015-06-08,McKelvie
-Anas platyrhynchos,3,-100.9791183,42.673814900000004,2015-06-19,McKelvie
+Anas platyrhynchos,3,-100.9791183,42.6738149,2015-06-19,McKelvie
 Anas platyrhynchos,12,-103.58951,42.94285,2015-06-21,Pine Ridge / Oglala
 Anas platyrhynchos,1,-100.3223848,41.9053274,2015-06-16,Bessey
 Anas platyrhynchos,15,-103.2202864,42.6258756,2015-09-06,Pine Ridge / Oglala
@@ -1501,7 +1501,7 @@ Tympanuchus phasianellus,4,-100.4661942,41.8674516,2014-04-14,Bessey
 Tympanuchus phasianellus,9,-102.9797566,42.7258824,2014-05-24,Pine Ridge / Oglala
 Tympanuchus phasianellus,2,-100.934193,42.649988,2015-05-16,McKelvie
 Tympanuchus phasianellus,1,-100.9000824,42.6455271,2015-06-13,McKelvie
-Tympanuchus phasianellus,1,-100.9791183,42.673814900000004,2015-06-19,McKelvie
+Tympanuchus phasianellus,1,-100.9791183,42.6738149,2015-06-19,McKelvie
 Tympanuchus phasianellus,50,-100.3807068,41.8572879,2015-09-07,Bessey
 Tympanuchus phasianellus,3,-103.572278,42.6954318,2016-03-18,Pine Ridge / Oglala
 Tympanuchus phasianellus,32,-100.977879,42.663311,2016-04-14,McKelvie
@@ -1545,7 +1545,7 @@ Tympanuchus phasianellus,1,-103.575917,42.816559,2021-02-22,Pine Ridge / Oglala
 Tympanuchus phasianellus,2,-103.4984207,42.9109261,2021-03-08,Pine Ridge / Oglala
 Tympanuchus phasianellus,15,-100.4708485,41.9041158,2021-03-26,Bessey
 Tympanuchus phasianellus,12,-100.4708485,41.9041158,2021-03-30,Bessey
-Tympanuchus phasianellus,14,-103.572707,42.814113999999996,2021-04-03,Pine Ridge / Oglala
+Tympanuchus phasianellus,14,-103.572707,42.814114,2021-04-03,Pine Ridge / Oglala
 Tympanuchus phasianellus,13,-100.4672989,41.9081115,2021-04-03,Bessey
 Tympanuchus phasianellus,2,-103.515494,42.80807,2021-05-06,Pine Ridge / Oglala
 Tympanuchus phasianellus,3,-100.3807068,41.8572879,2021-06-04,Bessey
@@ -2117,7 +2117,7 @@ Zenaida macroura,X,-103.0162239,42.7071641,1994-07-16,Pine Ridge / Oglala
 Zenaida macroura,X,-100.3807068,41.8572879,1994-09-10,Bessey
 Zenaida macroura,X,-103.5848093,42.85706,1995-09-06,Pine Ridge / Oglala
 Zenaida macroura,X,-103.0162239,42.7071641,1996-06-03,Pine Ridge / Oglala
-Zenaida macroura,X,-103.00351620000001,42.6974864,1998-09-04,Pine Ridge / Oglala
+Zenaida macroura,X,-103.0035162,42.6974864,1998-09-04,Pine Ridge / Oglala
 Zenaida macroura,2,-103.3163953,42.6317644,1999-06-26,Pine Ridge / Oglala
 Zenaida macroura,6,-103.5716912,42.6984793,1999-06-22,Pine Ridge / Oglala
 Zenaida macroura,2,-100.3807068,41.8572879,2000-03-30,Bessey
@@ -2336,7 +2336,7 @@ Zenaida macroura,1,-100.2983522,41.8992266,2015-05-15,Bessey
 Zenaida macroura,2,-100.2983522,41.8992266,2015-05-13,Bessey
 Zenaida macroura,9,-100.9000824,42.6455271,2015-06-13,McKelvie
 Zenaida macroura,2,-100.9000824,42.6455271,2015-06-05,McKelvie
-Zenaida macroura,4,-100.9791183,42.673814900000004,2015-06-19,McKelvie
+Zenaida macroura,4,-100.9791183,42.6738149,2015-06-19,McKelvie
 Zenaida macroura,21,-100.9054473,42.6448535,2015-06-08,McKelvie
 Zenaida macroura,8,-103.3163953,42.6317644,2015-06-10,Pine Ridge / Oglala
 Zenaida macroura,5,-103.2019615,42.6392627,2015-06-10,Pine Ridge / Oglala
@@ -2606,7 +2606,7 @@ Zenaida macroura,2,-103.0162239,42.7071641,2019-06-11,Pine Ridge / Oglala
 Zenaida macroura,1,-103.0373837,42.7156547,2019-06-18,Pine Ridge / Oglala
 Zenaida macroura,5,-103.4471798,42.908663,2019-06-20,Pine Ridge / Oglala
 Zenaida macroura,1,-103.2616997,42.6414094,2019-06-16,Pine Ridge / Oglala
-Zenaida macroura,X,-103.07470000000001,42.6743,2019-06-19,Pine Ridge / Oglala
+Zenaida macroura,X,-103.0747,42.6743,2019-06-19,Pine Ridge / Oglala
 Zenaida macroura,1,-103.0162239,42.7071641,2019-06-20,Pine Ridge / Oglala
 Zenaida macroura,5,-103.2019615,42.6392627,2019-06-15,Pine Ridge / Oglala
 Zenaida macroura,1,-103.502065,42.951232,2019-06-16,Pine Ridge / Oglala
@@ -2869,7 +2869,7 @@ Zenaida macroura,20,-102.957379,42.710307,2021-08-20,Pine Ridge / Oglala
 Zenaida macroura,4,-102.930012,42.717473,2021-08-21,Pine Ridge / Oglala
 Zenaida macroura,2,-102.9592145,42.6905315,2021-08-17,Pine Ridge / Oglala
 Zenaida macroura,X,-103.4804527,42.9322633,2021-08-06,Pine Ridge / Oglala
-Zenaida macroura,X,-103.671334,42.978699400000004,2021-08-19,Pine Ridge / Oglala
+Zenaida macroura,X,-103.671334,42.9786994,2021-08-19,Pine Ridge / Oglala
 Zenaida macroura,1,-100.296701,41.901114,2021-08-16,Bessey
 Zenaida macroura,1,-100.3260282,41.8622186,2021-08-31,Bessey
 Zenaida macroura,2,-103.0162239,42.7071641,2021-09-02,Pine Ridge / Oglala
@@ -3188,7 +3188,7 @@ Chordeiles minor,2,-103.0010737,42.7170068,2014-08-02,Pine Ridge / Oglala
 Chordeiles minor,2,-100.511384,41.9710414,2014-08-07,Bessey
 Chordeiles minor,X,-100.9651279,42.6647975,2015-05-28,McKelvie
 Chordeiles minor,1,-100.9000824,42.6455271,2015-06-13,McKelvie
-Chordeiles minor,2,-100.9791183,42.673814900000004,2015-06-19,McKelvie
+Chordeiles minor,2,-100.9791183,42.6738149,2015-06-19,McKelvie
 Chordeiles minor,4,-100.9054473,42.6448535,2015-06-08,McKelvie
 Chordeiles minor,1,-103.0162239,42.7071641,2015-06-09,Pine Ridge / Oglala
 Chordeiles minor,1,-100.9000824,42.6455271,2015-07-09,McKelvie
@@ -3337,7 +3337,7 @@ Chordeiles minor,1,-102.9344712,42.7131864,2021-08-17,Pine Ridge / Oglala
 Chordeiles minor,1,-103.0374204,42.7157774,2021-08-01,Pine Ridge / Oglala
 Chordeiles minor,1,-103.0162239,42.7071641,2021-08-23,Pine Ridge / Oglala
 Chordeiles minor,3,-103.5848093,42.85706,2021-08-01,Pine Ridge / Oglala
-Chordeiles minor,X,-103.671334,42.978699400000004,2021-08-19,Pine Ridge / Oglala
+Chordeiles minor,X,-103.671334,42.9786994,2021-08-19,Pine Ridge / Oglala
 Chordeiles minor,3,-100.9498903,42.6978972,2022-05-29,McKelvie
 Chordeiles minor,2,-102.94338,42.715043,2022-05-24,Pine Ridge / Oglala
 Chordeiles minor,1,-103.0162239,42.7071641,2022-05-26,Pine Ridge / Oglala
@@ -3717,7 +3717,7 @@ Charadrius vociferus,1,-100.299411,41.900498,2015-05-15,Bessey
 Charadrius vociferus,3,-100.9000824,42.6455271,2015-06-13,McKelvie
 Charadrius vociferus,3,-100.9000824,42.6455271,2015-06-05,McKelvie
 Charadrius vociferus,3,-100.9054473,42.6448535,2015-06-08,McKelvie
-Charadrius vociferus,2,-100.9791183,42.673814900000004,2015-06-19,McKelvie
+Charadrius vociferus,2,-100.9791183,42.6738149,2015-06-19,McKelvie
 Charadrius vociferus,6,-103.58951,42.94285,2015-06-21,Pine Ridge / Oglala
 Charadrius vociferus,1,-100.3161702,41.9054901,2015-06-16,Bessey
 Charadrius vociferus,2,-100.9000824,42.6455271,2015-07-09,McKelvie
@@ -3950,7 +3950,7 @@ Bartramia longicauda,5,-103.5581846,42.9808975,2015-05-26,Pine Ridge / Oglala
 Bartramia longicauda,2,-100.3136146,41.8722806,2015-05-17,Bessey
 Bartramia longicauda,3,-100.9000824,42.6455271,2015-06-13,McKelvie
 Bartramia longicauda,2,-100.9054473,42.6448535,2015-06-08,McKelvie
-Bartramia longicauda,8,-100.9791183,42.673814900000004,2015-06-19,McKelvie
+Bartramia longicauda,8,-100.9791183,42.6738149,2015-06-19,McKelvie
 Bartramia longicauda,1,-100.9000824,42.6455271,2015-06-05,McKelvie
 Bartramia longicauda,2,-103.4178686,42.841723,2015-06-09,Pine Ridge / Oglala
 Bartramia longicauda,2,-103.58951,42.94285,2015-06-21,Pine Ridge / Oglala
@@ -4158,7 +4158,7 @@ Gallinago delicata,1,-100.9413683,42.6512969,2021-06-06,McKelvie
 Gallinago delicata,2,-101.0644984,42.6849371,2021-06-07,McKelvie
 Gallinago delicata,1,-101.083149,42.775895,2022-06-15,McKelvie
 Phalaropus tricolor,1,-103.5111237,42.9227433,2011-05-16,Pine Ridge / Oglala
-Phalaropus tricolor,12,-100.9791183,42.673814900000004,2015-06-19,McKelvie
+Phalaropus tricolor,12,-100.9791183,42.6738149,2015-06-19,McKelvie
 Phalaropus tricolor,6,-100.920029,42.645409,2016-05-18,McKelvie
 Phalaropus tricolor,4,-103.4270203,42.8814204,2016-05-23,Pine Ridge / Oglala
 Phalaropus tricolor,2,-103.4593506,42.9191085,2016-05-23,Pine Ridge / Oglala
@@ -4323,7 +4323,7 @@ Pelecanus erythrorhynchos,X,-100.3807068,41.8572879,1995-10-07,Bessey
 Pelecanus erythrorhynchos,X,-103.0104322,42.7319256,2000-09-16,Pine Ridge / Oglala
 Pelecanus erythrorhynchos,13,-100.9498903,42.6978972,2012-07-18,McKelvie
 Pelecanus erythrorhynchos,2,-100.9054473,42.6448535,2015-05-22,McKelvie
-Pelecanus erythrorhynchos,3,-100.9791183,42.673814900000004,2015-06-19,McKelvie
+Pelecanus erythrorhynchos,3,-100.9791183,42.6738149,2015-06-19,McKelvie
 Pelecanus erythrorhynchos,8,-100.9054473,42.6448535,2015-06-08,McKelvie
 Pelecanus erythrorhynchos,1,-101.0644984,42.6849371,2017-05-24,McKelvie
 Pelecanus erythrorhynchos,13,-103.0162239,42.7071641,2018-09-20,Pine Ridge / Oglala
@@ -4384,7 +4384,7 @@ Ardea herodias,1,-103.0042076,42.7448691,2014-05-24,Pine Ridge / Oglala
 Ardea herodias,1,-102.9797566,42.7258824,2014-09-07,Pine Ridge / Oglala
 Ardea herodias,1,-103.57473,42.89685,2014-09-01,Pine Ridge / Oglala
 Ardea herodias,1,-101.0644984,42.6849371,2015-05-15,McKelvie
-Ardea herodias,2,-100.9791183,42.673814900000004,2015-06-19,McKelvie
+Ardea herodias,2,-100.9791183,42.6738149,2015-06-19,McKelvie
 Ardea herodias,2,-103.2202864,42.6258756,2015-09-06,Pine Ridge / Oglala
 Ardea herodias,1,-100.977879,42.663311,2016-04-14,McKelvie
 Ardea herodias,2,-100.920029,42.645409,2016-05-18,McKelvie
@@ -4514,7 +4514,7 @@ Cathartes aura,X,-100.3807068,41.8572879,1994-09-10,Bessey
 Cathartes aura,X,-103.0162239,42.7071641,1995-06-15,Pine Ridge / Oglala
 Cathartes aura,X,-100.3807068,41.8572879,1995-10-07,Bessey
 Cathartes aura,X,-100.3807068,41.8572879,1996-05-14,Bessey
-Cathartes aura,X,-103.00351620000001,42.6974864,1998-09-04,Pine Ridge / Oglala
+Cathartes aura,X,-103.0035162,42.6974864,1998-09-04,Pine Ridge / Oglala
 Cathartes aura,2,-103.3163953,42.6317644,1999-06-26,Pine Ridge / Oglala
 Cathartes aura,1,-100.511384,41.9710414,2000-04-01,Bessey
 Cathartes aura,X,-100.3223848,41.9053274,2002-07-21,Bessey
@@ -4653,7 +4653,7 @@ Cathartes aura,3,-100.2983522,41.8992266,2015-05-13,Bessey
 Cathartes aura,6,-100.2983522,41.8992266,2015-05-17,Bessey
 Cathartes aura,1,-100.299411,41.900498,2015-05-15,Bessey
 Cathartes aura,4,-100.3807068,41.8572879,2015-05-17,Bessey
-Cathartes aura,2,-100.9791183,42.673814900000004,2015-06-19,McKelvie
+Cathartes aura,2,-100.9791183,42.6738149,2015-06-19,McKelvie
 Cathartes aura,2,-103.0162239,42.7071641,2015-06-10,Pine Ridge / Oglala
 Cathartes aura,4,-103.3163953,42.6317644,2015-06-10,Pine Ridge / Oglala
 Cathartes aura,1,-100.3223848,41.9053274,2015-06-16,Bessey
@@ -5442,7 +5442,7 @@ Accipiter cooperii,1,-103.023827,42.7090038,2022-09-29,Pine Ridge / Oglala
 Accipiter cooperii,1,-103.0162239,42.7071641,2022-10-03,Pine Ridge / Oglala
 Accipiter cooperii,1,-103.0042076,42.7448691,2022-10-12,Pine Ridge / Oglala
 Accipiter cooperii,1,-103.0216191,42.7058023,2023-06-13,Pine Ridge / Oglala
-Accipiter gentilis,1,-103.0162239,42.7071641,1989-04-21,Pine Ridge / Oglala
+Accipiter atricapillus,1,-103.0162239,42.7071641,1989-04-21,Pine Ridge / Oglala
 Haliaeetus leucocephalus,X,-100.3807068,41.8572879,1978-03-22,Bessey
 Haliaeetus leucocephalus,2,-100.2983522,41.8992266,2009-05-11,Bessey
 Haliaeetus leucocephalus,1,-100.3807068,41.8572879,2012-05-04,Bessey
@@ -5605,7 +5605,7 @@ Buteo jamaicensis,X,-100.3807068,41.8572879,1989-10-08,Bessey
 Buteo jamaicensis,X,-100.3807068,41.8572879,1989-10-27,Bessey
 Buteo jamaicensis,X,-100.3807068,41.8572879,1994-09-10,Bessey
 Buteo jamaicensis,X,-100.3807068,41.8572879,1995-10-07,Bessey
-Buteo jamaicensis,X,-103.00351620000001,42.6974864,1998-09-04,Pine Ridge / Oglala
+Buteo jamaicensis,X,-103.0035162,42.6974864,1998-09-04,Pine Ridge / Oglala
 Buteo jamaicensis,X,-100.3807068,41.8572879,1999-12-27,Bessey
 Buteo jamaicensis,1,-100.3807068,41.8572879,2000-03-30,Bessey
 Buteo jamaicensis,X,-103.0104322,42.7319256,2000-09-16,Pine Ridge / Oglala
@@ -6786,7 +6786,7 @@ Melanerpes erythrocephalus,2,-102.958786,42.710508,2019-05-27,Pine Ridge / Oglal
 Melanerpes erythrocephalus,12,-103.5815588,42.790798,2019-05-30,Pine Ridge / Oglala
 Melanerpes erythrocephalus,1,-101.133042,42.701631,2019-06-12,McKelvie
 Melanerpes erythrocephalus,5,-103.218604,42.597385,2019-06-13,Pine Ridge / Oglala
-Melanerpes erythrocephalus,8,-103.07470000000001,42.6743,2019-06-19,Pine Ridge / Oglala
+Melanerpes erythrocephalus,8,-103.0747,42.6743,2019-06-19,Pine Ridge / Oglala
 Melanerpes erythrocephalus,5,-103.234412,42.616795,2019-06-15,Pine Ridge / Oglala
 Melanerpes erythrocephalus,2,-103.2616997,42.6414094,2019-06-16,Pine Ridge / Oglala
 Melanerpes erythrocephalus,2,-103.0373837,42.7156547,2019-06-18,Pine Ridge / Oglala
@@ -7723,7 +7723,7 @@ Leuconotopicus villosus,X,-100.3807068,41.8572879,1994-09-10,Bessey
 Leuconotopicus villosus,X,-103.0162239,42.7071641,1995-06-15,Pine Ridge / Oglala
 Leuconotopicus villosus,X,-100.3807068,41.8572879,1995-10-07,Bessey
 Leuconotopicus villosus,X,-100.3807068,41.8572879,1996-05-14,Bessey
-Leuconotopicus villosus,X,-103.00351620000001,42.6974864,1998-09-04,Pine Ridge / Oglala
+Leuconotopicus villosus,X,-103.0035162,42.6974864,1998-09-04,Pine Ridge / Oglala
 Leuconotopicus villosus,X,-100.3807068,41.8572879,1999-12-27,Bessey
 Leuconotopicus villosus,X,-103.0162239,42.7071641,2003-06-18,Pine Ridge / Oglala
 Leuconotopicus villosus,2,-103.0162239,42.7071641,2003-06-27,Pine Ridge / Oglala
@@ -9993,7 +9993,7 @@ Contopus sordidulus,2,-103.218604,42.597385,2019-06-13,Pine Ridge / Oglala
 Contopus sordidulus,2,-103.0162239,42.7071641,2019-06-28,Pine Ridge / Oglala
 Contopus sordidulus,1,-103.2019615,42.6392627,2019-06-16,Pine Ridge / Oglala
 Contopus sordidulus,10,-103.2019615,42.6392627,2019-06-15,Pine Ridge / Oglala
-Contopus sordidulus,1,-103.07470000000001,42.6743,2019-06-19,Pine Ridge / Oglala
+Contopus sordidulus,1,-103.0747,42.6743,2019-06-19,Pine Ridge / Oglala
 Contopus sordidulus,1,-103.0162239,42.7071641,2019-06-18,Pine Ridge / Oglala
 Contopus sordidulus,3,-103.2616997,42.6414094,2019-06-18,Pine Ridge / Oglala
 Contopus sordidulus,1,-103.3957297,42.5797816,2019-06-11,Pine Ridge / Oglala
@@ -11316,7 +11316,7 @@ Tyrannus tyrannus,X,-100.3807068,41.8572879,1994-09-10,Bessey
 Tyrannus tyrannus,X,-103.0162239,42.7071641,1995-06-15,Pine Ridge / Oglala
 Tyrannus tyrannus,X,-100.3807068,41.8572879,1996-05-14,Bessey
 Tyrannus tyrannus,X,-103.0162239,42.7071641,1996-06-03,Pine Ridge / Oglala
-Tyrannus tyrannus,X,-103.00351620000001,42.6974864,1998-09-04,Pine Ridge / Oglala
+Tyrannus tyrannus,X,-103.0035162,42.6974864,1998-09-04,Pine Ridge / Oglala
 Tyrannus tyrannus,1,-103.3163953,42.6317644,1999-06-26,Pine Ridge / Oglala
 Tyrannus tyrannus,1,-103.5716912,42.6984793,1999-06-22,Pine Ridge / Oglala
 Tyrannus tyrannus,X,-103.5848093,42.85706,1999-06-21,Pine Ridge / Oglala
@@ -11697,7 +11697,7 @@ Tyrannus tyrannus,2,-102.998027,42.677801,2021-08-02,Pine Ridge / Oglala
 Tyrannus tyrannus,1,-103.0162239,42.7071641,2021-08-02,Pine Ridge / Oglala
 Tyrannus tyrannus,2,-103.0162239,42.7071641,2021-08-23,Pine Ridge / Oglala
 Tyrannus tyrannus,X,-103.6183397,42.9992984,2021-08-06,Pine Ridge / Oglala
-Tyrannus tyrannus,3,-103.671334,42.978699400000004,2021-08-19,Pine Ridge / Oglala
+Tyrannus tyrannus,3,-103.671334,42.9786994,2021-08-19,Pine Ridge / Oglala
 Tyrannus tyrannus,5,-100.296701,41.901114,2021-08-16,Bessey
 Tyrannus tyrannus,2,-103.2950279,42.6055099,2021-09-05,Pine Ridge / Oglala
 Tyrannus tyrannus,4,-103.0042076,42.7448691,2021-09-02,Pine Ridge / Oglala
@@ -12508,7 +12508,7 @@ Lanius ludovicianus,3,-103.641775,42.992769,2021-06-19,Pine Ridge / Oglala
 Lanius ludovicianus,6,-103.86163,42.998659,2021-07-28,Pine Ridge / Oglala
 Lanius ludovicianus,X,-103.4804527,42.9322633,2021-08-06,Pine Ridge / Oglala
 Lanius ludovicianus,2,-103.545355,42.853919,2021-08-01,Pine Ridge / Oglala
-Lanius ludovicianus,5,-103.671334,42.978699400000004,2021-08-19,Pine Ridge / Oglala
+Lanius ludovicianus,5,-103.671334,42.9786994,2021-08-19,Pine Ridge / Oglala
 Lanius ludovicianus,1,-103.3163953,42.6317644,2022-03-28,Pine Ridge / Oglala
 Lanius ludovicianus,1,-102.958662,42.703564,2022-04-15,Pine Ridge / Oglala
 Lanius ludovicianus,1,-102.916534,42.736522,2022-04-13,Pine Ridge / Oglala
@@ -13383,7 +13383,7 @@ Corvus brachyrhynchos,X,-100.3807068,41.8572879,1994-09-10,Bessey
 Corvus brachyrhynchos,2,-103.0162239,42.7071641,1995-06-15,Pine Ridge / Oglala
 Corvus brachyrhynchos,X,-100.3807068,41.8572879,1995-10-07,Bessey
 Corvus brachyrhynchos,X,-100.3807068,41.8572879,1996-05-14,Bessey
-Corvus brachyrhynchos,X,-103.00351620000001,42.6974864,1998-09-04,Pine Ridge / Oglala
+Corvus brachyrhynchos,X,-103.0035162,42.6974864,1998-09-04,Pine Ridge / Oglala
 Corvus brachyrhynchos,X,-100.3807068,41.8572879,1999-12-27,Bessey
 Corvus brachyrhynchos,2,-100.3807068,41.8572879,2000-03-30,Bessey
 Corvus brachyrhynchos,X,-103.0162239,42.7071641,2000-05-21,Pine Ridge / Oglala
@@ -13595,7 +13595,7 @@ Corvus brachyrhynchos,2,-100.2983522,41.8992266,2015-05-13,Bessey
 Corvus brachyrhynchos,1,-100.299411,41.900498,2015-05-15,Bessey
 Corvus brachyrhynchos,1,-100.2983522,41.8992266,2015-05-17,Bessey
 Corvus brachyrhynchos,1,-100.9054473,42.6448535,2015-06-08,McKelvie
-Corvus brachyrhynchos,3,-100.9791183,42.673814900000004,2015-06-19,McKelvie
+Corvus brachyrhynchos,3,-100.9791183,42.6738149,2015-06-19,McKelvie
 Corvus brachyrhynchos,2,-103.2019615,42.6392627,2015-06-10,Pine Ridge / Oglala
 Corvus brachyrhynchos,5,-103.3163953,42.6317644,2015-06-10,Pine Ridge / Oglala
 Corvus brachyrhynchos,X,-103.1508225,42.6787284,2015-06-01,Pine Ridge / Oglala
@@ -14277,7 +14277,7 @@ Poecile atricapillus,X,-100.3807068,41.8572879,1994-09-10,Bessey
 Poecile atricapillus,X,-103.5848093,42.85706,1995-09-07,Pine Ridge / Oglala
 Poecile atricapillus,X,-100.3807068,41.8572879,1995-10-07,Bessey
 Poecile atricapillus,X,-100.3807068,41.8572879,1996-05-14,Bessey
-Poecile atricapillus,X,-103.00351620000001,42.6974864,1998-09-04,Pine Ridge / Oglala
+Poecile atricapillus,X,-103.0035162,42.6974864,1998-09-04,Pine Ridge / Oglala
 Poecile atricapillus,1,-103.3163953,42.6317644,1999-06-26,Pine Ridge / Oglala
 Poecile atricapillus,3,-103.5716912,42.6984793,1999-06-22,Pine Ridge / Oglala
 Poecile atricapillus,X,-100.3807068,41.8572879,1999-12-27,Bessey
@@ -14914,7 +14914,7 @@ Poecile atricapillus,1,-103.0373837,42.7156547,2019-06-18,Pine Ridge / Oglala
 Poecile atricapillus,1,-103.2616997,42.6414094,2019-06-16,Pine Ridge / Oglala
 Poecile atricapillus,2,-103.0162239,42.7071641,2019-06-16,Pine Ridge / Oglala
 Poecile atricapillus,3,-103.31328,42.631381,2019-06-21,Pine Ridge / Oglala
-Poecile atricapillus,1,-103.07470000000001,42.6743,2019-06-19,Pine Ridge / Oglala
+Poecile atricapillus,1,-103.0747,42.6743,2019-06-19,Pine Ridge / Oglala
 Poecile atricapillus,10,-103.2019615,42.6392627,2019-06-15,Pine Ridge / Oglala
 Poecile atricapillus,1,-103.0162239,42.7071641,2019-06-20,Pine Ridge / Oglala
 Poecile atricapillus,2,-103.0162239,42.7071641,2019-06-29,Pine Ridge / Oglala
@@ -15368,7 +15368,7 @@ Poecile atricapillus,10,-103.023827,42.7090038,2022-10-01,Pine Ridge / Oglala
 Poecile atricapillus,6,-103.0162239,42.7071641,2022-10-13,Pine Ridge / Oglala
 Poecile atricapillus,4,-100.2983522,41.8992266,2022-10-18,Bessey
 Poecile atricapillus,2,-100.3807068,41.8572879,2022-11-21,Bessey
-Poecile atricapillus,X,-100.28817600000001,41.829092,2022-11-02,Bessey
+Poecile atricapillus,X,-100.288176,41.829092,2022-11-02,Bessey
 Poecile atricapillus,1,-100.298352,41.901573,2023-03-28,Bessey
 Poecile atricapillus,3,-101.1539039,42.6890767,2023-05-26,McKelvie
 Poecile atricapillus,2,-101.035604,42.78312,2023-05-24,McKelvie
@@ -15466,7 +15466,7 @@ Eremophila alpestris,4,-103.876462,42.9262629,2014-06-12,Pine Ridge / Oglala
 Eremophila alpestris,X,-103.427994,42.880411,2015-04-24,Pine Ridge / Oglala
 Eremophila alpestris,X,-100.9651279,42.6647975,2015-05-28,McKelvie
 Eremophila alpestris,13,-103.5581846,42.9808975,2015-05-26,Pine Ridge / Oglala
-Eremophila alpestris,11,-100.9791183,42.673814900000004,2015-06-19,McKelvie
+Eremophila alpestris,11,-100.9791183,42.6738149,2015-06-19,McKelvie
 Eremophila alpestris,30,-100.9054473,42.6448535,2015-06-08,McKelvie
 Eremophila alpestris,7,-103.4178686,42.841723,2015-06-09,Pine Ridge / Oglala
 Eremophila alpestris,13,-103.58951,42.94285,2015-06-21,Pine Ridge / Oglala
@@ -16170,7 +16170,7 @@ Hirundo rustica,4,-100.3136146,41.8722806,2015-05-17,Bessey
 Hirundo rustica,6,-100.511384,41.9710414,2015-05-13,Bessey
 Hirundo rustica,2,-100.2983522,41.8992266,2015-05-17,Bessey
 Hirundo rustica,X,-100.2983522,41.8992266,2015-05-17,Bessey
-Hirundo rustica,2,-100.9791183,42.673814900000004,2015-06-19,McKelvie
+Hirundo rustica,2,-100.9791183,42.6738149,2015-06-19,McKelvie
 Hirundo rustica,4,-103.3163953,42.6317644,2015-06-10,Pine Ridge / Oglala
 Hirundo rustica,6,-103.0162239,42.7071641,2015-06-10,Pine Ridge / Oglala
 Hirundo rustica,2,-103.0162239,42.7071641,2015-06-11,Pine Ridge / Oglala
@@ -16763,7 +16763,7 @@ Sitta canadensis,X,-103.0162239,42.7071641,1994-07-16,Pine Ridge / Oglala
 Sitta canadensis,X,-100.3807068,41.8572879,1994-09-10,Bessey
 Sitta canadensis,X,-103.5848093,42.85706,1995-09-07,Pine Ridge / Oglala
 Sitta canadensis,X,-100.3807068,41.8572879,1995-10-07,Bessey
-Sitta canadensis,X,-103.00351620000001,42.6974864,1998-09-04,Pine Ridge / Oglala
+Sitta canadensis,X,-103.0035162,42.6974864,1998-09-04,Pine Ridge / Oglala
 Sitta canadensis,X,-100.3807068,41.8572879,1999-12-27,Bessey
 Sitta canadensis,2,-100.511384,41.9710414,2000-04-01,Bessey
 Sitta canadensis,X,-103.0162239,42.7071641,2000-05-21,Pine Ridge / Oglala
@@ -17390,7 +17390,7 @@ Sitta carolinensis,1,-103.0162239,42.7071641,1991-07-27,Pine Ridge / Oglala
 Sitta carolinensis,X,-103.0162239,42.7071641,1994-05-13,Pine Ridge / Oglala
 Sitta carolinensis,X,-100.3807068,41.8572879,1994-09-10,Bessey
 Sitta carolinensis,X,-100.3807068,41.8572879,1995-10-07,Bessey
-Sitta carolinensis,X,-103.00351620000001,42.6974864,1998-09-04,Pine Ridge / Oglala
+Sitta carolinensis,X,-103.0035162,42.6974864,1998-09-04,Pine Ridge / Oglala
 Sitta carolinensis,1,-100.511384,41.9710414,2000-04-01,Bessey
 Sitta carolinensis,X,-100.3223848,41.9053274,2002-09-30,Bessey
 Sitta carolinensis,X,-100.3223848,41.9053274,2002-10-02,Bessey
@@ -18046,7 +18046,7 @@ Sitta pygmaea,2,-103.0162239,42.7071641,1986-06-13,Pine Ridge / Oglala
 Sitta pygmaea,X,-103.0162239,42.7071641,1994-07-16,Pine Ridge / Oglala
 Sitta pygmaea,1,-103.0090302,42.7080984,1996-06-17,Pine Ridge / Oglala
 Sitta pygmaea,X,-103.0162239,42.7071641,1997-05-01,Pine Ridge / Oglala
-Sitta pygmaea,X,-103.00351620000001,42.6974864,1998-09-04,Pine Ridge / Oglala
+Sitta pygmaea,X,-103.0035162,42.6974864,1998-09-04,Pine Ridge / Oglala
 Sitta pygmaea,X,-103.0162239,42.7071641,2000-05-21,Pine Ridge / Oglala
 Sitta pygmaea,5,-103.0162239,42.7071641,2003-06-27,Pine Ridge / Oglala
 Sitta pygmaea,X,-103.0162239,42.7071641,2003-06-18,Pine Ridge / Oglala
@@ -18417,7 +18417,7 @@ Sitta pygmaea,5,-103.2019615,42.6392627,2019-06-15,Pine Ridge / Oglala
 Sitta pygmaea,1,-103.0162239,42.7071641,2019-06-18,Pine Ridge / Oglala
 Sitta pygmaea,1,-102.9250717,42.8147958,2019-06-09,Pine Ridge / Oglala
 Sitta pygmaea,10,-103.306428,42.626904,2019-06-13,Pine Ridge / Oglala
-Sitta pygmaea,3,-103.07470000000001,42.6743,2019-06-19,Pine Ridge / Oglala
+Sitta pygmaea,3,-103.0747,42.6743,2019-06-19,Pine Ridge / Oglala
 Sitta pygmaea,1,-103.0162239,42.7071641,2019-06-11,Pine Ridge / Oglala
 Sitta pygmaea,2,-103.31328,42.631381,2019-06-21,Pine Ridge / Oglala
 Sitta pygmaea,3,-103.0162239,42.7071641,2019-06-29,Pine Ridge / Oglala
@@ -20791,7 +20791,7 @@ Sialia sialis,X,-100.3807068,41.8572879,1989-10-07,Bessey
 Sialia sialis,X,-100.3807068,41.8572879,1989-10-08,Bessey
 Sialia sialis,X,-100.3807068,41.8572879,1994-09-10,Bessey
 Sialia sialis,X,-100.3807068,41.8572879,1995-10-07,Bessey
-Sialia sialis,X,-103.00351620000001,42.6974864,1998-09-04,Pine Ridge / Oglala
+Sialia sialis,X,-103.0035162,42.6974864,1998-09-04,Pine Ridge / Oglala
 Sialia sialis,2,-100.3807068,41.8572879,2000-03-30,Bessey
 Sialia sialis,X,-103.0162239,42.7071641,2000-05-20,Pine Ridge / Oglala
 Sialia sialis,X,-102.9250717,42.8147958,2004-05-12,Pine Ridge / Oglala
@@ -21754,7 +21754,7 @@ Myadestes townsendi,2,-103.0162239,42.7071641,2022-10-11,Pine Ridge / Oglala
 Myadestes townsendi,1,-103.0162239,42.7071641,2022-10-12,Pine Ridge / Oglala
 Myadestes townsendi,1,-103.0042076,42.7448691,2022-10-10,Pine Ridge / Oglala
 Myadestes townsendi,1,-103.3163953,42.6317644,2022-10-01,Pine Ridge / Oglala
-Myadestes townsendi,X,-100.28817600000001,41.829092,2022-11-02,Bessey
+Myadestes townsendi,X,-100.288176,41.829092,2022-11-02,Bessey
 Myadestes townsendi,15,-100.3807068,41.8572879,2022-11-21,Bessey
 Myadestes townsendi,1,-100.2983522,41.8992266,2023-01-05,Bessey
 Myadestes townsendi,1,-100.3807068,41.8572879,2023-03-21,Bessey
@@ -23117,7 +23117,7 @@ Turdus migratorius,6,-103.0042076,42.7448691,2022-10-11,Pine Ridge / Oglala
 Turdus migratorius,5,-103.023827,42.7090038,2022-10-01,Pine Ridge / Oglala
 Turdus migratorius,3,-100.2983522,41.8992266,2022-10-18,Bessey
 Turdus migratorius,80,-100.3807068,41.8572879,2022-11-21,Bessey
-Turdus migratorius,X,-100.28817600000001,41.829092,2022-11-02,Bessey
+Turdus migratorius,X,-100.288176,41.829092,2022-11-02,Bessey
 Turdus migratorius,4,-100.2983522,41.8992266,2023-01-05,Bessey
 Turdus migratorius,2,-101.124151,42.711629,2023-03-30,McKelvie
 Turdus migratorius,3,-100.412318,41.882493,2023-03-28,Bessey
@@ -23223,7 +23223,7 @@ Bombycilla cedrorum,4,-103.0162239,42.7071641,1995-06-15,Pine Ridge / Oglala
 Bombycilla cedrorum,X,-100.3807068,41.8572879,1995-10-07,Bessey
 Bombycilla cedrorum,X,-100.3807068,41.8572879,1996-05-14,Bessey
 Bombycilla cedrorum,X,-103.0162239,42.7071641,1996-06-03,Pine Ridge / Oglala
-Bombycilla cedrorum,X,-103.00351620000001,42.6974864,1998-09-04,Pine Ridge / Oglala
+Bombycilla cedrorum,X,-103.0035162,42.6974864,1998-09-04,Pine Ridge / Oglala
 Bombycilla cedrorum,6,-100.511384,41.9710414,2000-04-01,Bessey
 Bombycilla cedrorum,X,-100.3617821,41.905218,2002-05-13,Bessey
 Bombycilla cedrorum,X,-100.3223848,41.9053274,2002-07-20,Bessey
@@ -23970,7 +23970,7 @@ Loxia curvirostra,X,-103.0162239,42.7071641,1991-07-27,Pine Ridge / Oglala
 Loxia curvirostra,1,-103.0162239,42.7071641,1992-03-29,Pine Ridge / Oglala
 Loxia curvirostra,X,-103.0162239,42.7071641,1994-07-16,Pine Ridge / Oglala
 Loxia curvirostra,X,-100.3807068,41.8572879,1994-09-10,Bessey
-Loxia curvirostra,X,-103.00351620000001,42.6974864,1998-09-04,Pine Ridge / Oglala
+Loxia curvirostra,X,-103.0035162,42.6974864,1998-09-04,Pine Ridge / Oglala
 Loxia curvirostra,6,-103.5716912,42.6984793,1999-06-22,Pine Ridge / Oglala
 Loxia curvirostra,1,-103.021509,42.699989,2002-05-05,Pine Ridge / Oglala
 Loxia curvirostra,1,-103.5848093,42.85706,2002-05-24,Pine Ridge / Oglala
@@ -24704,7 +24704,7 @@ Spinus tristis,X,-100.3807068,41.8572879,1994-09-10,Bessey
 Spinus tristis,4,-103.0162239,42.7071641,1995-06-15,Pine Ridge / Oglala
 Spinus tristis,X,-100.3807068,41.8572879,1995-10-07,Bessey
 Spinus tristis,X,-103.0162239,42.7071641,1996-06-03,Pine Ridge / Oglala
-Spinus tristis,X,-103.00351620000001,42.6974864,1998-09-04,Pine Ridge / Oglala
+Spinus tristis,X,-103.0035162,42.6974864,1998-09-04,Pine Ridge / Oglala
 Spinus tristis,7,-103.5716912,42.6984793,1999-06-22,Pine Ridge / Oglala
 Spinus tristis,4,-100.511384,41.9710414,2000-04-01,Bessey
 Spinus tristis,X,-103.0162239,42.7071641,2000-05-21,Pine Ridge / Oglala
@@ -25319,7 +25319,7 @@ Spinus tristis,6,-103.234412,42.616795,2019-06-15,Pine Ridge / Oglala
 Spinus tristis,1,-103.4007615,42.5952465,2019-06-21,Pine Ridge / Oglala
 Spinus tristis,1,-103.0162239,42.7071641,2019-06-18,Pine Ridge / Oglala
 Spinus tristis,2,-103.0162239,42.7071641,2019-06-20,Pine Ridge / Oglala
-Spinus tristis,2,-103.07470000000001,42.6743,2019-06-19,Pine Ridge / Oglala
+Spinus tristis,2,-103.0747,42.6743,2019-06-19,Pine Ridge / Oglala
 Spinus tristis,3,-103.2616997,42.6414094,2019-06-16,Pine Ridge / Oglala
 Spinus tristis,5,-102.9250717,42.8147958,2019-06-09,Pine Ridge / Oglala
 Spinus tristis,1,-103.014208,42.715445,2019-06-27,Pine Ridge / Oglala
@@ -25786,7 +25786,7 @@ Calcarius lapponicus,12,-103.6417472,43.0007925,2016-11-17,Pine Ridge / Oglala
 Calcarius lapponicus,2,-100.3807068,41.8572879,2020-12-28,Bessey
 Calcarius ornatus,X,-103.5097504,42.9483814,1995-06-26,Pine Ridge / Oglala
 Calcarius ornatus,1,-103.8398209,42.9151464,2013-09-23,Pine Ridge / Oglala
-Calcarius ornatus,1,-100.9791183,42.673814900000004,2015-06-19,McKelvie
+Calcarius ornatus,1,-100.9791183,42.6738149,2015-06-19,McKelvie
 Calcarius ornatus,10,-103.5848093,42.85706,2017-09-21,Pine Ridge / Oglala
 Calcarius ornatus,2,-103.0162239,42.7071641,2018-09-14,Pine Ridge / Oglala
 Calcarius ornatus,6,-103.5967911,42.9903612,2020-09-03,Pine Ridge / Oglala
@@ -25844,7 +25844,7 @@ Ammodramus savannarum,8,-100.9054473,42.6448535,2015-05-22,McKelvie
 Ammodramus savannarum,21,-103.5581846,42.9808975,2015-05-26,Pine Ridge / Oglala
 Ammodramus savannarum,3,-100.9000824,42.6455271,2015-06-05,McKelvie
 Ammodramus savannarum,20,-100.9000824,42.6455271,2015-06-13,McKelvie
-Ammodramus savannarum,46,-100.9791183,42.673814900000004,2015-06-19,McKelvie
+Ammodramus savannarum,46,-100.9791183,42.6738149,2015-06-19,McKelvie
 Ammodramus savannarum,19,-100.9054473,42.6448535,2015-06-08,McKelvie
 Ammodramus savannarum,1,-103.4178686,42.841723,2015-06-09,Pine Ridge / Oglala
 Ammodramus savannarum,1,-103.3163953,42.6317644,2015-06-10,Pine Ridge / Oglala
@@ -26546,7 +26546,7 @@ Spizella passerina,1,-103.0162239,42.7071641,2021-08-15,Pine Ridge / Oglala
 Spizella passerina,4,-102.998027,42.677801,2021-08-02,Pine Ridge / Oglala
 Spizella passerina,1,-102.976683,42.678494,2021-08-20,Pine Ridge / Oglala
 Spizella passerina,1,-102.998027,42.677801,2021-08-01,Pine Ridge / Oglala
-Spizella passerina,1,-103.671334,42.978699400000004,2021-08-19,Pine Ridge / Oglala
+Spizella passerina,1,-103.671334,42.9786994,2021-08-19,Pine Ridge / Oglala
 Spizella passerina,4,-100.296701,41.901114,2021-08-16,Bessey
 Spizella passerina,2,-100.296701,41.901114,2021-08-16,Bessey
 Spizella passerina,1,-103.0162239,42.7071641,2021-09-18,Pine Ridge / Oglala
@@ -26896,7 +26896,7 @@ Spizella pusilla,1,-100.2983522,41.8992266,2015-05-13,Bessey
 Spizella pusilla,X,-100.2983522,41.8992266,2015-05-17,Bessey
 Spizella pusilla,1,-100.2983522,41.8992266,2015-05-17,Bessey
 Spizella pusilla,3,-100.9000824,42.6455271,2015-06-13,McKelvie
-Spizella pusilla,5,-100.9791183,42.673814900000004,2015-06-19,McKelvie
+Spizella pusilla,5,-100.9791183,42.6738149,2015-06-19,McKelvie
 Spizella pusilla,3,-100.9054473,42.6448535,2015-06-08,McKelvie
 Spizella pusilla,2,-100.3223848,41.9053274,2015-06-16,Bessey
 Spizella pusilla,5,-100.3067851,41.8812243,2015-07-04,Bessey
@@ -27145,7 +27145,7 @@ Chondestes grammacus,2,-100.511384,41.9710414,2015-05-13,Bessey
 Chondestes grammacus,1,-100.3056451,41.9020192,2015-05-21,Bessey
 Chondestes grammacus,30,-100.3807068,41.8572879,2015-05-17,Bessey
 Chondestes grammacus,4,-100.9000824,42.6455271,2015-06-05,McKelvie
-Chondestes grammacus,14,-100.9791183,42.673814900000004,2015-06-19,McKelvie
+Chondestes grammacus,14,-100.9791183,42.6738149,2015-06-19,McKelvie
 Chondestes grammacus,3,-100.9054473,42.6448535,2015-06-08,McKelvie
 Chondestes grammacus,3,-100.9000824,42.6455271,2015-06-13,McKelvie
 Chondestes grammacus,1,-103.4178686,42.841723,2015-06-09,Pine Ridge / Oglala
@@ -27301,7 +27301,7 @@ Chondestes grammacus,3,-103.0162239,42.7071641,2019-06-25,Pine Ridge / Oglala
 Chondestes grammacus,3,-103.2616997,42.6414094,2019-06-16,Pine Ridge / Oglala
 Chondestes grammacus,4,-103.0162239,42.7071641,2019-06-29,Pine Ridge / Oglala
 Chondestes grammacus,4,-103.2019615,42.6392627,2019-06-15,Pine Ridge / Oglala
-Chondestes grammacus,2,-103.07470000000001,42.6743,2019-06-19,Pine Ridge / Oglala
+Chondestes grammacus,2,-103.0747,42.6743,2019-06-19,Pine Ridge / Oglala
 Chondestes grammacus,2,-103.0162239,42.7071641,2019-06-16,Pine Ridge / Oglala
 Chondestes grammacus,1,-103.218604,42.597385,2019-06-13,Pine Ridge / Oglala
 Chondestes grammacus,2,-103.2616997,42.6414094,2019-06-18,Pine Ridge / Oglala
@@ -27728,7 +27728,7 @@ Calamospiza melanocorys,40,-103.86163,42.998659,2021-07-28,Pine Ridge / Oglala
 Calamospiza melanocorys,1,-101.026024,42.670002,2021-08-18,McKelvie
 Calamospiza melanocorys,X,-103.4804527,42.9322633,2021-08-06,Pine Ridge / Oglala
 Calamospiza melanocorys,3,-102.9592145,42.6905315,2021-08-17,Pine Ridge / Oglala
-Calamospiza melanocorys,X,-103.671334,42.978699400000004,2021-08-19,Pine Ridge / Oglala
+Calamospiza melanocorys,X,-103.671334,42.9786994,2021-08-19,Pine Ridge / Oglala
 Calamospiza melanocorys,5,-103.391239,42.852224,2022-05-10,Pine Ridge / Oglala
 Calamospiza melanocorys,3,-103.465215,42.920507,2022-05-18,Pine Ridge / Oglala
 Calamospiza melanocorys,3,-103.463793,42.797292,2022-05-18,Pine Ridge / Oglala
@@ -27962,7 +27962,7 @@ Junco hyemalis,7,-103.0042076,42.7448691,2022-10-12,Pine Ridge / Oglala
 Junco hyemalis,3,-103.023827,42.7090038,2022-10-04,Pine Ridge / Oglala
 Junco hyemalis,1,-103.0162239,42.7071641,2022-10-09,Pine Ridge / Oglala
 Junco hyemalis,3,-100.2983522,41.8992266,2022-10-18,Bessey
-Junco hyemalis,X,-100.28817600000001,41.829092,2022-11-02,Bessey
+Junco hyemalis,X,-100.288176,41.829092,2022-11-02,Bessey
 Junco hyemalis,3,-100.3040502,41.9009611,2023-03-18,Bessey
 Junco hyemalis,10,-100.2983522,41.8992266,2023-04-01,Bessey
 Junco hyemalis,46,-100.511384,41.9710414,2023-04-03,Bessey
@@ -28474,7 +28474,7 @@ Pooecetes gramineus,2,-103.5967911,42.9903612,2020-09-03,Pine Ridge / Oglala
 Pooecetes gramineus,1,-103.5848093,42.85706,2021-04-29,Pine Ridge / Oglala
 Pooecetes gramineus,1,-100.3527038,41.8962773,2021-05-02,Bessey
 Pooecetes gramineus,1,-100.3807068,41.8572879,2021-06-04,Bessey
-Pooecetes gramineus,X,-103.671334,42.978699400000004,2021-08-19,Pine Ridge / Oglala
+Pooecetes gramineus,X,-103.671334,42.9786994,2021-08-19,Pine Ridge / Oglala
 Pooecetes gramineus,2,-100.296701,41.901114,2021-08-16,Bessey
 Pooecetes gramineus,X,-103.2624514,42.6466722,2021-09-25,Pine Ridge / Oglala
 Pooecetes gramineus,1,-103.5332642,42.8447233,2021-09-24,Pine Ridge / Oglala
@@ -29374,7 +29374,7 @@ Pipilo maculatus,1,-103.2616997,42.6414094,2019-06-18,Pine Ridge / Oglala
 Pipilo maculatus,2,-103.3957297,42.5797816,2019-06-11,Pine Ridge / Oglala
 Pipilo maculatus,2,-103.0162239,42.7071641,2019-06-20,Pine Ridge / Oglala
 Pipilo maculatus,4,-103.014208,42.715445,2019-06-27,Pine Ridge / Oglala
-Pipilo maculatus,1,-103.07470000000001,42.6743,2019-06-19,Pine Ridge / Oglala
+Pipilo maculatus,1,-103.0747,42.6743,2019-06-19,Pine Ridge / Oglala
 Pipilo maculatus,10,-103.306428,42.626904,2019-06-13,Pine Ridge / Oglala
 Pipilo maculatus,6,-103.2616997,42.6414094,2019-06-16,Pine Ridge / Oglala
 Pipilo maculatus,1,-103.0162239,42.7071641,2019-06-17,Pine Ridge / Oglala
@@ -30134,7 +30134,7 @@ Xanthocephalus xanthocephalus,2,-103.8398209,42.9151464,2013-09-23,Pine Ridge / 
 Xanthocephalus xanthocephalus,2,-103.5923624,42.9594691,2014-08-26,Pine Ridge / Oglala
 Xanthocephalus xanthocephalus,1,-103.0162239,42.7071641,2014-09-20,Pine Ridge / Oglala
 Xanthocephalus xanthocephalus,40,-103.2616997,42.6414094,2014-09-09,Pine Ridge / Oglala
-Xanthocephalus xanthocephalus,1,-100.9791183,42.673814900000004,2015-06-19,McKelvie
+Xanthocephalus xanthocephalus,1,-100.9791183,42.6738149,2015-06-19,McKelvie
 Xanthocephalus xanthocephalus,1,-103.58951,42.94285,2015-06-21,Pine Ridge / Oglala
 Xanthocephalus xanthocephalus,5,-100.3807068,41.8572879,2015-09-07,Bessey
 Xanthocephalus xanthocephalus,2,-103.5736942,42.9003129,2016-05-23,Pine Ridge / Oglala
@@ -30376,7 +30376,7 @@ Sturnella neglecta,1,-100.2983522,41.8992266,2015-05-17,Bessey
 Sturnella neglecta,35,-100.9000824,42.6455271,2015-06-13,McKelvie
 Sturnella neglecta,22,-100.9054473,42.6448535,2015-06-08,McKelvie
 Sturnella neglecta,3,-100.9000824,42.6455271,2015-06-05,McKelvie
-Sturnella neglecta,37,-100.9791183,42.673814900000004,2015-06-19,McKelvie
+Sturnella neglecta,37,-100.9791183,42.6738149,2015-06-19,McKelvie
 Sturnella neglecta,3,-103.2019615,42.6392627,2015-06-10,Pine Ridge / Oglala
 Sturnella neglecta,4,-103.4178686,42.841723,2015-06-09,Pine Ridge / Oglala
 Sturnella neglecta,3,-103.3163953,42.6317644,2015-06-10,Pine Ridge / Oglala
@@ -30586,7 +30586,7 @@ Sturnella neglecta,4,-102.9250717,42.8147958,2019-06-09,Pine Ridge / Oglala
 Sturnella neglecta,23,-103.2616997,42.6414094,2019-06-18,Pine Ridge / Oglala
 Sturnella neglecta,17,-103.4471798,42.908663,2019-06-20,Pine Ridge / Oglala
 Sturnella neglecta,1,-103.172177,42.597155,2019-06-18,Pine Ridge / Oglala
-Sturnella neglecta,X,-103.07470000000001,42.6743,2019-06-19,Pine Ridge / Oglala
+Sturnella neglecta,X,-103.0747,42.6743,2019-06-19,Pine Ridge / Oglala
 Sturnella neglecta,8,-103.5848093,42.85706,2019-06-16,Pine Ridge / Oglala
 Sturnella neglecta,15,-103.875442,42.921708,2019-06-14,Pine Ridge / Oglala
 Sturnella neglecta,10,-103.578998,42.7969,2019-06-16,Pine Ridge / Oglala
@@ -30729,7 +30729,7 @@ Sturnella neglecta,2,-103.5716912,42.6984793,2021-04-28,Pine Ridge / Oglala
 Sturnella neglecta,2,-103.5848093,42.85706,2021-04-29,Pine Ridge / Oglala
 Sturnella neglecta,3,-103.729949,42.9219263,2021-04-22,Pine Ridge / Oglala
 Sturnella neglecta,3,-103.6015345,42.8282226,2021-04-10,Pine Ridge / Oglala
-Sturnella neglecta,3,-103.572707,42.814113999999996,2021-04-03,Pine Ridge / Oglala
+Sturnella neglecta,3,-103.572707,42.814114,2021-04-03,Pine Ridge / Oglala
 Sturnella neglecta,7,-100.4672989,41.9081115,2021-04-03,Bessey
 Sturnella neglecta,X,-100.511384,41.9710414,2021-04-02,Bessey
 Sturnella neglecta,5,-103.3995438,42.8031154,2021-05-11,Pine Ridge / Oglala
@@ -30831,7 +30831,7 @@ Sturnella neglecta,1,-101.026024,42.670002,2021-08-18,McKelvie
 Sturnella neglecta,X,-103.4804527,42.9322633,2021-08-06,Pine Ridge / Oglala
 Sturnella neglecta,4,-102.957379,42.710307,2021-08-20,Pine Ridge / Oglala
 Sturnella neglecta,15,-102.9592145,42.6905315,2021-08-17,Pine Ridge / Oglala
-Sturnella neglecta,1,-103.671334,42.978699400000004,2021-08-19,Pine Ridge / Oglala
+Sturnella neglecta,1,-103.671334,42.9786994,2021-08-19,Pine Ridge / Oglala
 Sturnella neglecta,1,-103.5848093,42.85706,2021-08-19,Pine Ridge / Oglala
 Sturnella neglecta,5,-103.4984207,42.9109261,2021-09-07,Pine Ridge / Oglala
 Sturnella neglecta,X,-103.0158964,42.7955032,2021-09-25,Pine Ridge / Oglala
@@ -31433,7 +31433,7 @@ Agelaius phoeniceus,X,-100.3807068,41.8572879,1994-09-10,Bessey
 Agelaius phoeniceus,5,-103.0162239,42.7071641,1995-06-15,Pine Ridge / Oglala
 Agelaius phoeniceus,X,-100.3807068,41.8572879,1995-10-07,Bessey
 Agelaius phoeniceus,X,-103.0162239,42.7071641,1996-06-03,Pine Ridge / Oglala
-Agelaius phoeniceus,X,-103.00351620000001,42.6974864,1998-09-04,Pine Ridge / Oglala
+Agelaius phoeniceus,X,-103.0035162,42.6974864,1998-09-04,Pine Ridge / Oglala
 Agelaius phoeniceus,8,-100.3807068,41.8572879,2000-03-30,Bessey
 Agelaius phoeniceus,X,-103.0162239,42.7071641,2000-05-21,Pine Ridge / Oglala
 Agelaius phoeniceus,X,-103.0104322,42.7319256,2000-09-16,Pine Ridge / Oglala
@@ -31508,7 +31508,7 @@ Agelaius phoeniceus,3,-100.2983522,41.8992266,2015-05-17,Bessey
 Agelaius phoeniceus,5,-100.2983522,41.8992266,2015-05-13,Bessey
 Agelaius phoeniceus,8,-100.511384,41.9710414,2015-05-13,Bessey
 Agelaius phoeniceus,X,-100.2983522,41.8992266,2015-05-17,Bessey
-Agelaius phoeniceus,12,-100.9791183,42.673814900000004,2015-06-19,McKelvie
+Agelaius phoeniceus,12,-100.9791183,42.6738149,2015-06-19,McKelvie
 Agelaius phoeniceus,6,-100.9054473,42.6448535,2015-06-08,McKelvie
 Agelaius phoeniceus,2,-103.0162239,42.7071641,2015-06-11,Pine Ridge / Oglala
 Agelaius phoeniceus,2,-103.3163953,42.6317644,2015-06-10,Pine Ridge / Oglala
@@ -32000,7 +32000,7 @@ Molothrus ater,13,-103.5581846,42.9808975,2015-05-26,Pine Ridge / Oglala
 Molothrus ater,X,-103.5968256,42.8171568,2015-05-31,Pine Ridge / Oglala
 Molothrus ater,X,-100.2983522,41.8992266,2015-05-17,Bessey
 Molothrus ater,1,-100.3056451,41.9020192,2015-05-21,Bessey
-Molothrus ater,10,-100.9791183,42.673814900000004,2015-06-19,McKelvie
+Molothrus ater,10,-100.9791183,42.6738149,2015-06-19,McKelvie
 Molothrus ater,8,-100.9000824,42.6455271,2015-06-13,McKelvie
 Molothrus ater,30,-100.9054473,42.6448535,2015-06-08,McKelvie
 Molothrus ater,6,-103.4178686,42.841723,2015-06-09,Pine Ridge / Oglala
@@ -32741,7 +32741,7 @@ Quiscalus quiscula,12,-100.9498903,42.6978972,2022-05-29,McKelvie
 Quiscalus quiscula,1,-101.035604,42.78312,2023-05-24,McKelvie
 Quiscalus mexicanus,X,-100.3807068,41.8572879,2009-05-21,Bessey
 Quiscalus mexicanus,X,-103.5848093,42.85706,2010-05-15,Pine Ridge / Oglala
-Quiscalus mexicanus,2,-100.9791183,42.673814900000004,2015-06-19,McKelvie
+Quiscalus mexicanus,2,-100.9791183,42.6738149,2015-06-19,McKelvie
 Quiscalus mexicanus,30,-100.3807068,41.8572879,2018-05-02,Bessey
 Quiscalus mexicanus,1,-103.872529,42.941468,2019-06-14,Pine Ridge / Oglala
 Seiurus aurocapilla,X,-103.0162239,42.7071641,1984-06-14,Pine Ridge / Oglala
@@ -35562,7 +35562,7 @@ Passerina caerulea,2,-103.2616997,42.6414094,2014-09-09,Pine Ridge / Oglala
 Passerina caerulea,1,-100.3807068,41.8572879,2014-09-01,Bessey
 Passerina caerulea,1,-100.2983522,41.8992266,2015-05-17,Bessey
 Passerina caerulea,X,-100.2983522,41.8992266,2015-05-17,Bessey
-Passerina caerulea,1,-100.9791183,42.673814900000004,2015-06-19,McKelvie
+Passerina caerulea,1,-100.9791183,42.6738149,2015-06-19,McKelvie
 Passerina caerulea,1,-100.9000824,42.6455271,2015-06-13,McKelvie
 Passerina caerulea,1,-103.0162239,42.7071641,2015-06-11,Pine Ridge / Oglala
 Passerina caerulea,2,-103.3163953,42.6317644,2015-06-10,Pine Ridge / Oglala
@@ -35889,7 +35889,7 @@ Setophaga coronata/auduboni,NA,-100.35073,41.891506,2002-02-16,Bessey
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2018-09-07,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-100.40924,41.896416,2019-08-10,Bessey
 Setophaga coronata/auduboni,1,-102.97727,42.787537,2020-06-11,Pine Ridge / Oglala
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2021-05-27,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2021-05-27,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.012,42.70647,2016-09-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.0042,42.74487,2014-08-27,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.01622,42.707165,1975-06-24,Pine Ridge / Oglala
@@ -36004,7 +36004,7 @@ Setophaga coronata/auduboni,2,-103.001854,42.681694,2018-03-18,Pine Ridge / Ogla
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2020-09-04,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.59236,42.95947,2018-05-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-100.298836,41.90111,2017-05-15,Bessey
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2020-06-06,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2020-06-06,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-102.998024,42.6778,2020-05-31,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.0042,42.74487,2015-05-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.39573,42.57978,2019-06-11,Pine Ridge / Oglala
@@ -36013,7 +36013,7 @@ Setophaga coronata/auduboni,1,-103.023254,42.709038,2016-08-21,Pine Ridge / Ogla
 Setophaga coronata/auduboni,4,-103.01622,42.707165,2017-05-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2017-05-30,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-101.17035,42.77121,2013-09-11,McKelvie
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2017-10-01,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2017-10-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.01622,42.707165,2019-04-24,Pine Ridge / Oglala
 Setophaga coronata/auduboni,14,-100.38071,41.85729,2014-07-14,Bessey
 Setophaga coronata/auduboni,2,-103.023254,42.709038,2015-09-16,Pine Ridge / Oglala
@@ -36095,7 +36095,7 @@ Setophaga coronata/auduboni,NA,-103.011046,42.713165,2017-04-30,Pine Ridge / Ogl
 Setophaga coronata/auduboni,NA,-103.004343,42.742161,2019-05-09,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.009604,42.711362,2022-04-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.428555,42.880989,2016-04-23,Pine Ridge / Oglala
-Setophaga coronata/auduboni,NA,-103.008667,42.708437000000004,2022-09-10,Pine Ridge / Oglala
+Setophaga coronata/auduboni,NA,-103.008667,42.708437,2022-09-10,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.017592,42.701013,2020-04-27,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.009559,42.7111,2020-09-13,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.010973,42.714372,2022-03-26,Pine Ridge / Oglala
@@ -36368,7 +36368,7 @@ Setophaga coronata/auduboni,4,-100.38071,41.85729,2018-05-22,Bessey
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2018-09-14,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.55818,42.980896,2015-05-26,Pine Ridge / Oglala
 Setophaga coronata/auduboni,12,-101.0645,42.684937,2018-08-26,McKelvie
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2020-05-30,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2020-05-30,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.578285,42.93929,1981-07-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-100.51138,41.971043,2020-07-03,Bessey
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2021-09-12,Pine Ridge / Oglala
@@ -36467,7 +36467,7 @@ Setophaga coronata/auduboni,1,-100.298355,41.899227,2012-04-29,Bessey
 Setophaga coronata/auduboni,NA,-103.01622,42.707165,2010-05-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,15,-103.2617,42.64141,2019-06-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.01622,42.707165,2010-08-30,Pine Ridge / Oglala
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,1999-06-22,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,1999-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.2617,42.64141,2018-06-21,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-100.298355,41.899227,2013-10-11,Bessey
 Setophaga coronata/auduboni,4,-103.01622,42.707165,2019-08-28,Pine Ridge / Oglala
@@ -36490,7 +36490,7 @@ Setophaga coronata/auduboni,1,-103.014206,42.715446,2019-06-27,Pine Ridge / Ogla
 Setophaga coronata/auduboni,5,-103.01831,42.702168,2018-06-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.012,42.70647,2015-08-24,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-102.998024,42.6778,2021-05-25,Pine Ridge / Oglala
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2018-09-17,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2018-09-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.39954,42.803116,2021-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,15,-103.20196,42.639263,2015-09-05,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2016-09-16,Pine Ridge / Oglala
@@ -36519,7 +36519,7 @@ Setophaga coronata/auduboni,2,-103.01622,42.707165,2010-09-10,Pine Ridge / Oglal
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2020-09-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.023254,42.709038,2015-09-21,Pine Ridge / Oglala
 Setophaga coronata/auduboni,30,-100.298355,41.899227,2009-05-11,Bessey
-Setophaga coronata/auduboni,5,-103.1904,42.594970000000004,2020-05-06,Pine Ridge / Oglala
+Setophaga coronata/auduboni,5,-103.1904,42.59497,2020-05-06,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.0042,42.74487,2020-05-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.3164,42.631763,2020-05-28,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.00327,42.703796,2021-02-19,Pine Ridge / Oglala
@@ -36545,7 +36545,7 @@ Setophaga coronata/auduboni,1,-103.01622,42.707165,2020-07-23,Pine Ridge / Oglal
 Setophaga coronata/auduboni,NA,-100.298355,41.899227,2015-07-03,Bessey
 Setophaga coronata/auduboni,2,-103.2617,42.64141,2014-09-09,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.023254,42.709038,2016-10-02,Pine Ridge / Oglala
-Setophaga coronata/auduboni,20,-103.57169,42.698480000000004,2020-05-23,Pine Ridge / Oglala
+Setophaga coronata/auduboni,20,-103.57169,42.69848,2020-05-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-102.97976,42.725883,2018-06-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.023254,42.709038,2016-09-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2021-07-12,Pine Ridge / Oglala
@@ -36570,7 +36570,7 @@ Setophaga coronata/auduboni,1,-101.15546,42.68949,2021-06-02,McKelvie
 Setophaga coronata/auduboni,1,-103.03744,42.71497,2021-07-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2020-06-07,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2018-10-01,Pine Ridge / Oglala
-Setophaga coronata/auduboni,2,-103.57169,42.698480000000004,1999-06-22,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.57169,42.69848,1999-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2018-09-13,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.58481,42.85706,2014-08-31,Pine Ridge / Oglala
 Setophaga coronata/auduboni,8,-103.01622,42.707165,2014-09-10,Pine Ridge / Oglala
@@ -36594,7 +36594,7 @@ Setophaga coronata/auduboni,14,-100.90545,42.64485,2015-05-22,McKelvie
 Setophaga coronata/auduboni,1,-103.57331,42.699944,2010-08-20,Pine Ridge / Oglala
 Setophaga coronata/auduboni,20,-101.03559,42.67562,2016-06-14,McKelvie
 Setophaga coronata/auduboni,1,-102.998024,42.6778,2018-05-20,Pine Ridge / Oglala
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2019-01-20,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2019-01-20,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.01622,42.707165,2021-09-26,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.01622,42.707165,2018-09-05,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2014-09-15,Pine Ridge / Oglala
@@ -36679,9 +36679,9 @@ Setophaga coronata/auduboni,1,-103.01512,42.71544,2017-09-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.07338,42.673233,2020-07-03,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-100.29945,41.899803,2014-07-23,Bessey
 Setophaga coronata/auduboni,1,-103.02775,42.640285,2020-08-31,Pine Ridge / Oglala
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2017-06-17,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2017-06-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2018-09-14,Pine Ridge / Oglala
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2017-07-28,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2017-07-28,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-100.38071,41.85729,2010-05-23,Bessey
 Setophaga coronata/auduboni,20,-103.0042,42.74487,2020-05-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.0042,42.74487,2021-03-07,Pine Ridge / Oglala
@@ -36707,13 +36707,13 @@ Setophaga coronata/auduboni,9,-103.01622,42.707165,2010-09-21,Pine Ridge / Oglal
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2017-09-03,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.0042,42.74487,2021-05-11,Pine Ridge / Oglala
 Setophaga coronata/auduboni,18,-103.01622,42.707165,2018-05-20,Pine Ridge / Oglala
-Setophaga coronata/auduboni,NA,-103.57169,42.698480000000004,2013-06-26,Pine Ridge / Oglala
-Setophaga coronata/auduboni,17,-103.57169,42.698480000000004,2020-08-16,Pine Ridge / Oglala
+Setophaga coronata/auduboni,NA,-103.57169,42.69848,2013-06-26,Pine Ridge / Oglala
+Setophaga coronata/auduboni,17,-103.57169,42.69848,2020-08-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2015-10-10,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.58481,42.85706,1984-06-14,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2017-08-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.023254,42.709038,2015-09-24,Pine Ridge / Oglala
-Setophaga coronata/auduboni,7,-103.57169,42.698480000000004,2020-08-16,Pine Ridge / Oglala
+Setophaga coronata/auduboni,7,-103.57169,42.69848,2020-08-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.20196,42.639263,2017-05-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.023254,42.709038,2016-09-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.87253,42.941467,2019-06-14,Pine Ridge / Oglala
@@ -36866,7 +36866,7 @@ Setophaga coronata/auduboni,3,-103.3164,42.631763,2011-11-08,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.012,42.70647,2016-08-31,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.64193,43.000973,2017-05-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.03779,42.71529,2016-07-09,Pine Ridge / Oglala
-Setophaga coronata/auduboni,12,-103.57169,42.698480000000004,2021-01-16,Pine Ridge / Oglala
+Setophaga coronata/auduboni,12,-103.57169,42.69848,2021-01-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-101.0645,42.684937,2021-06-07,McKelvie
 Setophaga coronata/auduboni,12,-100.30165,41.900326,2018-10-27,Bessey
 Setophaga coronata/auduboni,6,-103.010895,42.711555,2015-09-06,Pine Ridge / Oglala
@@ -36930,7 +36930,7 @@ Setophaga coronata/auduboni,2,-103.51014,42.959564,2018-05-19,Pine Ridge / Oglal
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2020-09-30,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-100.51138,41.971043,2004-03-27,Bessey
 Setophaga coronata/auduboni,1,-103.012,42.70647,2014-09-02,Pine Ridge / Oglala
-Setophaga coronata/auduboni,6,-103.57169,42.698480000000004,2019-08-25,Pine Ridge / Oglala
+Setophaga coronata/auduboni,6,-103.57169,42.69848,2019-08-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-100.298355,41.899227,2015-07-04,Bessey
 Setophaga coronata/auduboni,3,-100.41375,41.881847,2021-05-19,Bessey
 Setophaga coronata/auduboni,4,-103.023254,42.709038,2015-09-28,Pine Ridge / Oglala
@@ -36944,7 +36944,7 @@ Setophaga coronata/auduboni,1,-103.20196,42.639263,2021-06-21,Pine Ridge / Oglal
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2019-05-06,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.0042,42.74487,2021-05-11,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.58156,42.7908,2019-05-30,Pine Ridge / Oglala
-Setophaga coronata/auduboni,2,-103.57169,42.698480000000004,2020-05-23,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.57169,42.69848,2020-05-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2017-09-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.023254,42.709038,2015-08-30,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.26993,42.66624,2021-11-15,Pine Ridge / Oglala
@@ -37007,7 +37007,7 @@ Setophaga coronata/auduboni,16,-103.20196,42.639263,2017-10-07,Pine Ridge / Ogla
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2021-09-08,Pine Ridge / Oglala
 Setophaga coronata/auduboni,10,-103.400085,42.803673,2020-05-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2018-10-12,Pine Ridge / Oglala
-Setophaga coronata/auduboni,2,-103.57169,42.698480000000004,2018-06-23,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.57169,42.69848,2018-06-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.023254,42.709038,2015-09-07,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.0042,42.74487,2014-05-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.47602,42.80683,2020-09-01,Pine Ridge / Oglala
@@ -37018,7 +37018,7 @@ Setophaga coronata/auduboni,5,-103.26934,42.660927,2020-05-06,Pine Ridge / Oglal
 Setophaga coronata/auduboni,1,-103.023254,42.709038,2015-09-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-102.95323,42.71407,2020-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-102.998024,42.6778,2021-06-30,Pine Ridge / Oglala
-Setophaga coronata/auduboni,NA,-103.57169,42.698480000000004,2014-05-17,Pine Ridge / Oglala
+Setophaga coronata/auduboni,NA,-103.57169,42.69848,2014-05-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.023254,42.709038,2016-10-13,Pine Ridge / Oglala
 Setophaga coronata/auduboni,10,-101.03559,42.67562,2016-06-14,McKelvie
 Setophaga coronata/auduboni,1,-103.49842,42.910927,2021-05-08,Pine Ridge / Oglala
@@ -37029,11 +37029,11 @@ Setophaga coronata/auduboni,2,-103.20196,42.639263,2016-05-24,Pine Ridge / Oglal
 Setophaga coronata/auduboni,NA,-103.01622,42.707165,2003-06-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.58481,42.85706,2020-05-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-102.998024,42.6778,2021-05-11,Pine Ridge / Oglala
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2018-06-22,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2018-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.223465,42.598618,2020-08-31,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.023254,42.709038,2016-10-12,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.023254,42.709038,2015-09-28,Pine Ridge / Oglala
-Setophaga coronata/auduboni,NA,-103.07470000000001,42.6743,2019-06-19,Pine Ridge / Oglala
+Setophaga coronata/auduboni,NA,-103.0747,42.6743,2019-06-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,17,-103.20196,42.639263,2019-08-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-100.38071,41.85729,2017-05-29,Bessey
 Setophaga coronata/auduboni,1,-103.58481,42.85706,2018-05-17,Pine Ridge / Oglala
@@ -37071,7 +37071,7 @@ Setophaga coronata/auduboni,3,-103.01622,42.707165,2018-09-20,Pine Ridge / Oglal
 Setophaga coronata/auduboni,5,-103.023254,42.709038,2015-09-07,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.44736,42.902023,2011-07-31,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2016-09-06,Pine Ridge / Oglala
-Setophaga coronata/auduboni,2,-103.1904,42.594970000000004,2020-05-06,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.1904,42.59497,2020-05-06,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.2617,42.64141,2021-05-27,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.58481,42.85706,2021-06-27,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.01622,42.707165,1994-05-13,Pine Ridge / Oglala
@@ -37095,7 +37095,7 @@ Setophaga coronata/auduboni,10,-103.023254,42.709038,2016-09-23,Pine Ridge / Ogl
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2021-09-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-102.998024,42.6778,2018-05-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-100.9777,42.663654,2020-05-30,McKelvie
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2017-09-03,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2017-09-03,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.01622,42.707165,2016-09-03,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2017-07-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2016-10-06,Pine Ridge / Oglala
@@ -37141,7 +37141,7 @@ Setophaga coronata/auduboni,14,-103.45156,42.526615,2016-04-10,Pine Ridge / Ogla
 Setophaga coronata/auduboni,2,-100.33866,41.890514,2016-06-13,Bessey
 Setophaga coronata/auduboni,1,-100.38071,41.85729,1986-06-11,Bessey
 Setophaga coronata/auduboni,5,-103.51912,42.95372,2021-05-19,Pine Ridge / Oglala
-Setophaga coronata/auduboni,1,-103.1904,42.594970000000004,2020-05-06,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.1904,42.59497,2020-05-06,Pine Ridge / Oglala
 Setophaga coronata/auduboni,18,-103.015434,42.704277,2014-09-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.54065,42.841232,2011-07-08,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.51112,42.922745,2011-05-16,Pine Ridge / Oglala
@@ -37164,7 +37164,7 @@ Setophaga coronata/auduboni,2,-103.01622,42.707165,2013-09-17,Pine Ridge / Oglal
 Setophaga coronata/auduboni,4,-103.01622,42.707165,2015-08-29,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-100.29782,41.902763,2019-06-10,Bessey
 Setophaga coronata/auduboni,8,-103.394585,42.84311,2020-07-03,Pine Ridge / Oglala
-Setophaga coronata/auduboni,8,-103.57169,42.698480000000004,2017-09-03,Pine Ridge / Oglala
+Setophaga coronata/auduboni,8,-103.57169,42.69848,2017-09-03,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2017-05-31,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-100.298355,41.899227,2018-07-09,Bessey
 Setophaga coronata/auduboni,2,-103.58156,42.7908,2020-05-24,Pine Ridge / Oglala
@@ -37210,7 +37210,7 @@ Setophaga coronata/auduboni,2,-103.01436,42.71574,2014-09-11,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.0042,42.74487,2014-05-24,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-102.993866,42.685543,2012-07-28,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01436,42.71574,2016-08-21,Pine Ridge / Oglala
-Setophaga coronata/auduboni,4,-103.57169,42.698480000000004,2019-02-02,Pine Ridge / Oglala
+Setophaga coronata/auduboni,4,-103.57169,42.69848,2019-02-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2019-05-06,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-101.15546,42.68949,2021-06-03,McKelvie
 Setophaga coronata/auduboni,6,-102.92507,42.814796,2015-08-24,Pine Ridge / Oglala
@@ -37447,7 +37447,7 @@ Setophaga coronata/auduboni,2,-100.94989,42.6979,2020-12-27,McKelvie
 Setophaga coronata/auduboni,2,-100.51138,41.971043,2020-05-19,Bessey
 Setophaga coronata/auduboni,4,-103.01436,42.71574,2014-09-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.45935,42.91911,2017-05-16,Pine Ridge / Oglala
-Setophaga coronata/auduboni,2,-103.57169,42.698480000000004,2020-05-21,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.57169,42.69848,2020-05-21,Pine Ridge / Oglala
 Setophaga coronata/auduboni,9,-103.01622,42.707165,2018-09-10,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.51872,42.905254,2021-06-21,Pine Ridge / Oglala
 Setophaga coronata/auduboni,11,-103.49842,42.910927,2019-04-21,Pine Ridge / Oglala
@@ -37496,7 +37496,7 @@ Setophaga coronata/auduboni,4,-103.3164,42.631763,2013-09-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,8,-100.313614,41.87228,2015-05-17,Bessey
 Setophaga coronata/auduboni,2,-103.20196,42.639263,2014-09-09,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2016-10-14,Pine Ridge / Oglala
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2020-08-16,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2020-08-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2018-05-21,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.3164,42.631763,2012-09-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.49842,42.910927,2021-09-07,Pine Ridge / Oglala
@@ -37539,13 +37539,13 @@ Setophaga coronata/auduboni,7,-103.023254,42.709038,2016-08-25,Pine Ridge / Ogla
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2017-07-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,10,-103.26934,42.660927,2020-05-06,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2021-06-09,Pine Ridge / Oglala
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2020-05-22,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2020-05-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.0042,42.74487,2019-03-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-100.298355,41.899227,1985-10-05,Bessey
 Setophaga coronata/auduboni,1,-103.012,42.70647,2016-09-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-100.298355,41.899227,2021-05-14,Bessey
 Setophaga coronata/auduboni,5,-101.066925,42.686813,2021-06-06,McKelvie
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2019-06-13,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2019-06-13,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.23441,42.616795,2019-06-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.2617,42.64141,2013-09-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2013-09-01,Pine Ridge / Oglala
@@ -37577,11 +37577,11 @@ Setophaga coronata/auduboni,4,-100.38071,41.85729,2014-01-04,Bessey
 Setophaga coronata/auduboni,2,-103.023254,42.709038,2016-09-26,Pine Ridge / Oglala
 Setophaga coronata/auduboni,13,-103.3164,42.631763,2012-09-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-100.900085,42.645527,2015-07-09,McKelvie
-Setophaga coronata/auduboni,NA,-103.57169,42.698480000000004,2007-05-15,Pine Ridge / Oglala
+Setophaga coronata/auduboni,NA,-103.57169,42.69848,2007-05-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.39954,42.803116,2021-05-08,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.3164,42.631763,2003-05-20,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-100.298355,41.899227,2009-05-09,Bessey
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2018-05-19,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2018-05-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.45935,42.91911,2016-05-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-100.301315,41.89938,2019-06-30,Bessey
 Setophaga coronata/auduboni,3,-103.2617,42.64141,2020-05-06,Pine Ridge / Oglala
@@ -37795,7 +37795,7 @@ Setophaga coronata/auduboni,4,-103.023254,42.709038,2015-10-08,Pine Ridge / Ogla
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2020-10-14,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.87489,42.96536,2019-06-14,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-100.38071,41.85729,2010-04-21,Bessey
-Setophaga coronata/auduboni,2,-103.57169,42.698480000000004,2017-06-17,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.57169,42.69848,2017-06-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2016-08-28,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.0042,42.74487,2016-06-30,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.0042,42.74487,2018-05-21,Pine Ridge / Oglala
@@ -37837,7 +37837,7 @@ Setophaga coronata/auduboni,1,-100.329895,41.893593,2021-08-31,Bessey
 Setophaga coronata/auduboni,1,-100.31311,41.842503,2021-10-11,Bessey
 Setophaga coronata/auduboni,1,-100.298836,41.90111,2017-05-15,Bessey
 Setophaga coronata/auduboni,3,-103.18896,42.630383,2017-10-23,Pine Ridge / Oglala
-Setophaga coronata/auduboni,2,-103.61571000000001,42.97341,2018-05-18,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.61571,42.97341,2018-05-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,10,-103.578995,42.7969,2019-06-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-102.993866,42.685543,2012-05-11,Pine Ridge / Oglala
 Setophaga coronata/auduboni,10,-103.01622,42.707165,2021-06-24,Pine Ridge / Oglala
@@ -37864,7 +37864,7 @@ Setophaga coronata/auduboni,4,-103.023254,42.709038,2015-09-06,Pine Ridge / Ogla
 Setophaga coronata/auduboni,NA,-100.38071,41.85729,1999-12-27,Bessey
 Setophaga coronata/auduboni,2,-100.298355,41.899227,2012-04-08,Bessey
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2014-09-06,Pine Ridge / Oglala
-Setophaga coronata/auduboni,4,-103.1904,42.594970000000004,2020-05-06,Pine Ridge / Oglala
+Setophaga coronata/auduboni,4,-103.1904,42.59497,2020-05-06,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.012,42.70647,2016-09-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.08277,42.6853,2020-07-03,Pine Ridge / Oglala
 Setophaga coronata/auduboni,42,-103.01622,42.707165,2018-09-02,Pine Ridge / Oglala
@@ -37923,15 +37923,15 @@ Setophaga coronata/auduboni,7,-100.298355,41.899227,2015-09-22,Bessey
 Setophaga coronata/auduboni,NA,-100.38071,41.85729,1996-05-14,Bessey
 Setophaga coronata/auduboni,NA,-103.00903,42.708103,2003-08-03,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-101.17035,42.77121,2013-09-26,McKelvie
-Setophaga coronata/auduboni,6,-103.57169,42.698480000000004,1999-06-22,Pine Ridge / Oglala
+Setophaga coronata/auduboni,6,-103.57169,42.69848,1999-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.578995,42.7969,2019-06-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-102.998024,42.6778,2020-05-27,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.58481,42.85706,2017-07-02,Pine Ridge / Oglala
-Setophaga coronata/auduboni,7,-103.57169,42.698480000000004,2020-05-23,Pine Ridge / Oglala
+Setophaga coronata/auduboni,7,-103.57169,42.69848,2020-05-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.056854,42.64999,2020-07-03,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2010-09-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2021-06-19,Pine Ridge / Oglala
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2018-05-18,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2018-05-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-100.298355,41.899227,2020-07-05,Bessey
 Setophaga coronata/auduboni,2,-103.57369,42.900314,2018-05-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.023254,42.709038,2015-08-27,Pine Ridge / Oglala
@@ -37969,7 +37969,7 @@ Setophaga coronata/auduboni,2,-103.01622,42.707165,2018-09-03,Pine Ridge / Oglal
 Setophaga coronata/auduboni,5,-102.986664,42.75793,2017-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.218605,42.597385,2019-06-13,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-101.00064,42.665604,2021-06-02,McKelvie
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2020-01-04,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2020-01-04,Pine Ridge / Oglala
 Setophaga coronata/auduboni,10,-103.51912,42.95372,2021-07-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-102.998024,42.6778,2012-09-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2020-09-18,Pine Ridge / Oglala
@@ -37992,7 +37992,7 @@ Setophaga coronata/auduboni,4,-103.01622,42.707165,2020-09-18,Pine Ridge / Oglal
 Setophaga coronata/auduboni,9,-103.2617,42.64141,2019-06-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01436,42.71574,2015-08-26,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-100.317535,41.905853,2013-05-13,Bessey
-Setophaga coronata/auduboni,4,-103.57169,42.698480000000004,2020-05-23,Pine Ridge / Oglala
+Setophaga coronata/auduboni,4,-103.57169,42.69848,2020-05-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,71,-103.01622,42.707165,2021-06-24,Pine Ridge / Oglala
 Setophaga coronata/auduboni,17,-103.023254,42.709038,2016-10-11,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2018-09-01,Pine Ridge / Oglala
@@ -38014,7 +38014,7 @@ Setophaga coronata/auduboni,3,-103.57369,42.900314,2018-05-20,Pine Ridge / Oglal
 Setophaga coronata/auduboni,2,-103.012,42.70647,2014-08-31,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-102.998024,42.6778,2021-07-11,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2014-05-27,Pine Ridge / Oglala
-Setophaga coronata/auduboni,1,-103.07470000000001,42.6743,2019-06-19,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.0747,42.6743,2019-06-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-100.301315,41.89938,2019-06-30,Bessey
 Setophaga coronata/auduboni,22,-103.01622,42.707165,2018-08-30,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2020-07-24,Pine Ridge / Oglala
@@ -38046,11 +38046,11 @@ Setophaga coronata/auduboni,4,-102.93447,42.71319,2021-08-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.023254,42.709038,2016-09-10,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-103.01622,42.707165,2018-09-06,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.55487,42.80179,2019-05-09,Pine Ridge / Oglala
-Setophaga coronata/auduboni,2,-103.57169,42.698480000000004,2020-08-16,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.57169,42.69848,2020-08-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-100.38071,41.85729,2021-06-04,Bessey
 Setophaga coronata/auduboni,4,-103.01622,42.707165,2017-09-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.26934,42.660927,2020-05-06,Pine Ridge / Oglala
-Setophaga coronata/auduboni,4,-103.61571000000001,42.97341,2018-05-18,Pine Ridge / Oglala
+Setophaga coronata/auduboni,4,-103.61571,42.97341,2018-05-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2018-05-20,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.59236,42.95947,2018-05-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2010-09-30,Pine Ridge / Oglala
@@ -38104,12 +38104,12 @@ Setophaga coronata/auduboni,8,-103.01622,42.707165,2016-10-03,Pine Ridge / Oglal
 Setophaga coronata/auduboni,1,-103.012,42.70647,2016-09-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.00115,42.681858,2020-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.20196,42.639263,2018-09-03,Pine Ridge / Oglala
-Setophaga coronata/auduboni,2,-103.57169,42.698480000000004,2019-06-13,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.57169,42.69848,2019-06-13,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.3164,42.631763,2020-06-20,Pine Ridge / Oglala
 Setophaga coronata/auduboni,40,-103.01622,42.707165,2010-08-31,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-102.998024,42.6778,2020-05-28,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-102.9272,42.670048,2021-05-07,Pine Ridge / Oglala
-Setophaga coronata/auduboni,5,-103.57169,42.698480000000004,2020-08-16,Pine Ridge / Oglala
+Setophaga coronata/auduboni,5,-103.57169,42.69848,2020-08-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-101.0645,42.684937,2015-05-15,McKelvie
 Setophaga coronata/auduboni,2,-101.0645,42.684937,2021-04-25,McKelvie
 Setophaga coronata/auduboni,NA,-103.01622,42.707165,1991-07-27,Pine Ridge / Oglala
@@ -38292,7 +38292,7 @@ Setophaga coronata/auduboni,NA,-100.361786,41.905216,2002-05-03,Bessey
 Setophaga coronata/auduboni,6,-100.38071,41.85729,2020-05-19,Bessey
 Setophaga coronata/auduboni,NA,-102.998024,42.6778,2019-05-05,Pine Ridge / Oglala
 Setophaga coronata/auduboni,35,-103.01622,42.707165,2017-09-15,Pine Ridge / Oglala
-Setophaga coronata/auduboni,10,-103.57169,42.698480000000004,2020-07-26,Pine Ridge / Oglala
+Setophaga coronata/auduboni,10,-103.57169,42.69848,2020-07-26,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.0042,42.74487,2021-08-13,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-102.998024,42.6778,2021-05-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.023254,42.709038,2016-08-29,Pine Ridge / Oglala
@@ -38352,7 +38352,7 @@ Setophaga coronata/auduboni,NA,-103.0042,42.74487,2021-05-08,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-100.298256,41.90157,2020-06-14,Bessey
 Setophaga coronata/auduboni,1,-103.5858,42.985813,2019-05-12,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-103.07338,42.673233,2020-07-03,Pine Ridge / Oglala
-Setophaga coronata/auduboni,7,-103.57169,42.698480000000004,2020-11-28,Pine Ridge / Oglala
+Setophaga coronata/auduboni,7,-103.57169,42.69848,2020-11-28,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-100.38071,41.85729,2021-06-26,Bessey
 Setophaga coronata/auduboni,8,-103.01622,42.707165,2020-08-10,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.0042,42.74487,2019-07-19,Pine Ridge / Oglala
@@ -38374,7 +38374,7 @@ Setophaga coronata/auduboni,NA,-103.01622,42.707165,1991-06-05,Pine Ridge / Ogla
 Setophaga coronata/auduboni,4,-103.60153,42.828224,2021-06-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,8,-101.15515,42.68946,2011-06-05,McKelvie
 Setophaga coronata/auduboni,16,-103.01436,42.71574,2015-08-25,Pine Ridge / Oglala
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2021-04-28,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2021-04-28,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-100.38071,41.85729,1987-10-03,Bessey
 Setophaga coronata/auduboni,2,-100.38071,41.85729,2020-04-24,Bessey
 Setophaga coronata/auduboni,3,-101.0645,42.684937,2021-04-25,McKelvie
@@ -38419,8 +38419,8 @@ Setophaga coronata/auduboni,15,-100.51138,41.971043,2015-11-01,Bessey
 Setophaga coronata/auduboni,2,-100.29936,41.899666,2014-07-20,Bessey
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2017-08-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,8,-103.008896,42.707718,2021-06-18,Pine Ridge / Oglala
-Setophaga coronata/auduboni,3,-103.57169,42.698480000000004,2020-05-23,Pine Ridge / Oglala
-Setophaga coronata/auduboni,30,-103.61571000000001,42.97341,2018-05-18,Pine Ridge / Oglala
+Setophaga coronata/auduboni,3,-103.57169,42.69848,2020-05-23,Pine Ridge / Oglala
+Setophaga coronata/auduboni,30,-103.61571,42.97341,2018-05-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.0042,42.74487,2020-09-10,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.023254,42.709038,2016-09-14,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.01622,42.707165,2018-09-09,Pine Ridge / Oglala
@@ -38498,7 +38498,7 @@ Setophaga coronata/auduboni,2,-103.0042,42.74487,2018-05-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.01622,42.707165,2018-05-20,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-100.32239,41.905327,2002-09-30,Bessey
 Setophaga coronata/auduboni,1,-103.00428,42.69616,2020-08-30,Pine Ridge / Oglala
-Setophaga coronata/auduboni,6,-103.57169,42.698480000000004,2020-08-16,Pine Ridge / Oglala
+Setophaga coronata/auduboni,6,-103.57169,42.69848,2020-08-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.056854,42.64999,2020-07-03,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,1986-06-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-101.17035,42.77121,2013-10-08,McKelvie
@@ -38537,7 +38537,7 @@ Setophaga coronata/auduboni,1,-100.298355,41.899227,2017-05-08,Bessey
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2017-08-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2017-06-05,Pine Ridge / Oglala
 Setophaga coronata/auduboni,35,-103.8363,42.965927,2020-06-10,Pine Ridge / Oglala
-Setophaga coronata/auduboni,5,-103.57169,42.698480000000004,2020-05-21,Pine Ridge / Oglala
+Setophaga coronata/auduboni,5,-103.57169,42.69848,2020-05-21,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.64185,43.0005,2020-12-30,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.126015,42.647507,2020-07-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,30,-103.20196,42.639263,2017-05-17,Pine Ridge / Oglala
@@ -38593,7 +38593,7 @@ Setophaga coronata/auduboni,4,-103.01622,42.707165,2021-06-09,Pine Ridge / Oglal
 Setophaga coronata/auduboni,8,-103.01622,42.707165,2013-09-24,Pine Ridge / Oglala
 Setophaga coronata/auduboni,9,-103.01622,42.707165,2018-09-14,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2020-10-02,Pine Ridge / Oglala
-Setophaga coronata/auduboni,5,-103.57169,42.698480000000004,2019-01-20,Pine Ridge / Oglala
+Setophaga coronata/auduboni,5,-103.57169,42.69848,2019-01-20,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.023254,42.709038,2015-08-31,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-102.95323,42.71407,2020-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-102.998024,42.6778,2018-05-19,Pine Ridge / Oglala
@@ -38802,7 +38802,7 @@ Setophaga coronata/auduboni,1,-103.522736,42.836815,2020-05-22,Pine Ridge / Ogla
 Setophaga coronata/auduboni,2,-100.29812,41.90158,2014-07-23,Bessey
 Setophaga coronata/auduboni,7,-103.01622,42.707165,2018-10-03,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.23441,42.616795,2019-06-15,Pine Ridge / Oglala
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2020-11-28,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2020-11-28,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2020-05-24,Pine Ridge / Oglala
 Setophaga coronata/auduboni,8,-103.57369,42.900314,2018-05-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.0042,42.74487,2009-09-29,Pine Ridge / Oglala
@@ -38838,7 +38838,7 @@ Setophaga coronata/auduboni,4,-103.023254,42.709038,2015-09-08,Pine Ridge / Ogla
 Setophaga coronata/auduboni,12,-103.01622,42.707165,2014-09-20,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.01622,42.707165,2010-09-30,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-100.90397,42.647408,2021-06-12,McKelvie
-Setophaga coronata/auduboni,7,-103.57169,42.698480000000004,2018-06-22,Pine Ridge / Oglala
+Setophaga coronata/auduboni,7,-103.57169,42.69848,2018-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,11,-102.998024,42.6778,2021-05-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2018-05-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.023254,42.709038,2015-10-08,Pine Ridge / Oglala
@@ -38885,7 +38885,7 @@ Setophaga coronata/auduboni,20,-101.0645,42.684937,2019-06-04,McKelvie
 Setophaga coronata/auduboni,3,-102.998024,42.6778,2016-09-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,14,-102.95323,42.71407,2020-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2017-09-01,Pine Ridge / Oglala
-Setophaga coronata/auduboni,8,-103.01032,42.709815999999996,2020-09-19,Pine Ridge / Oglala
+Setophaga coronata/auduboni,8,-103.01032,42.709816,2020-09-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2016-05-24,Pine Ridge / Oglala
 Setophaga coronata/auduboni,18,-103.01622,42.707165,2020-09-07,Pine Ridge / Oglala
 Setophaga coronata/auduboni,14,-103.023254,42.709038,2016-10-14,Pine Ridge / Oglala
@@ -38931,7 +38931,7 @@ Setophaga coronata/auduboni,14,-103.01622,42.707165,2015-08-23,Pine Ridge / Ogla
 Setophaga coronata/auduboni,NA,-100.965126,42.6648,2015-05-28,McKelvie
 Setophaga coronata/auduboni,40,-100.298355,41.899227,2017-02-22,Bessey
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2013-05-25,Pine Ridge / Oglala
-Setophaga coronata/auduboni,7,-103.1904,42.594970000000004,2020-05-06,Pine Ridge / Oglala
+Setophaga coronata/auduboni,7,-103.1904,42.59497,2020-05-06,Pine Ridge / Oglala
 Setophaga coronata/auduboni,10,-103.58156,42.7908,2019-05-30,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.01622,42.707165,2020-09-24,Pine Ridge / Oglala
 Setophaga coronata/auduboni,8,-103.44671,42.90772,2019-07-18,Pine Ridge / Oglala
@@ -38963,7 +38963,7 @@ Setophaga coronata/auduboni,8,-103.01622,42.707165,2010-09-07,Pine Ridge / Oglal
 Setophaga coronata/auduboni,1,-103.02326,42.70902,2021-09-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-103.01622,42.707165,2015-06-11,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-101.0645,42.684937,2020-09-16,McKelvie
-Setophaga coronata/auduboni,1,-103.61571000000001,42.97341,2018-05-18,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.61571,42.97341,2018-05-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,10,-102.912575,42.72638,2017-11-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-101.0645,42.684937,2017-05-24,McKelvie
 Setophaga coronata/auduboni,3,-101.00064,42.665604,2021-06-02,McKelvie
@@ -39007,8 +39007,8 @@ Setophaga coronata/auduboni,1,-100.298355,41.899227,2019-06-20,Bessey
 Setophaga coronata/auduboni,10,-103.581894,42.94968,2016-03-27,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-103.023254,42.709038,2014-10-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2018-05-15,Pine Ridge / Oglala
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2020-05-21,Pine Ridge / Oglala
-Setophaga coronata/auduboni,7,-103.57169,42.698480000000004,1999-06-22,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2020-05-21,Pine Ridge / Oglala
+Setophaga coronata/auduboni,7,-103.57169,42.69848,1999-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-101.108,42.70551,2021-08-31,McKelvie
 Setophaga coronata/auduboni,6,-103.3164,42.631763,2006-06-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.023254,42.709038,2016-10-06,Pine Ridge / Oglala
@@ -39035,8 +39035,8 @@ Setophaga coronata/auduboni,1,-103.0042,42.74487,2014-08-27,Pine Ridge / Oglala
 Setophaga coronata/auduboni,10,-103.60073,42.82688,2010-05-14,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.0042,42.74487,2013-05-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.44248,42.90224,2018-05-16,Pine Ridge / Oglala
-Setophaga coronata/auduboni,7,-103.57169,42.698480000000004,2019-01-20,Pine Ridge / Oglala
-Setophaga coronata/auduboni,5,-103.57169,42.698480000000004,2018-05-19,Pine Ridge / Oglala
+Setophaga coronata/auduboni,7,-103.57169,42.69848,2019-01-20,Pine Ridge / Oglala
+Setophaga coronata/auduboni,5,-103.57169,42.69848,2018-05-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-102.998024,42.6778,2021-08-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,12,-103.18896,42.630383,2017-10-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01436,42.71574,2015-10-01,Pine Ridge / Oglala
@@ -39136,7 +39136,7 @@ Setophaga coronata/auduboni,8,-103.18896,42.630383,2017-10-23,Pine Ridge / Oglal
 Setophaga coronata/auduboni,10,-103.59236,42.95947,2018-05-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-100.51138,41.971043,2021-05-16,Bessey
 Setophaga coronata/auduboni,6,-103.01622,42.707165,2018-10-12,Pine Ridge / Oglala
-Setophaga coronata/auduboni,10,-103.57169,42.698480000000004,2019-01-20,Pine Ridge / Oglala
+Setophaga coronata/auduboni,10,-103.57169,42.69848,2019-01-20,Pine Ridge / Oglala
 Setophaga coronata/auduboni,50,-103.01622,42.707165,2010-09-07,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.012,42.70647,2016-08-31,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-102.998024,42.6778,2020-05-24,Pine Ridge / Oglala
@@ -39203,7 +39203,7 @@ Setophaga coronata/auduboni,1,-103.52113,42.966118,2021-07-18,Pine Ridge / Oglal
 Setophaga coronata/auduboni,2,-101.13993,42.69807,2021-06-06,McKelvie
 Setophaga coronata/auduboni,2,-103.023254,42.709038,2015-08-24,Pine Ridge / Oglala
 Setophaga coronata/auduboni,24,-100.92003,42.64541,2016-05-18,McKelvie
-Setophaga coronata/auduboni,2,-103.57169,42.698480000000004,2021-05-27,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.57169,42.69848,2021-05-27,Pine Ridge / Oglala
 Setophaga coronata/auduboni,220,-103.57369,42.900314,2018-05-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.20196,42.639263,2013-09-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.01622,42.707165,2018-10-12,Pine Ridge / Oglala
@@ -39242,10 +39242,10 @@ Setophaga coronata/auduboni,4,-100.38071,41.85729,2019-07-13,Bessey
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2015-09-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2014-05-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.012,42.70647,2016-10-02,Pine Ridge / Oglala
-Setophaga coronata/auduboni,3,-103.57169,42.698480000000004,2019-06-13,Pine Ridge / Oglala
+Setophaga coronata/auduboni,3,-103.57169,42.69848,2019-06-13,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2017-06-05,Pine Ridge / Oglala
 Setophaga coronata/auduboni,10,-103.01622,42.707165,2014-09-20,Pine Ridge / Oglala
-Setophaga coronata/auduboni,2,-103.57169,42.698480000000004,2020-05-22,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.57169,42.69848,2020-05-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2016-05-29,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2018-10-08,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2021-07-21,Pine Ridge / Oglala
@@ -39259,7 +39259,7 @@ Setophaga coronata/auduboni,7,-103.01622,42.707165,2018-09-13,Pine Ridge / Oglal
 Setophaga coronata/auduboni,7,-103.023254,42.709038,2016-10-06,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.023254,42.709038,2015-10-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.20196,42.639263,2017-10-07,Pine Ridge / Oglala
-Setophaga coronata/auduboni,5,-103.61571000000001,42.97341,2018-05-18,Pine Ridge / Oglala
+Setophaga coronata/auduboni,5,-103.61571,42.97341,2018-05-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-102.930016,42.717472,2021-08-20,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.51912,42.95372,2021-05-08,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2018-09-08,Pine Ridge / Oglala
@@ -39303,7 +39303,7 @@ Setophaga coronata/auduboni,1,-103.023254,42.709038,2016-10-05,Pine Ridge / Ogla
 Setophaga coronata/auduboni,3,-102.953224,42.726734,2020-06-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,27,-103.18955,42.63071,2017-10-13,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.55818,42.980896,2015-05-26,Pine Ridge / Oglala
-Setophaga coronata/auduboni,2,-103.57169,42.698480000000004,2021-01-16,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.57169,42.69848,2021-01-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2019-09-08,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-100.298355,41.899227,2015-07-04,Bessey
 Setophaga coronata/auduboni,NA,-103.50975,42.94838,1995-06-26,Pine Ridge / Oglala
@@ -39338,8 +39338,8 @@ Setophaga coronata/auduboni,2,-103.58156,42.7908,2019-05-30,Pine Ridge / Oglala
 Setophaga coronata/auduboni,28,-103.45897,42.918884,2020-05-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,8,-103.01622,42.707165,2014-09-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,8,-103.30643,42.626904,2019-06-13,Pine Ridge / Oglala
-Setophaga coronata/auduboni,2,-103.57169,42.698480000000004,2020-07-26,Pine Ridge / Oglala
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2018-06-23,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.57169,42.69848,2020-07-26,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2018-06-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.0042,42.74487,2020-05-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,40,-103.58481,42.85706,2018-05-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.57658,42.892334,2020-08-17,Pine Ridge / Oglala
@@ -39361,7 +39361,7 @@ Setophaga coronata/auduboni,7,-103.01622,42.707165,2017-08-19,Pine Ridge / Oglal
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2014-08-29,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-100.298355,41.899227,2021-05-16,Bessey
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2010-10-05,Pine Ridge / Oglala
-Setophaga coronata/auduboni,3,-103.57169,42.698480000000004,2018-06-22,Pine Ridge / Oglala
+Setophaga coronata/auduboni,3,-103.57169,42.69848,2018-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.023254,42.709038,2016-09-05,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2010-09-09,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.57168,42.69851,2016-05-31,Pine Ridge / Oglala
@@ -39386,7 +39386,7 @@ Setophaga coronata/auduboni,13,-103.20196,42.639263,2018-09-03,Pine Ridge / Ogla
 Setophaga coronata/auduboni,2,-102.998024,42.6778,2021-06-05,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2013-10-03,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.010895,42.711555,2015-09-04,Pine Ridge / Oglala
-Setophaga coronata/auduboni,4,-103.57169,42.698480000000004,2021-01-16,Pine Ridge / Oglala
+Setophaga coronata/auduboni,4,-103.57169,42.69848,2021-01-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-100.29782,41.902763,2019-06-10,Bessey
 Setophaga coronata/auduboni,4,-103.58481,42.85706,2018-05-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,11,-100.38071,41.85729,2011-04-11,Bessey
@@ -39432,7 +39432,7 @@ Setophaga coronata/auduboni,4,-103.023254,42.709038,2015-09-10,Pine Ridge / Ogla
 Setophaga coronata/auduboni,4,-100.298355,41.899227,2014-08-19,Bessey
 Setophaga coronata/auduboni,2,-100.51138,41.971043,2021-10-03,Bessey
 Setophaga coronata/auduboni,12,-103.01622,42.707165,2015-08-18,Pine Ridge / Oglala
-Setophaga coronata/auduboni,3,-103.57169,42.698480000000004,2021-01-16,Pine Ridge / Oglala
+Setophaga coronata/auduboni,3,-103.57169,42.69848,2021-01-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.023254,42.709038,2016-09-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,9,-103.2617,42.64141,2021-03-03,Pine Ridge / Oglala
 Setophaga coronata/auduboni,8,-100.298355,41.899227,2019-06-01,Bessey
@@ -39481,7 +39481,7 @@ Setophaga coronata/auduboni,1,-103.023254,42.709038,2014-09-25,Pine Ridge / Ogla
 Setophaga coronata/auduboni,5,-103.54751,42.855675,2016-03-27,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2010-08-30,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-102.97976,42.725883,2019-05-07,Pine Ridge / Oglala
-Setophaga coronata/auduboni,11,-103.57169,42.698480000000004,2020-08-16,Pine Ridge / Oglala
+Setophaga coronata/auduboni,11,-103.57169,42.69848,2020-08-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.056145,42.65605,2017-11-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,175,-103.01622,42.707165,2018-10-05,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.012,42.70647,2015-08-23,Pine Ridge / Oglala
@@ -39561,7 +39561,7 @@ Setophaga coronata/auduboni,1,-103.01436,42.71574,2016-09-10,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.2617,42.64141,2018-05-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,22,-103.01622,42.707165,2018-09-04,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2018-09-07,Pine Ridge / Oglala
-Setophaga coronata/auduboni,2,-103.57169,42.698480000000004,2019-08-25,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.57169,42.69848,2019-08-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.58985,42.98626,2021-06-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-100.49918,41.95112,2021-06-04,Bessey
 Setophaga coronata/auduboni,5,-103.01622,42.707165,2021-07-06,Pine Ridge / Oglala
@@ -39600,7 +39600,7 @@ Setophaga coronata/auduboni,18,-103.51112,42.922745,2010-05-14,Pine Ridge / Ogla
 Setophaga coronata/auduboni,5,-103.001076,42.717007,2014-08-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,28,-103.0042,42.74487,2021-05-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.023254,42.709038,2016-09-26,Pine Ridge / Oglala
-Setophaga coronata/auduboni,2,-103.57169,42.698480000000004,2021-04-28,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.57169,42.69848,2021-04-28,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-100.298256,41.90157,2020-06-14,Bessey
 Setophaga coronata/auduboni,1,-101.0645,42.684937,2015-05-15,McKelvie
 Setophaga coronata/auduboni,1,-100.298355,41.899227,2015-07-23,Bessey
@@ -39621,7 +39621,7 @@ Setophaga coronata/auduboni,7,-103.008896,42.707718,2021-06-18,Pine Ridge / Ogla
 Setophaga coronata/auduboni,4,-103.39954,42.803116,2011-04-20,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.51872,42.905254,2021-06-21,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.009766,42.6975,2010-05-15,Pine Ridge / Oglala
-Setophaga coronata/auduboni,4,-103.01032,42.709815999999996,2020-09-19,Pine Ridge / Oglala
+Setophaga coronata/auduboni,4,-103.01032,42.709816,2020-09-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-102.998024,42.6778,2021-09-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-101.16365,42.687862,2009-07-25,McKelvie
 Setophaga coronata/auduboni,6,-103.01622,42.707165,2010-09-19,Pine Ridge / Oglala
@@ -39642,7 +39642,7 @@ Setophaga coronata/auduboni,9,-102.998024,42.6778,2021-05-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.57253,42.69908,2017-06-07,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-100.33903,41.88654,2017-04-07,Bessey
 Setophaga coronata/auduboni,3,-103.01436,42.71574,2015-09-17,Pine Ridge / Oglala
-Setophaga coronata/auduboni,10,-103.57169,42.698480000000004,2018-05-19,Pine Ridge / Oglala
+Setophaga coronata/auduboni,10,-103.57169,42.69848,2018-05-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.500984,42.95008,2015-04-24,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-100.35271,41.89628,2021-05-02,Bessey
 Setophaga coronata/auduboni,4,-103.01622,42.707165,2014-05-25,Pine Ridge / Oglala
@@ -39770,7 +39770,7 @@ Setophaga coronata/auduboni,12,-100.298355,41.899227,2015-05-17,Bessey
 Setophaga coronata/auduboni,1,-103.012,42.70647,2015-09-09,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.3164,42.631763,2006-06-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,20,-103.250114,42.6301,2020-09-20,Pine Ridge / Oglala
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2020-05-23,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2020-05-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,22,-100.26448,41.796577,2021-10-11,Bessey
 Setophaga coronata/auduboni,3,-103.00271,42.703846,2021-02-12,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2015-07-13,Pine Ridge / Oglala
@@ -39909,7 +39909,7 @@ Setophaga coronata/auduboni,8,-103.01622,42.707165,2010-09-27,Pine Ridge / Oglal
 Setophaga coronata/auduboni,2,-102.97976,42.725883,2018-06-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.01622,42.707165,2014-09-13,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.581894,42.94968,2016-03-27,Pine Ridge / Oglala
-Setophaga coronata/auduboni,2,-103.57169,42.698480000000004,2019-01-20,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.57169,42.69848,2019-01-20,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.012,42.70647,2015-08-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.01622,42.707165,2017-08-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.01622,42.707165,2021-06-28,Pine Ridge / Oglala
@@ -39959,7 +39959,7 @@ Setophaga coronata/auduboni,5,-103.01622,42.707165,2017-09-29,Pine Ridge / Oglal
 Setophaga coronata/auduboni,11,-103.29503,42.60551,2021-07-04,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.394585,42.84311,2020-07-03,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.009056,42.70811,2017-08-15,Pine Ridge / Oglala
-Setophaga coronata/auduboni,4,-103.57169,42.698480000000004,1999-06-22,Pine Ridge / Oglala
+Setophaga coronata/auduboni,4,-103.57169,42.69848,1999-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.58481,42.85706,2018-07-20,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2020-06-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.2617,42.64141,2021-07-04,Pine Ridge / Oglala
@@ -40088,7 +40088,7 @@ Setophaga coronata/auduboni,2,-103.01622,42.707165,2019-01-19,Pine Ridge / Oglal
 Setophaga coronata/auduboni,20,-103.59236,42.95947,2018-05-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-100.298355,41.899227,2020-09-19,Bessey
 Setophaga coronata/auduboni,2,-103.023254,42.709038,2015-09-30,Pine Ridge / Oglala
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2021-01-16,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2021-01-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.08179,42.655173,2020-05-14,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.0234,42.708994,2022-09-29,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.010651,42.711329,2018-06-01,Pine Ridge / Oglala
@@ -40281,7 +40281,7 @@ Sitta carolinensis,NA,-103.009029,42.708098,2021-06-24,Pine Ridge / Oglala
 Setophaga coronata/auduboni,15,-103.01622,42.707165,2017-09-29,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.51912,42.95372,2021-05-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,10,-102.998024,42.6778,2021-06-24,Pine Ridge / Oglala
-Setophaga coronata/auduboni,25,-103.01032,42.709815999999996,2020-09-19,Pine Ridge / Oglala
+Setophaga coronata/auduboni,25,-103.01032,42.709816,2020-09-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2017-05-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,40,-103.01622,42.707165,2013-05-31,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-103.01622,42.707165,2010-09-21,Pine Ridge / Oglala
@@ -40308,7 +40308,7 @@ Setophaga coronata/auduboni,NA,-103.577,42.8593,2007-05-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-100.298355,41.899227,2017-01-30,Bessey
 Setophaga coronata/auduboni,3,-100.96043,42.65897,2018-05-15,McKelvie
 Setophaga coronata/auduboni,1,-100.51138,41.971043,2021-05-16,Bessey
-Setophaga coronata/auduboni,2,-103.57169,42.698480000000004,2020-01-04,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.57169,42.69848,2020-01-04,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-100.29804,41.901394,2020-09-15,Bessey
 Setophaga coronata/auduboni,30,-103.00271,42.703846,2021-02-12,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.01622,42.707165,2017-09-12,Pine Ridge / Oglala
@@ -40408,7 +40408,7 @@ Setophaga coronata/auduboni,12,-100.4842,41.8931,2017-04-26,Bessey
 Setophaga coronata/auduboni,8,-103.012,42.70647,2015-08-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2020-07-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.023254,42.709038,2016-09-23,Pine Ridge / Oglala
-Setophaga coronata/auduboni,14,-103.57169,42.698480000000004,2020-08-16,Pine Ridge / Oglala
+Setophaga coronata/auduboni,14,-103.57169,42.69848,2020-08-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2017-09-07,Pine Ridge / Oglala
 Setophaga coronata/auduboni,10,-103.45409,42.91564,2018-03-28,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-100.38071,41.85729,2018-05-17,Bessey
@@ -40431,7 +40431,7 @@ Setophaga coronata/auduboni,3,-103.3164,42.631763,2014-09-09,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-100.2967,41.901115,2021-08-16,Bessey
 Setophaga coronata/auduboni,10,-103.22104,42.594135,2021-05-27,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.01622,42.707165,2010-09-24,Pine Ridge / Oglala
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2019-08-25,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2019-08-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-100.30378,41.89477,2019-06-30,Bessey
 Setophaga coronata/auduboni,4,-103.023254,42.709038,2015-09-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.0042,42.74487,2016-08-07,Pine Ridge / Oglala
@@ -40519,7 +40519,7 @@ Setophaga coronata/auduboni,3,-103.47296,42.92759,2018-05-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.3164,42.631763,2015-06-10,Pine Ridge / Oglala
 Setophaga coronata/auduboni,17,-103.00454,42.696423,2020-05-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,30,-100.38071,41.85729,2015-09-07,Bessey
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2020-07-26,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2020-07-26,Pine Ridge / Oglala
 Setophaga coronata/auduboni,12,-103.023254,42.709038,2015-09-05,Pine Ridge / Oglala
 Setophaga coronata/auduboni,11,-103.01622,42.707165,2017-08-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.6,42.8,2014-06-01,Pine Ridge / Oglala
@@ -40559,7 +40559,7 @@ Setophaga coronata/auduboni,2,-103.0042,42.74487,2017-05-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-100.29933,41.899693,2014-07-21,Bessey
 Setophaga coronata/auduboni,5,-100.38071,41.85729,2012-05-04,Bessey
 Setophaga coronata/auduboni,3,-102.97976,42.725883,2018-06-20,Pine Ridge / Oglala
-Setophaga coronata/auduboni,10,-103.01032,42.709815999999996,2020-09-19,Pine Ridge / Oglala
+Setophaga coronata/auduboni,10,-103.01032,42.709816,2020-09-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,12,-103.0042,42.74487,2018-10-03,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-100.298355,41.899227,2018-05-17,Bessey
 Setophaga coronata/auduboni,1,-103.023254,42.709038,2014-09-15,Pine Ridge / Oglala
@@ -40688,7 +40688,7 @@ Setophaga coronata/auduboni,4,-103.57473,42.89685,2014-09-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.58481,42.85706,2021-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.0042,42.74487,2013-05-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,17,-103.01622,42.707165,2018-09-17,Pine Ridge / Oglala
-Setophaga coronata/auduboni,4,-103.57169,42.698480000000004,2017-06-17,Pine Ridge / Oglala
+Setophaga coronata/auduboni,4,-103.57169,42.69848,2017-06-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.01622,42.707165,2018-10-07,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-100.90545,42.64485,2015-06-08,McKelvie
 Setophaga coronata/auduboni,8,-103.01622,42.707165,2020-08-30,Pine Ridge / Oglala
@@ -40842,20 +40842,20 @@ Setophaga coronata/auduboni,1,-103.023254,42.709038,2016-10-14,Pine Ridge / Ogla
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2010-09-11,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.001076,42.717007,2014-08-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.01622,42.707165,2014-09-10,Pine Ridge / Oglala
-Setophaga coronata/auduboni,3,-103.57169,42.698480000000004,2017-06-17,Pine Ridge / Oglala
+Setophaga coronata/auduboni,3,-103.57169,42.69848,2017-06-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,19,-103.01622,42.707165,2010-09-27,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.01622,42.707165,2010-09-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,10,-103.01622,42.707165,2018-09-13,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2020-08-26,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-102.993866,42.685543,2012-07-28,Pine Ridge / Oglala
-Setophaga coronata/auduboni,4,-103.57169,42.698480000000004,2020-05-21,Pine Ridge / Oglala
+Setophaga coronata/auduboni,4,-103.57169,42.69848,2020-05-21,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.023254,42.709038,2016-10-07,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.3164,42.631763,2006-06-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.023254,42.709038,2015-09-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2012-12-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2018-09-12,Pine Ridge / Oglala
 Setophaga coronata/auduboni,12,-103.01622,42.707165,2018-10-12,Pine Ridge / Oglala
-Setophaga coronata/auduboni,30,-103.57169,42.698480000000004,2020-05-22,Pine Ridge / Oglala
+Setophaga coronata/auduboni,30,-103.57169,42.69848,2020-05-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2010-09-03,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-103.0042,42.74487,2018-05-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.51912,42.95372,2021-06-19,Pine Ridge / Oglala
@@ -40899,7 +40899,7 @@ Setophaga coronata/auduboni,4,-103.01622,42.707165,2021-07-24,Pine Ridge / Oglal
 Setophaga coronata/auduboni,2,-103.59236,42.95947,2009-09-30,Pine Ridge / Oglala
 Setophaga coronata/auduboni,16,-103.01622,42.707165,2021-09-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.20196,42.639263,2017-10-23,Pine Ridge / Oglala
-Setophaga coronata/auduboni,3,-103.57169,42.698480000000004,2020-05-21,Pine Ridge / Oglala
+Setophaga coronata/auduboni,3,-103.57169,42.69848,2020-05-21,Pine Ridge / Oglala
 Setophaga coronata/auduboni,21,-100.90545,42.64485,2015-06-08,McKelvie
 Setophaga coronata/auduboni,7,-100.29788,41.901337,2011-05-19,Bessey
 Setophaga coronata/auduboni,20,-103.01622,42.707165,2010-09-27,Pine Ridge / Oglala
@@ -40969,7 +40969,7 @@ Setophaga coronata/auduboni,2,-102.958786,42.710506,2019-05-27,Pine Ridge / Ogla
 Setophaga coronata/auduboni,7,-103.023254,42.709038,2016-09-30,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.023254,42.709038,2016-10-04,Pine Ridge / Oglala
 Setophaga coronata/auduboni,8,-103.023254,42.709038,2016-08-27,Pine Ridge / Oglala
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2020-05-31,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2020-05-31,Pine Ridge / Oglala
 Setophaga coronata/auduboni,10,-103.46541,42.920353,2020-06-12,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2018-10-05,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.01622,42.707165,2016-09-07,Pine Ridge / Oglala
@@ -41019,7 +41019,7 @@ Setophaga coronata/auduboni,12,-103.01622,42.707165,2017-05-28,Pine Ridge / Ogla
 Setophaga coronata/auduboni,6,-103.023254,42.709038,2015-08-26,Pine Ridge / Oglala
 Setophaga coronata/auduboni,11,-100.32603,41.862217,2021-09-01,Bessey
 Setophaga coronata/auduboni,18,-103.01622,42.707165,2018-09-10,Pine Ridge / Oglala
-Setophaga coronata/auduboni,20,-103.1904,42.594970000000004,2020-05-06,Pine Ridge / Oglala
+Setophaga coronata/auduboni,20,-103.1904,42.59497,2020-05-06,Pine Ridge / Oglala
 Setophaga coronata/auduboni,100,-103.58481,42.85706,2010-05-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2020-09-11,Pine Ridge / Oglala
 Setophaga coronata/auduboni,11,-103.3164,42.631763,2017-10-15,Pine Ridge / Oglala
@@ -41076,7 +41076,7 @@ Setophaga coronata/auduboni,9,-103.01622,42.707165,2020-10-02,Pine Ridge / Oglal
 Setophaga coronata/auduboni,4,-103.0042,42.74487,2017-09-12,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-100.298355,41.899227,2009-05-11,Bessey
 Setophaga coronata/auduboni,8,-103.023254,42.709038,2015-09-24,Pine Ridge / Oglala
-Setophaga coronata/auduboni,6,-103.57169,42.698480000000004,2020-05-22,Pine Ridge / Oglala
+Setophaga coronata/auduboni,6,-103.57169,42.69848,2020-05-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,8,-103.023254,42.709038,2016-09-09,Pine Ridge / Oglala
 Setophaga coronata/auduboni,8,-103.023254,42.709038,2016-10-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-101.152374,42.689964,2016-05-18,McKelvie
@@ -41103,7 +41103,7 @@ Setophaga coronata/auduboni,1,-100.30194,41.895855,2020-09-15,Bessey
 Setophaga coronata/auduboni,1,-103.00452,42.696358,2020-07-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.20196,42.639263,2009-04-29,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.023254,42.709038,2016-09-16,Pine Ridge / Oglala
-Setophaga coronata/auduboni,9,-103.57169,42.698480000000004,2021-01-16,Pine Ridge / Oglala
+Setophaga coronata/auduboni,9,-103.57169,42.69848,2021-01-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-101.0645,42.684937,2021-06-07,McKelvie
 Setophaga coronata/auduboni,4,-103.87509,42.95075,2018-05-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.49842,42.910927,2019-09-03,Pine Ridge / Oglala
@@ -41285,7 +41285,7 @@ Setophaga coronata/auduboni,5,-103.20196,42.639263,2013-09-18,Pine Ridge / Oglal
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2017-09-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,14,-103.01622,42.707165,2017-09-14,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-100.298355,41.899227,2011-05-11,Bessey
-Setophaga coronata/auduboni,40,-103.57169,42.698480000000004,2018-05-19,Pine Ridge / Oglala
+Setophaga coronata/auduboni,40,-103.57169,42.69848,2018-05-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.189285,42.622223,2006-06-14,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2010-09-21,Pine Ridge / Oglala
 Setophaga coronata/auduboni,12,-103.3164,42.631763,2020-06-20,Pine Ridge / Oglala
@@ -41345,7 +41345,7 @@ Setophaga coronata/auduboni,20,-103.02311,42.70892,2019-09-14,Pine Ridge / Oglal
 Setophaga coronata/auduboni,4,-100.9777,42.663654,2020-05-30,McKelvie
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2007-08-28,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-102.92507,42.814796,2009-04-30,Pine Ridge / Oglala
-Setophaga coronata/auduboni,8,-103.61571000000001,42.97341,2018-05-18,Pine Ridge / Oglala
+Setophaga coronata/auduboni,8,-103.61571,42.97341,2018-05-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.012,42.70647,2014-09-29,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.01622,42.707165,2010-09-12,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.00327,42.703796,2021-02-21,Pine Ridge / Oglala
@@ -41374,7 +41374,7 @@ Setophaga coronata/auduboni,6,-103.023254,42.709038,2014-09-10,Pine Ridge / Ogla
 Setophaga coronata/auduboni,8,-103.601845,42.81871,2020-07-06,Pine Ridge / Oglala
 Setophaga coronata/auduboni,9,-103.87253,42.941467,2019-06-14,Pine Ridge / Oglala
 Setophaga coronata/auduboni,550,-103.60153,42.828224,2021-04-10,Pine Ridge / Oglala
-Setophaga coronata/auduboni,4,-103.57169,42.698480000000004,2020-07-26,Pine Ridge / Oglala
+Setophaga coronata/auduboni,4,-103.57169,42.69848,2020-07-26,Pine Ridge / Oglala
 Setophaga coronata/auduboni,25,-103.023254,42.709038,2015-10-06,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-100.96043,42.65897,2019-06-11,McKelvie
 Setophaga coronata/auduboni,5,-103.01622,42.707165,2010-09-08,Pine Ridge / Oglala
@@ -41470,7 +41470,7 @@ Setophaga coronata/auduboni,5,-103.02343,42.70931,2020-06-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.58156,42.7908,2021-06-21,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-100.298355,41.899227,2020-07-26,Bessey
 Setophaga coronata/auduboni,3,-101.12257,42.70672,2020-05-19,McKelvie
-Setophaga coronata/auduboni,10,-103.57169,42.698480000000004,2018-06-23,Pine Ridge / Oglala
+Setophaga coronata/auduboni,10,-103.57169,42.69848,2018-06-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.01622,42.707165,2015-09-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2014-05-27,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.023254,42.709038,2014-09-25,Pine Ridge / Oglala
@@ -41483,7 +41483,7 @@ Setophaga coronata/auduboni,2,-103.00446,42.695778,2011-05-04,Pine Ridge / Oglal
 Setophaga coronata/auduboni,1,-103.0064,42.708073,2017-09-28,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2017-05-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,30,-102.998024,42.6778,2021-09-02,Pine Ridge / Oglala
-Setophaga coronata/auduboni,21,-103.53743,42.845363999999996,2020-11-28,Pine Ridge / Oglala
+Setophaga coronata/auduboni,21,-103.53743,42.845364,2020-11-28,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.023254,42.709038,2015-09-30,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-100.94137,42.6513,2021-06-06,McKelvie
 Setophaga coronata/auduboni,5,-103.01622,42.707165,2017-09-15,Pine Ridge / Oglala
@@ -41503,10 +41503,10 @@ Setophaga coronata/auduboni,12,-103.01622,42.707165,2019-09-08,Pine Ridge / Ogla
 Setophaga coronata/auduboni,7,-103.01622,42.707165,2011-05-04,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2018-09-27,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.01622,42.707165,1986-06-16,Pine Ridge / Oglala
-Setophaga coronata/auduboni,2,-103.57169,42.698480000000004,2020-05-30,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.57169,42.69848,2020-05-30,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.20196,42.639263,2017-05-30,Pine Ridge / Oglala
 Setophaga coronata/auduboni,9,-103.00794,42.69542,2020-05-25,Pine Ridge / Oglala
-Setophaga coronata/auduboni,2,-103.57169,42.698480000000004,2018-05-19,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.57169,42.69848,2018-05-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.01622,42.707165,2013-09-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.65175,42.987507,2018-07-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,12,-103.49842,42.910927,2021-03-08,Pine Ridge / Oglala
@@ -41560,7 +41560,7 @@ Setophaga coronata/auduboni,6,-101.15515,42.68946,2014-06-19,McKelvie
 Setophaga coronata/auduboni,1,-103.60405,42.945827,2019-08-30,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.01436,42.71574,2016-08-21,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.57592,42.81656,2021-02-22,Pine Ridge / Oglala
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2019-02-02,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2019-02-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-103.01622,42.707165,2016-09-13,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.39954,42.803116,2021-03-08,Pine Ridge / Oglala
 Setophaga coronata/auduboni,11,-103.01622,42.707165,2021-06-28,Pine Ridge / Oglala
@@ -41656,7 +41656,7 @@ Setophaga coronata/auduboni,6,-103.023254,42.709038,2016-10-11,Pine Ridge / Ogla
 Setophaga coronata/auduboni,8,-103.57369,42.900314,2017-05-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,12,-103.44718,42.908665,2017-05-26,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.54756,42.85606,2020-12-05,Pine Ridge / Oglala
-Setophaga coronata/auduboni,10,-103.57169,42.698480000000004,2020-05-22,Pine Ridge / Oglala
+Setophaga coronata/auduboni,10,-103.57169,42.69848,2020-05-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.0042,42.74487,2020-09-10,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.0042,42.74487,2013-10-10,Pine Ridge / Oglala
 Setophaga coronata/auduboni,14,-101.0645,42.684937,2017-05-24,McKelvie
@@ -41738,7 +41738,7 @@ Setophaga coronata/auduboni,3,-103.01622,42.707165,2016-10-14,Pine Ridge / Oglal
 Setophaga coronata/auduboni,3,-103.023254,42.709038,2014-09-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-100.94137,42.6513,2021-06-06,McKelvie
 Setophaga coronata/auduboni,2,-103.45156,42.526615,2016-04-10,Pine Ridge / Oglala
-Setophaga coronata/auduboni,1,-103.01032,42.709815999999996,2020-09-19,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.01032,42.709816,2020-09-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.01622,42.707165,2017-09-14,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-101.17035,42.77121,2013-10-24,McKelvie
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2020-10-01,Pine Ridge / Oglala
@@ -41764,7 +41764,7 @@ Setophaga coronata/auduboni,4,-103.01622,42.707165,2018-07-08,Pine Ridge / Oglal
 Setophaga coronata/auduboni,5,-101.15515,42.68946,2011-06-05,McKelvie
 Setophaga coronata/auduboni,8,-100.298355,41.899227,2021-07-17,Bessey
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2013-09-03,Pine Ridge / Oglala
-Setophaga coronata/auduboni,4,-103.57169,42.698480000000004,2020-05-22,Pine Ridge / Oglala
+Setophaga coronata/auduboni,4,-103.57169,42.69848,2020-05-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-100.298355,41.899227,2020-07-26,Bessey
 Setophaga coronata/auduboni,3,-103.20196,42.639263,2017-10-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,20,-103.01622,42.707165,2015-08-18,Pine Ridge / Oglala
@@ -41831,7 +41831,7 @@ Setophaga coronata/auduboni,6,-103.18896,42.630383,2017-10-23,Pine Ridge / Oglal
 Setophaga coronata/auduboni,7,-103.126015,42.647507,2020-07-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,12,-103.01622,42.707165,2013-09-24,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.58481,42.85706,2020-07-16,Pine Ridge / Oglala
-Setophaga coronata/auduboni,3,-103.57169,42.698480000000004,2018-05-19,Pine Ridge / Oglala
+Setophaga coronata/auduboni,3,-103.57169,42.69848,2018-05-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2018-09-11,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.023254,42.709038,2016-10-11,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-100.38071,41.85729,1987-10-03,Bessey
@@ -41957,7 +41957,7 @@ Setophaga coronata/auduboni,11,-100.298355,41.899227,2015-11-01,Bessey
 Setophaga coronata/auduboni,6,-103.023254,42.709038,2016-08-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.5709,42.98028,2017-08-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2020-07-24,Pine Ridge / Oglala
-Setophaga coronata/auduboni,3,-103.57169,42.698480000000004,2018-05-18,Pine Ridge / Oglala
+Setophaga coronata/auduboni,3,-103.57169,42.69848,2018-05-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2016-05-29,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2018-06-04,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.00289,42.704185,2021-05-10,Pine Ridge / Oglala
@@ -42039,7 +42039,7 @@ Setophaga coronata/auduboni,2,-103.0096,42.709675,2021-03-06,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.023254,42.709038,2015-08-30,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.023254,42.709038,2014-09-28,Pine Ridge / Oglala
 Setophaga coronata/auduboni,43,-103.01622,42.707165,2010-09-14,Pine Ridge / Oglala
-Setophaga coronata/auduboni,2,-103.57169,42.698480000000004,2017-10-01,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.57169,42.69848,2017-10-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.57395,42.69714,2019-01-20,Pine Ridge / Oglala
 Setophaga coronata/auduboni,8,-103.01622,42.707165,2010-09-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,8,-103.0042,42.74487,2016-06-30,Pine Ridge / Oglala
@@ -42104,7 +42104,7 @@ Setophaga coronata/auduboni,6,-103.51912,42.95372,2021-06-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.01622,42.707165,2017-09-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.03779,42.71529,2016-07-09,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.015434,42.704277,2014-09-22,Pine Ridge / Oglala
-Setophaga coronata/auduboni,20,-103.57169,42.698480000000004,2019-08-25,Pine Ridge / Oglala
+Setophaga coronata/auduboni,20,-103.57169,42.69848,2019-08-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-100.33928,41.88671,2018-05-24,Bessey
 Setophaga coronata/auduboni,1,-103.0027,42.704353,2021-02-04,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.126015,42.647507,2020-07-01,Pine Ridge / Oglala
@@ -42169,7 +42169,7 @@ Setophaga coronata/auduboni,6,-103.01622,42.707165,2018-09-10,Pine Ridge / Oglal
 Setophaga coronata/auduboni,2,-103.00794,42.69542,2020-05-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.01622,42.707165,2019-08-31,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-103.023254,42.709038,2016-09-09,Pine Ridge / Oglala
-Setophaga coronata/auduboni,3,-103.57169,42.698480000000004,2020-11-28,Pine Ridge / Oglala
+Setophaga coronata/auduboni,3,-103.57169,42.69848,2020-11-28,Pine Ridge / Oglala
 Setophaga coronata/auduboni,12,-103.20196,42.639263,2017-09-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-100.51138,41.971043,2020-05-31,Bessey
 Setophaga coronata/auduboni,3,-103.42702,42.88142,2016-05-23,Pine Ridge / Oglala
@@ -42327,13 +42327,13 @@ Setophaga coronata/auduboni,15,-103.01622,42.707165,2017-08-19,Pine Ridge / Ogla
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2010-09-12,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.2617,42.64141,2014-09-09,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.01622,42.707165,2016-06-30,Pine Ridge / Oglala
-Setophaga coronata/auduboni,9,-103.57169,42.698480000000004,2017-10-01,Pine Ridge / Oglala
+Setophaga coronata/auduboni,9,-103.57169,42.69848,2017-10-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-100.29933,41.899693,2014-07-21,Bessey
 Setophaga coronata/auduboni,3,-103.53622,42.904152,2018-05-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2021-05-24,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-102.99676,42.75754,2020-05-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-102.99676,42.75754,2020-05-25,Pine Ridge / Oglala
-Setophaga coronata/auduboni,2,-103.01032,42.709815999999996,2020-09-19,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.01032,42.709816,2020-09-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,18,-103.20196,42.639263,2020-08-31,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-100.38071,41.85729,2010-04-21,Bessey
 Setophaga coronata/auduboni,4,-103.023254,42.709038,2016-09-15,Pine Ridge / Oglala
@@ -42380,7 +42380,7 @@ Setophaga coronata/auduboni,2,-100.298355,41.899227,2009-05-09,Bessey
 Setophaga coronata/auduboni,13,-103.01622,42.707165,2011-05-13,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.001854,42.681694,2018-03-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.49842,42.910927,2004-06-23,Pine Ridge / Oglala
-Setophaga coronata/auduboni,4,-103.57169,42.698480000000004,2017-10-01,Pine Ridge / Oglala
+Setophaga coronata/auduboni,4,-103.57169,42.69848,2017-10-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,12,-103.01622,42.707165,2018-10-07,Pine Ridge / Oglala
 Setophaga coronata/auduboni,35,-103.224266,42.606678,2020-05-06,Pine Ridge / Oglala
 Setophaga coronata/auduboni,79,-103.01622,42.707165,2018-10-05,Pine Ridge / Oglala
@@ -42423,8 +42423,8 @@ Setophaga coronata/auduboni,25,-100.29806,41.90144,2021-11-03,Bessey
 Setophaga coronata/auduboni,7,-103.394585,42.84311,2020-07-03,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-100.51138,41.971043,2021-03-20,Bessey
 Setophaga coronata/auduboni,30,-103.01622,42.707165,2010-08-20,Pine Ridge / Oglala
-Setophaga coronata/auduboni,3,-103.57169,42.698480000000004,2020-07-26,Pine Ridge / Oglala
-Setophaga coronata/auduboni,2,-103.57169,42.698480000000004,2018-06-22,Pine Ridge / Oglala
+Setophaga coronata/auduboni,3,-103.57169,42.69848,2020-07-26,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.57169,42.69848,2018-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,8,-103.01622,42.707165,2019-08-28,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.023254,42.709038,2014-09-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.50873,42.958035,2014-08-02,Pine Ridge / Oglala
@@ -42435,7 +42435,7 @@ Setophaga coronata/auduboni,1,-100.466194,41.86745,2014-04-13,Bessey
 Setophaga coronata/auduboni,4,-103.58481,42.85706,2020-08-04,Pine Ridge / Oglala
 Setophaga coronata/auduboni,10,-100.298355,41.899227,2012-04-06,Bessey
 Setophaga coronata/auduboni,2,-103.51112,42.922745,2011-05-16,Pine Ridge / Oglala
-Setophaga coronata/auduboni,3,-103.61571000000001,42.97341,2018-05-18,Pine Ridge / Oglala
+Setophaga coronata/auduboni,3,-103.61571,42.97341,2018-05-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-103.58481,42.85706,2021-06-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-100.298355,41.899227,2019-06-02,Bessey
 Setophaga coronata/auduboni,8,-103.023254,42.709038,2015-09-12,Pine Ridge / Oglala
@@ -42482,11 +42482,11 @@ Setophaga coronata/auduboni,21,-103.0042,42.74487,2021-05-14,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.023254,42.709038,2014-09-27,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-100.38071,41.85729,2018-05-17,Bessey
 Setophaga coronata/auduboni,NA,-103.01622,42.707165,2021-08-15,Pine Ridge / Oglala
-Setophaga coronata/auduboni,5,-103.57169,42.698480000000004,2020-07-26,Pine Ridge / Oglala
+Setophaga coronata/auduboni,5,-103.57169,42.69848,2020-07-26,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.01622,42.707165,2018-09-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.01622,42.707165,2018-09-24,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.023254,42.709038,2016-10-13,Pine Ridge / Oglala
-Setophaga coronata/auduboni,5,-103.57169,42.698480000000004,2017-10-01,Pine Ridge / Oglala
+Setophaga coronata/auduboni,5,-103.57169,42.69848,2017-10-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-100.321526,41.88346,2015-07-04,Bessey
 Setophaga coronata/auduboni,2,-104.03829,42.98584,2011-05-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,16,-102.998024,42.6778,2021-01-29,Pine Ridge / Oglala
@@ -42534,7 +42534,7 @@ Setophaga coronata/auduboni,25,-103.023254,42.709038,2016-10-07,Pine Ridge / Ogl
 Setophaga coronata/auduboni,1,-100.36687,41.86919,2021-09-01,Bessey
 Setophaga coronata/auduboni,6,-103.023254,42.709038,2015-09-13,Pine Ridge / Oglala
 Setophaga coronata/auduboni,72,-103.01622,42.707165,2018-09-20,Pine Ridge / Oglala
-Setophaga coronata/auduboni,3,-103.57169,42.698480000000004,2020-05-30,Pine Ridge / Oglala
+Setophaga coronata/auduboni,3,-103.57169,42.69848,2020-05-30,Pine Ridge / Oglala
 Setophaga coronata/auduboni,26,-103.01622,42.707165,2018-08-29,Pine Ridge / Oglala
 Setophaga coronata/auduboni,30,-100.38071,41.85729,2015-05-17,Bessey
 Setophaga coronata/auduboni,2,-103.86163,42.998657,2021-07-28,Pine Ridge / Oglala
@@ -42579,7 +42579,7 @@ Setophaga coronata/auduboni,6,-103.02326,42.70902,2021-09-10,Pine Ridge / Oglala
 Setophaga coronata/auduboni,20,-103.45935,42.91911,2017-05-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-100.298355,41.899227,2016-07-01,Bessey
 Setophaga coronata/auduboni,4,-103.01622,42.707165,2016-09-29,Pine Ridge / Oglala
-Setophaga coronata/auduboni,4,-103.57169,42.698480000000004,2018-09-17,Pine Ridge / Oglala
+Setophaga coronata/auduboni,4,-103.57169,42.69848,2018-09-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.1286,42.650238,2016-06-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-100.94989,42.6979,2014-07-24,McKelvie
 Setophaga coronata/auduboni,3,-102.97976,42.725883,2014-09-07,Pine Ridge / Oglala
@@ -42641,7 +42641,7 @@ Setophaga coronata/auduboni,2,-103.51912,42.95372,2021-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-102.986664,42.75793,2017-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,16,-103.012,42.70647,2015-08-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.49842,42.910927,2021-06-02,Pine Ridge / Oglala
-Setophaga coronata/auduboni,12,-103.57169,42.698480000000004,2020-05-22,Pine Ridge / Oglala
+Setophaga coronata/auduboni,12,-103.57169,42.69848,2020-05-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-100.38071,41.85729,2009-09-24,Bessey
 Setophaga coronata/auduboni,7,-103.023254,42.709038,2015-10-09,Pine Ridge / Oglala
 Setophaga coronata/auduboni,11,-103.01622,42.707165,2020-09-09,Pine Ridge / Oglala
@@ -42715,7 +42715,7 @@ Setophaga coronata/auduboni,3,-103.20196,42.639263,2020-09-13,Pine Ridge / Oglal
 Setophaga coronata/auduboni,5,-100.298355,41.899227,2012-05-19,Bessey
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2021-08-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.01622,42.707165,2018-09-08,Pine Ridge / Oglala
-Setophaga coronata/auduboni,9,-103.57169,42.698480000000004,2020-08-16,Pine Ridge / Oglala
+Setophaga coronata/auduboni,9,-103.57169,42.69848,2020-08-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.6433,42.991905,2016-04-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.023254,42.709038,2014-09-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,12,-100.32239,41.905327,2015-06-16,Bessey
@@ -42771,7 +42771,7 @@ Setophaga coronata/auduboni,24,-103.01622,42.707165,2010-09-10,Pine Ridge / Ogla
 Setophaga coronata/auduboni,9,-103.20196,42.639263,2019-08-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.0042,42.74487,2018-10-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.01622,42.707165,2014-09-01,Pine Ridge / Oglala
-Setophaga coronata/auduboni,20,-103.01032,42.709815999999996,2020-09-19,Pine Ridge / Oglala
+Setophaga coronata/auduboni,20,-103.01032,42.709816,2020-09-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.01622,42.707165,2018-05-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,25,-100.466194,41.86745,2014-04-13,Bessey
 Setophaga coronata/auduboni,16,-103.224266,42.606678,2020-05-06,Pine Ridge / Oglala
@@ -42792,7 +42792,7 @@ Setophaga coronata/auduboni,40,-103.01622,42.707165,2018-09-11,Pine Ridge / Ogla
 Setophaga coronata/auduboni,1,-100.38071,41.85729,1995-10-07,Bessey
 Setophaga coronata/auduboni,6,-100.38071,41.85729,2010-07-28,Bessey
 Setophaga coronata/auduboni,NA,-100.361786,41.905216,2003-08-31,Bessey
-Setophaga coronata/auduboni,3,-103.57169,42.698480000000004,2020-01-04,Pine Ridge / Oglala
+Setophaga coronata/auduboni,3,-103.57169,42.69848,2020-01-04,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-103.01622,42.707165,2017-09-07,Pine Ridge / Oglala
 Setophaga coronata/auduboni,13,-100.94989,42.6979,2020-12-27,McKelvie
 Setophaga coronata/auduboni,2,-103.023254,42.709038,2016-08-30,Pine Ridge / Oglala
@@ -42906,7 +42906,7 @@ Setophaga coronata/auduboni,1,-103.58481,42.85706,2010-09-04,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.02326,42.70902,2021-09-08,Pine Ridge / Oglala
 Setophaga coronata/auduboni,55,-103.20196,42.639263,2017-10-07,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2015-06-09,Pine Ridge / Oglala
-Setophaga coronata/auduboni,4,-103.57169,42.698480000000004,2019-08-25,Pine Ridge / Oglala
+Setophaga coronata/auduboni,4,-103.57169,42.69848,2019-08-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-102.9272,42.670048,2021-05-10,Pine Ridge / Oglala
 Setophaga coronata/auduboni,10,-100.51138,41.971043,2020-10-18,Bessey
 Setophaga coronata/auduboni,10,-103.01622,42.707165,2017-09-20,Pine Ridge / Oglala
@@ -42926,7 +42926,7 @@ Setophaga coronata/auduboni,8,-103.0042,42.74487,2015-09-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-103.29503,42.60551,2021-09-05,Pine Ridge / Oglala
 Setophaga coronata/auduboni,19,-100.30805,41.90036,2014-06-18,Bessey
 Setophaga coronata/auduboni,6,-100.298355,41.899227,2016-04-13,Bessey
-Setophaga coronata/auduboni,3,-103.57169,42.698480000000004,2020-08-16,Pine Ridge / Oglala
+Setophaga coronata/auduboni,3,-103.57169,42.69848,2020-08-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-101.13304,42.70163,2021-06-03,McKelvie
 Setophaga coronata/auduboni,5,-103.51872,42.905254,2021-06-21,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.01622,42.707165,2020-09-04,Pine Ridge / Oglala
@@ -42942,7 +42942,7 @@ Setophaga coronata/auduboni,2,-103.01622,42.707165,2019-09-09,Pine Ridge / Oglal
 Setophaga coronata/auduboni,2,-101.17035,42.77121,2013-11-14,McKelvie
 Setophaga coronata/auduboni,4,-103.0042,42.74487,2014-05-24,Pine Ridge / Oglala
 Setophaga coronata/auduboni,23,-102.91584,42.778248,2013-12-22,Pine Ridge / Oglala
-Setophaga coronata/auduboni,2,-103.57169,42.698480000000004,2018-09-17,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.57169,42.69848,2018-09-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,15,-103.01622,42.707165,2018-09-04,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-100.38071,41.85729,1999-12-27,Bessey
 Setophaga coronata/auduboni,2,-103.51912,42.95372,2021-06-09,Pine Ridge / Oglala
@@ -42966,7 +42966,7 @@ Setophaga coronata/auduboni,1,-100.34066,41.895348,2020-05-28,Bessey
 Setophaga coronata/auduboni,2,-103.023254,42.709038,2015-09-28,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.01622,42.707165,2019-07-14,Pine Ridge / Oglala
 Setophaga coronata/auduboni,22,-103.50207,42.951233,2019-06-16,Pine Ridge / Oglala
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2018-07-30,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2018-07-30,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.00687,42.755207,2021-02-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2016-05-24,Pine Ridge / Oglala
 Setophaga coronata/auduboni,12,-103.01622,42.707165,2020-07-16,Pine Ridge / Oglala
@@ -43008,7 +43008,7 @@ Setophaga coronata/auduboni,2,-103.51136,42.921646,2021-05-06,Pine Ridge / Oglal
 Setophaga coronata/auduboni,5,-103.54554,42.862755,2019-08-24,Pine Ridge / Oglala
 Setophaga coronata/auduboni,9,-103.01622,42.707165,2018-07-08,Pine Ridge / Oglala
 Setophaga coronata/auduboni,8,-103.01622,42.707165,2017-08-02,Pine Ridge / Oglala
-Setophaga coronata/auduboni,8,-103.57169,42.698480000000004,2019-08-25,Pine Ridge / Oglala
+Setophaga coronata/auduboni,8,-103.57169,42.69848,2019-08-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,12,-103.54554,42.862755,2020-05-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.58481,42.85706,2017-09-21,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2014-09-20,Pine Ridge / Oglala
@@ -43092,7 +43092,7 @@ Setophaga coronata/auduboni,3,-103.023254,42.709038,2016-10-04,Pine Ridge / Ogla
 Setophaga coronata/auduboni,4,-103.0042,42.74487,2020-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,8,-103.3164,42.631763,2015-06-10,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-101.00064,42.665604,2021-06-02,McKelvie
-Setophaga coronata/auduboni,4,-103.57169,42.698480000000004,2020-11-28,Pine Ridge / Oglala
+Setophaga coronata/auduboni,4,-103.57169,42.69848,2020-11-28,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-100.51138,41.971043,2000-04-01,Bessey
 Setophaga coronata/auduboni,5,-103.6433,42.991905,2016-04-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-103.023254,42.709038,2014-09-26,Pine Ridge / Oglala
@@ -43134,7 +43134,7 @@ Setophaga coronata/auduboni,1,-103.023254,42.709038,2014-09-14,Pine Ridge / Ogla
 Setophaga coronata/auduboni,4,-103.010895,42.711555,2015-09-04,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.00345,42.70367,2021-02-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.023254,42.709038,2016-09-06,Pine Ridge / Oglala
-Setophaga coronata/auduboni,6,-103.01032,42.709815999999996,2020-09-19,Pine Ridge / Oglala
+Setophaga coronata/auduboni,6,-103.01032,42.709816,2020-09-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2019-09-08,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-103.01436,42.71574,2016-08-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,8,-103.023254,42.709038,2016-09-19,Pine Ridge / Oglala
@@ -43147,7 +43147,7 @@ Setophaga coronata/auduboni,2,-100.30405,41.900963,2021-05-16,Bessey
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2019-06-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-103.023254,42.709038,2015-09-24,Pine Ridge / Oglala
 Setophaga coronata/auduboni,14,-103.29503,42.60551,2021-07-04,Pine Ridge / Oglala
-Setophaga coronata/auduboni,5,-103.57169,42.698480000000004,2017-09-03,Pine Ridge / Oglala
+Setophaga coronata/auduboni,5,-103.57169,42.69848,2017-09-03,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.51912,42.95372,2021-05-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-102.998024,42.6778,2020-06-07,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-103.023254,42.709038,2016-08-22,Pine Ridge / Oglala
@@ -43164,7 +43164,7 @@ Setophaga coronata/auduboni,40,-103.01622,42.707165,2018-10-05,Pine Ridge / Ogla
 Setophaga coronata/auduboni,4,-103.01436,42.71574,2015-10-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,13,-103.01622,42.707165,2020-03-29,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-102.998024,42.6778,2016-09-01,Pine Ridge / Oglala
-Setophaga coronata/auduboni,3,-103.57169,42.698480000000004,2018-06-23,Pine Ridge / Oglala
+Setophaga coronata/auduboni,3,-103.57169,42.69848,2018-06-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,35,-100.51138,41.971043,2020-10-18,Bessey
 Setophaga coronata/auduboni,1,-103.60143,42.977104,2011-07-31,Pine Ridge / Oglala
 Setophaga coronata/auduboni,9,-103.01622,42.707165,2017-09-20,Pine Ridge / Oglala
@@ -43232,7 +43232,7 @@ Setophaga coronata/auduboni,2,-100.298355,41.899227,2017-03-02,Bessey
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2014-09-10,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.55491,42.801773,2021-05-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.023254,42.709038,2016-10-05,Pine Ridge / Oglala
-Setophaga coronata/auduboni,4,-103.57169,42.698480000000004,2018-06-23,Pine Ridge / Oglala
+Setophaga coronata/auduboni,4,-103.57169,42.69848,2018-06-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2018-06-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.530304,42.967297,2020-06-12,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.023254,42.709038,2015-08-24,Pine Ridge / Oglala
@@ -43341,12 +43341,12 @@ Setophaga coronata/auduboni,1,-103.01622,42.707165,2010-09-15,Pine Ridge / Oglal
 Setophaga coronata/auduboni,2,-103.58481,42.85706,2018-05-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.61887,42.97219,2020-12-08,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.023254,42.709038,2015-08-28,Pine Ridge / Oglala
-Setophaga coronata/auduboni,3,-103.57169,42.698480000000004,2017-09-03,Pine Ridge / Oglala
+Setophaga coronata/auduboni,3,-103.57169,42.69848,2017-09-03,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-100.298355,41.899227,2017-06-05,Bessey
 Setophaga coronata/auduboni,4,-103.01622,42.707165,2021-08-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,10,-103.52617,42.960384,2018-05-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-100.38071,41.85729,2012-07-17,Bessey
-Setophaga coronata/auduboni,1,-103.57169,42.698480000000004,2017-10-07,Pine Ridge / Oglala
+Setophaga coronata/auduboni,1,-103.57169,42.69848,2017-10-07,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.0042,42.74487,2021-06-26,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-101.15546,42.68949,2021-06-03,McKelvie
 Setophaga coronata/auduboni,9,-103.01622,42.707165,2018-10-12,Pine Ridge / Oglala
@@ -43365,7 +43365,7 @@ Setophaga coronata/auduboni,14,-103.01622,42.707165,2010-09-25,Pine Ridge / Ogla
 Setophaga coronata/auduboni,4,-103.023254,42.709038,2016-09-24,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.20196,42.639263,2016-09-09,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.01622,42.707165,2010-08-20,Pine Ridge / Oglala
-Setophaga coronata/auduboni,29,-103.1904,42.594970000000004,2020-05-06,Pine Ridge / Oglala
+Setophaga coronata/auduboni,29,-103.1904,42.59497,2020-05-06,Pine Ridge / Oglala
 Setophaga coronata/auduboni,8,-103.01622,42.707165,2017-08-31,Pine Ridge / Oglala
 Setophaga coronata/auduboni,8,-103.61265,42.968914,2020-06-10,Pine Ridge / Oglala
 Setophaga coronata/auduboni,20,-100.38071,41.85729,2011-03-23,Bessey
@@ -43400,12 +43400,12 @@ Setophaga coronata/auduboni,2,-103.023254,42.709038,2014-09-13,Pine Ridge / Ogla
 Setophaga coronata/auduboni,16,-103.01622,42.707165,2010-09-13,Pine Ridge / Oglala
 Setophaga coronata/auduboni,24,-103.01622,42.707165,2018-09-21,Pine Ridge / Oglala
 Setophaga coronata/auduboni,10,-103.23441,42.616795,2019-06-15,Pine Ridge / Oglala
-Setophaga coronata/auduboni,3,-103.57169,42.698480000000004,1999-06-22,Pine Ridge / Oglala
+Setophaga coronata/auduboni,3,-103.57169,42.69848,1999-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.023254,42.709038,2016-10-07,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.023254,42.709038,2016-09-06,Pine Ridge / Oglala
 Setophaga coronata/auduboni,20,-103.01622,42.707165,2014-09-04,Pine Ridge / Oglala
 Setophaga coronata/auduboni,10,-103.57331,42.699944,2010-08-20,Pine Ridge / Oglala
-Setophaga coronata/auduboni,7,-103.57169,42.698480000000004,2020-05-22,Pine Ridge / Oglala
+Setophaga coronata/auduboni,7,-103.57169,42.69848,2020-05-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-103.87676,42.973885,2007-08-13,Pine Ridge / Oglala
 Setophaga coronata/auduboni,11,-100.38071,41.85729,2017-06-03,Bessey
 Setophaga coronata/auduboni,15,-103.3164,42.631763,2017-10-15,Pine Ridge / Oglala
@@ -43438,12 +43438,12 @@ Setophaga coronata/auduboni,3,-103.876465,42.92626,2014-06-12,Pine Ridge / Oglal
 Setophaga coronata/auduboni,2,-101.152374,42.689964,2016-05-18,McKelvie
 Setophaga coronata/auduboni,24,-103.18896,42.630383,2017-10-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.01622,42.707165,2018-09-17,Pine Ridge / Oglala
-Setophaga coronata/auduboni,8,-103.57169,42.698480000000004,2018-05-19,Pine Ridge / Oglala
+Setophaga coronata/auduboni,8,-103.57169,42.69848,2018-05-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.3164,42.631763,2020-12-30,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2021-01-29,Pine Ridge / Oglala
 Setophaga coronata/auduboni,11,-101.13304,42.70163,2019-06-12,McKelvie
 Setophaga coronata/auduboni,6,-103.57168,42.69851,2016-05-31,Pine Ridge / Oglala
-Setophaga coronata/auduboni,2,-103.57169,42.698480000000004,2020-11-28,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.57169,42.69848,2020-11-28,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.01622,42.707165,2015-09-27,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-100.94989,42.6979,2021-11-12,McKelvie
 Setophaga coronata/auduboni,2,-103.42799,42.88041,2015-04-24,Pine Ridge / Oglala
@@ -43546,7 +43546,7 @@ Setophaga coronata/auduboni,12,-103.01622,42.707165,2021-06-24,Pine Ridge / Ogla
 Setophaga coronata/auduboni,4,-103.0042,42.74487,2013-06-05,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.01436,42.71574,2016-08-27,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.0042,42.74487,2011-11-08,Pine Ridge / Oglala
-Setophaga coronata/auduboni,10,-103.61571000000001,42.97341,2018-05-18,Pine Ridge / Oglala
+Setophaga coronata/auduboni,10,-103.61571,42.97341,2018-05-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-104.03829,42.98584,2011-05-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-102.91057,42.758915,2017-06-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,35,-103.01622,42.707165,2010-09-07,Pine Ridge / Oglala
@@ -43871,14 +43871,14 @@ Setophaga coronata/auduboni,8,-102.930016,42.717472,2021-08-21,Pine Ridge / Ogla
 Setophaga coronata/auduboni,5,-103.39954,42.803116,2021-05-11,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-101.0645,42.684937,2017-05-24,McKelvie
 Setophaga coronata/auduboni,11,-101.026024,42.670002,2021-08-18,McKelvie
-Setophaga coronata/auduboni,2,-103.53743,42.845363999999996,2020-11-28,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.53743,42.845364,2020-11-28,Pine Ridge / Oglala
 Setophaga coronata/auduboni,13,-103.01622,42.707165,2016-09-07,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.01622,42.707165,2010-09-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.58481,42.85706,2021-06-27,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.20196,42.639263,2017-02-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.20196,42.639263,2016-09-09,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-100.313614,41.87228,2012-05-19,Bessey
-Setophaga coronata/auduboni,NA,-102.99228599999999,42.743872,2022-06-27,Pine Ridge / Oglala
+Setophaga coronata/auduboni,NA,-102.992286,42.743872,2022-06-27,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.010125,42.706642,2022-09-10,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.402089,42.835509,2020-03-21,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.589452,42.853546,2018-09-17,Pine Ridge / Oglala
@@ -43904,7 +43904,7 @@ Setophaga coronata/auduboni,20,-102.953224,42.726734,2020-06-23,Pine Ridge / Ogl
 Setophaga coronata/auduboni,17,-103.58481,42.85706,2020-05-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,9,-100.38071,41.85729,2012-05-05,Bessey
 Setophaga coronata/auduboni,1,-103.5709,42.98028,2017-08-22,Pine Ridge / Oglala
-Setophaga coronata/auduboni,24,-103.57169,42.698480000000004,2020-08-16,Pine Ridge / Oglala
+Setophaga coronata/auduboni,24,-103.57169,42.69848,2020-08-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.023254,42.709038,2014-09-10,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2010-09-14,Pine Ridge / Oglala
 Setophaga coronata/auduboni,50,-100.298355,41.899227,2013-10-11,Bessey
@@ -43954,7 +43954,7 @@ Setophaga coronata/auduboni,3,-103.58156,42.7908,2021-06-21,Pine Ridge / Oglala
 Setophaga coronata/auduboni,20,-103.2617,42.64141,2013-08-04,Pine Ridge / Oglala
 Setophaga coronata/auduboni,22,-103.2617,42.64141,2021-07-04,Pine Ridge / Oglala
 Setophaga coronata/auduboni,20,-103.01622,42.707165,2018-10-07,Pine Ridge / Oglala
-Setophaga coronata/auduboni,5,-103.57169,42.698480000000004,1999-06-22,Pine Ridge / Oglala
+Setophaga coronata/auduboni,5,-103.57169,42.69848,1999-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-100.32239,41.905327,2015-06-16,Bessey
 Setophaga coronata/auduboni,40,-103.01436,42.71574,2015-09-04,Pine Ridge / Oglala
 Setophaga coronata/auduboni,9,-103.00454,42.696423,2021-06-02,Pine Ridge / Oglala
@@ -44004,7 +44004,7 @@ Setophaga coronata/auduboni,15,-103.0042,42.74487,2021-09-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-100.29994,41.90041,2020-05-27,Bessey
 Setophaga coronata/auduboni,4,-103.02326,42.70902,2021-09-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-103.3164,42.631763,2020-12-30,Pine Ridge / Oglala
-Setophaga coronata/auduboni,3,-103.07470000000001,42.6743,2019-06-19,Pine Ridge / Oglala
+Setophaga coronata/auduboni,3,-103.0747,42.6743,2019-06-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.010849,42.712107,2019-05-12,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-102.99558,42.747041,2022-06-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.007722,42.698143,2022-02-07,Pine Ridge / Oglala
@@ -44063,7 +44063,7 @@ Setophaga coronata/auduboni,4,-103.42702,42.88142,2016-05-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-103.01622,42.707165,2020-05-26,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.023254,42.709038,2016-09-29,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.02345,42.708912,2022-09-16,Pine Ridge / Oglala
-Setophaga coronata/auduboni,NA,-103.46591600000001,42.920004,2020-05-22,Pine Ridge / Oglala
+Setophaga coronata/auduboni,NA,-103.465916,42.920004,2020-05-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.58,42.8,1997-09-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.58,42.87,1997-09-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.6,42.85,2018-07-22,Pine Ridge / Oglala
@@ -44075,7 +44075,7 @@ Setophaga coronata/auduboni,4,-103.02343,42.70931,2020-06-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.01622,42.707165,2016-09-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2013-05-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.0042,42.74487,2021-07-04,Pine Ridge / Oglala
-Setophaga coronata/auduboni,7,-103.57169,42.698480000000004,2018-05-19,Pine Ridge / Oglala
+Setophaga coronata/auduboni,7,-103.57169,42.69848,2018-05-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2010-09-27,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-100.298355,41.899227,2019-06-01,Bessey
 Setophaga coronata/auduboni,13,-103.126015,42.647507,2020-07-01,Pine Ridge / Oglala
@@ -44276,7 +44276,7 @@ Setophaga coronata/auduboni,3,-100.38071,41.85729,2021-05-27,Bessey
 Setophaga coronata/auduboni,1,-103.02326,42.70902,2021-09-03,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.51964,42.965714,2018-08-11,Pine Ridge / Oglala
 Setophaga coronata/auduboni,9,-103.01622,42.707165,2017-05-31,Pine Ridge / Oglala
-Setophaga coronata/auduboni,6,-103.57169,42.698480000000004,2017-10-01,Pine Ridge / Oglala
+Setophaga coronata/auduboni,6,-103.57169,42.69848,2017-10-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2018-09-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.49842,42.910927,2021-05-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,32,-103.01622,42.707165,2017-08-19,Pine Ridge / Oglala
@@ -44291,7 +44291,7 @@ Setophaga coronata/auduboni,3,-100.29956,41.899723,2014-07-20,Bessey
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2019-11-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.023254,42.709038,2016-10-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,35,-103.01622,42.707165,2010-09-21,Pine Ridge / Oglala
-Setophaga coronata/auduboni,4,-103.57169,42.698480000000004,2020-05-30,Pine Ridge / Oglala
+Setophaga coronata/auduboni,4,-103.57169,42.69848,2020-05-30,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2021-04-03,Pine Ridge / Oglala
 Setophaga coronata/auduboni,15,-103.01622,42.707165,2018-10-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,8,-103.00406,42.69595,2020-06-10,Pine Ridge / Oglala
@@ -44302,16 +44302,16 @@ Setophaga coronata/auduboni,4,-103.08277,42.6853,2020-07-03,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.55487,42.80179,2019-05-09,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-100.51138,41.971043,2021-04-02,Bessey
 Setophaga coronata/auduboni,17,-103.0042,42.74487,2016-08-22,Pine Ridge / Oglala
-Setophaga coronata/auduboni,5,-103.57169,42.698480000000004,2021-01-16,Pine Ridge / Oglala
+Setophaga coronata/auduboni,5,-103.57169,42.69848,2021-01-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.57253,42.69908,2017-06-07,Pine Ridge / Oglala
-Setophaga coronata/auduboni,8,-103.57169,42.698480000000004,2020-11-28,Pine Ridge / Oglala
+Setophaga coronata/auduboni,8,-103.57169,42.69848,2020-11-28,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.01622,42.707165,2020-09-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.01622,42.707165,2020-09-05,Pine Ridge / Oglala
 Setophaga coronata/auduboni,24,-102.95323,42.71407,2020-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-102.998024,42.6778,2020-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.01622,42.707165,2020-10-14,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.01622,42.707165,2020-08-24,Pine Ridge / Oglala
-Setophaga coronata/auduboni,7,-103.57169,42.698480000000004,2021-01-16,Pine Ridge / Oglala
+Setophaga coronata/auduboni,7,-103.57169,42.69848,2021-01-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,12,-103.01622,42.707165,2019-06-11,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.87676,42.973885,2007-08-13,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.51112,42.922745,2010-05-16,Pine Ridge / Oglala
@@ -44348,10 +44348,10 @@ Setophaga coronata/auduboni,1,-103.59613,42.98981,2019-06-11,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.02326,42.70902,2021-09-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.01622,42.707165,2017-05-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.20196,42.639263,2020-09-13,Pine Ridge / Oglala
-Setophaga coronata/auduboni,3,-103.57169,42.698480000000004,2017-10-01,Pine Ridge / Oglala
+Setophaga coronata/auduboni,3,-103.57169,42.69848,2017-10-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.44718,42.908665,2019-06-20,Pine Ridge / Oglala
-Setophaga coronata/auduboni,16,-103.57169,42.698480000000004,1999-06-22,Pine Ridge / Oglala
-Setophaga coronata/auduboni,3,-103.57169,42.698480000000004,2019-08-25,Pine Ridge / Oglala
+Setophaga coronata/auduboni,16,-103.57169,42.69848,1999-06-22,Pine Ridge / Oglala
+Setophaga coronata/auduboni,3,-103.57169,42.69848,2019-08-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-100.33928,41.88671,2018-05-24,Bessey
 Setophaga coronata/auduboni,3,-103.023254,42.709038,2014-09-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-100.38071,41.85729,2011-04-29,Bessey
@@ -44415,7 +44415,7 @@ Setophaga coronata/auduboni,49,-103.01622,42.707165,2010-09-25,Pine Ridge / Ogla
 Setophaga coronata/auduboni,12,-103.540054,42.91559,2012-06-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,19,-100.90545,42.64485,2015-06-08,McKelvie
 Setophaga coronata/auduboni,12,-103.01622,42.707165,2021-06-17,Pine Ridge / Oglala
-Setophaga coronata/auduboni,45,-103.57169,42.698480000000004,2017-10-01,Pine Ridge / Oglala
+Setophaga coronata/auduboni,45,-103.57169,42.69848,2017-10-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2020-06-06,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.006386,42.74815,2021-04-05,Pine Ridge / Oglala
 Setophaga coronata/auduboni,18,-103.01622,42.707165,2018-09-15,Pine Ridge / Oglala
@@ -44517,10 +44517,10 @@ Setophaga coronata/auduboni,3,-103.03308,42.709644,2021-06-27,Pine Ridge / Oglal
 Setophaga coronata/auduboni,5,-103.01622,42.707165,2011-05-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,13,-103.01622,42.707165,2014-09-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.58481,42.85706,2018-07-20,Pine Ridge / Oglala
-Setophaga coronata/auduboni,16,-103.57169,42.698480000000004,2021-01-16,Pine Ridge / Oglala
+Setophaga coronata/auduboni,16,-103.57169,42.69848,2021-01-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.0042,42.74487,2021-06-28,Pine Ridge / Oglala
 Setophaga coronata/auduboni,13,-102.95323,42.71407,2020-06-22,Pine Ridge / Oglala
-Setophaga coronata/auduboni,NA,-103.57169,42.698480000000004,2020-08-16,Pine Ridge / Oglala
+Setophaga coronata/auduboni,NA,-103.57169,42.69848,2020-08-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.023254,42.709038,2014-09-27,Pine Ridge / Oglala
 Setophaga coronata/auduboni,48,-103.01622,42.707165,2018-08-29,Pine Ridge / Oglala
 Setophaga coronata/auduboni,8,-100.298355,41.899227,2020-07-10,Bessey
@@ -44584,7 +44584,7 @@ Setophaga coronata/auduboni,8,-100.38071,41.85729,2012-12-12,Bessey
 Setophaga coronata/auduboni,8,-103.20196,42.639263,2014-10-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-103.3164,42.631763,2006-06-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,10,-103.023254,42.709038,2016-10-01,Pine Ridge / Oglala
-Setophaga coronata/auduboni,7,-103.61571000000001,42.97341,2018-05-18,Pine Ridge / Oglala
+Setophaga coronata/auduboni,7,-103.61571,42.97341,2018-05-18,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.57862,42.88413,2021-01-02,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-100.96043,42.65897,2018-05-15,McKelvie
 Setophaga coronata/auduboni,6,-100.298355,41.899227,2017-04-07,Bessey
@@ -44618,7 +44618,7 @@ Setophaga coronata/auduboni,2,-103.02326,42.70902,2021-09-14,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.01622,42.707165,2021-08-24,Pine Ridge / Oglala
 Setophaga coronata/auduboni,10,-103.3164,42.631763,2014-09-09,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.01622,42.707165,2014-08-30,Pine Ridge / Oglala
-Setophaga coronata/auduboni,3,-103.57169,42.698480000000004,2020-05-22,Pine Ridge / Oglala
+Setophaga coronata/auduboni,3,-103.57169,42.69848,2020-05-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.51872,42.905254,2021-06-21,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.0042,42.74487,2021-03-29,Pine Ridge / Oglala
 Setophaga coronata/auduboni,10,-103.01622,42.707165,1986-06-12,Pine Ridge / Oglala
@@ -44643,7 +44643,7 @@ Setophaga coronata/auduboni,12,-103.3164,42.631763,2020-12-30,Pine Ridge / Oglal
 Setophaga coronata/auduboni,NA,-103.58481,42.85706,2002-05-24,Pine Ridge / Oglala
 Setophaga coronata/auduboni,12,-103.52836,42.840683,2017-09-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,11,-103.01622,42.707165,2018-05-20,Pine Ridge / Oglala
-Setophaga coronata/auduboni,8,-103.57169,42.698480000000004,2018-06-23,Pine Ridge / Oglala
+Setophaga coronata/auduboni,8,-103.57169,42.69848,2018-06-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.20196,42.639263,2019-07-07,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.01622,42.707165,2021-07-12,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.0042,42.74487,2021-05-15,Pine Ridge / Oglala
@@ -44694,7 +44694,7 @@ Setophaga coronata/auduboni,12,-103.01622,42.707165,2019-09-07,Pine Ridge / Ogla
 Setophaga coronata/auduboni,4,-103.189285,42.622223,2006-06-14,Pine Ridge / Oglala
 Setophaga coronata/auduboni,9,-103.01622,42.707165,2010-09-26,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-100.33866,41.890514,2016-06-13,Bessey
-Setophaga coronata/auduboni,7,-103.57169,42.698480000000004,2018-06-23,Pine Ridge / Oglala
+Setophaga coronata/auduboni,7,-103.57169,42.69848,2018-06-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.01622,42.707165,2020-10-14,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.01436,42.71574,2014-09-11,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.01436,42.71574,2016-09-27,Pine Ridge / Oglala
@@ -44732,7 +44732,7 @@ Setophaga coronata/auduboni,8,-103.51112,42.922745,2010-05-14,Pine Ridge / Oglal
 Setophaga coronata/auduboni,7,-103.39954,42.803116,2021-05-11,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-102.99824,42.67869,2015-09-10,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.01622,42.707165,2020-05-30,Pine Ridge / Oglala
-Setophaga coronata/auduboni,2,-103.07470000000001,42.6743,2019-06-19,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.0747,42.6743,2019-06-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,14,-103.55484,42.801807,2019-05-14,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2013-06-09,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-100.96043,42.65897,2019-06-11,McKelvie
@@ -44843,7 +44843,7 @@ Setophaga coronata/auduboni,9,-103.01622,42.707165,2019-09-08,Pine Ridge / Oglal
 Setophaga coronata/auduboni,8,-103.01622,42.707165,2014-08-30,Pine Ridge / Oglala
 Setophaga coronata/auduboni,30,-103.87253,42.941467,2019-06-14,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-102.99233,42.70872,2021-09-01,Pine Ridge / Oglala
-Setophaga coronata/auduboni,8,-103.57169,42.698480000000004,2020-07-26,Pine Ridge / Oglala
+Setophaga coronata/auduboni,8,-103.57169,42.69848,2020-07-26,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.56994,42.697662,2017-06-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.2617,42.64141,2021-11-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.023254,42.709038,2016-09-16,Pine Ridge / Oglala
@@ -44887,7 +44887,7 @@ Setophaga coronata/auduboni,2,-103.01622,42.707165,2019-09-01,Pine Ridge / Oglal
 Setophaga coronata/auduboni,4,-103.05493,42.6575,2017-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.01622,42.707165,2016-06-24,Pine Ridge / Oglala
 Setophaga coronata/auduboni,12,-103.01622,42.707165,2014-09-30,Pine Ridge / Oglala
-Setophaga coronata/auduboni,10,-103.57169,42.698480000000004,2019-08-25,Pine Ridge / Oglala
+Setophaga coronata/auduboni,10,-103.57169,42.69848,2019-08-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.5845,42.857826,2018-09-09,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-100.298355,41.899227,2014-10-04,Bessey
 Setophaga coronata/auduboni,1,-103.48306,42.933773,2019-07-18,Pine Ridge / Oglala
@@ -45012,7 +45012,7 @@ Setophaga coronata/auduboni,8,-103.023254,42.709038,2016-10-13,Pine Ridge / Ogla
 Setophaga coronata/auduboni,6,-100.29956,41.899723,2014-07-20,Bessey
 Setophaga coronata/auduboni,2,-100.38071,41.85729,1989-10-27,Bessey
 Setophaga coronata/auduboni,6,-103.01622,42.707165,2019-09-07,Pine Ridge / Oglala
-Setophaga coronata/auduboni,3,-103.57169,42.698480000000004,2021-04-28,Pine Ridge / Oglala
+Setophaga coronata/auduboni,3,-103.57169,42.69848,2021-04-28,Pine Ridge / Oglala
 Setophaga coronata/auduboni,11,-100.94989,42.6979,2020-12-27,McKelvie
 Setophaga coronata/auduboni,3,-103.00295,42.704166,2021-05-11,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.023254,42.709038,2014-08-30,Pine Ridge / Oglala
@@ -45092,10 +45092,10 @@ Setophaga coronata/auduboni,4,-102.92507,42.814796,2021-04-24,Pine Ridge / Oglal
 Setophaga coronata/auduboni,5,-100.298355,41.899227,2021-05-20,Bessey
 Setophaga coronata/auduboni,20,-103.01436,42.71574,2014-09-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,8,-102.998024,42.6778,2021-06-30,Pine Ridge / Oglala
-Setophaga coronata/auduboni,2,-103.57169,42.698480000000004,2018-07-30,Pine Ridge / Oglala
-Setophaga coronata/auduboni,6,-103.57169,42.698480000000004,2018-06-23,Pine Ridge / Oglala
+Setophaga coronata/auduboni,2,-103.57169,42.69848,2018-07-30,Pine Ridge / Oglala
+Setophaga coronata/auduboni,6,-103.57169,42.69848,2018-06-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.023254,42.709038,2014-09-18,Pine Ridge / Oglala
-Setophaga coronata/auduboni,29,-103.57169,42.698480000000004,2020-08-16,Pine Ridge / Oglala
+Setophaga coronata/auduboni,29,-103.57169,42.69848,2020-08-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,9,-103.01622,42.707165,2017-08-03,Pine Ridge / Oglala
 Setophaga coronata/auduboni,12,-103.023254,42.709038,2015-09-30,Pine Ridge / Oglala
 Setophaga coronata/auduboni,14,-103.01622,42.707165,2010-09-03,Pine Ridge / Oglala
@@ -45140,8 +45140,8 @@ Setophaga coronata/auduboni,4,-103.023254,42.709038,2015-08-27,Pine Ridge / Ogla
 Setophaga coronata/auduboni,45,-102.91584,42.778248,2013-12-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.58481,42.85706,2012-07-20,Pine Ridge / Oglala
 Setophaga coronata/auduboni,44,-103.01622,42.707165,2020-09-07,Pine Ridge / Oglala
-Setophaga coronata/auduboni,3,-103.57271,42.814113999999996,2021-04-03,Pine Ridge / Oglala
-Setophaga coronata/auduboni,13,-103.57169,42.698480000000004,2020-05-21,Pine Ridge / Oglala
+Setophaga coronata/auduboni,3,-103.57271,42.814114,2021-04-03,Pine Ridge / Oglala
+Setophaga coronata/auduboni,13,-103.57169,42.69848,2020-05-21,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-102.998024,42.6778,2021-07-11,Pine Ridge / Oglala
 Setophaga coronata/auduboni,14,-100.38071,41.85729,2010-04-20,Bessey
 Setophaga coronata/auduboni,12,-103.01436,42.71574,2016-09-27,Pine Ridge / Oglala
@@ -45175,7 +45175,7 @@ Setophaga coronata/auduboni,5,-103.01622,42.707165,2020-09-12,Pine Ridge / Oglal
 Setophaga coronata/auduboni,5,-103.60155,42.828487,2017-08-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-100.38071,41.85729,2017-05-29,Bessey
 Setophaga coronata/auduboni,3,-103.0042,42.74487,2021-06-24,Pine Ridge / Oglala
-Setophaga coronata/auduboni,6,-103.57169,42.698480000000004,2017-06-17,Pine Ridge / Oglala
+Setophaga coronata/auduboni,6,-103.57169,42.69848,2017-06-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.00643,42.713276,2018-09-03,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.99169,42.99146,2018-10-04,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.0042,42.74487,2013-10-10,Pine Ridge / Oglala
@@ -45213,7 +45213,7 @@ Setophaga coronata/auduboni,4,-103.0042,42.74487,2013-05-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-100.38071,41.85729,2010-04-21,Bessey
 Setophaga coronata/auduboni,3,-103.01285,42.759636,2019-09-07,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-102.97976,42.725883,2014-09-07,Pine Ridge / Oglala
-Setophaga coronata/auduboni,5,-103.57169,42.698480000000004,2019-08-25,Pine Ridge / Oglala
+Setophaga coronata/auduboni,5,-103.57169,42.69848,2019-08-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-104.01466,42.984062,2018-10-04,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-103.01622,42.707165,2010-09-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.023254,42.709038,2015-09-13,Pine Ridge / Oglala
@@ -45316,7 +45316,7 @@ Setophaga coronata/auduboni,6,-100.31311,41.842503,2021-10-11,Bessey
 Setophaga coronata/auduboni,8,-101.152374,42.689964,2016-05-18,McKelvie
 Setophaga coronata/auduboni,7,-103.023254,42.709038,2015-10-07,Pine Ridge / Oglala
 Setophaga coronata/auduboni,20,-103.01622,42.707165,2020-06-21,Pine Ridge / Oglala
-Setophaga coronata/auduboni,3,-103.57169,42.698480000000004,2021-05-27,Pine Ridge / Oglala
+Setophaga coronata/auduboni,3,-103.57169,42.69848,2021-05-27,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-103.01622,42.707165,2010-09-11,Pine Ridge / Oglala
 Setophaga coronata/auduboni,10,-103.51112,42.922745,2010-05-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.47602,42.80683,2020-09-01,Pine Ridge / Oglala
@@ -45332,7 +45332,7 @@ Setophaga coronata/auduboni,10,-103.01622,42.707165,2018-09-03,Pine Ridge / Ogla
 Setophaga coronata/auduboni,NA,-103.0042,42.74487,2020-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,60,-103.01622,42.707165,2018-09-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.49968,42.81956,2016-03-27,Pine Ridge / Oglala
-Setophaga coronata/auduboni,13,-103.57169,42.698480000000004,1999-06-22,Pine Ridge / Oglala
+Setophaga coronata/auduboni,13,-103.57169,42.69848,1999-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.01622,42.707165,2018-06-13,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-100.32239,41.905327,2003-09-05,Bessey
 Setophaga coronata/auduboni,7,-103.20196,42.639263,2021-06-26,Pine Ridge / Oglala
@@ -45414,7 +45414,7 @@ Setophaga coronata/auduboni,6,-103.01622,42.707165,2018-10-02,Pine Ridge / Oglal
 Setophaga coronata/auduboni,6,-100.298355,41.899227,2015-05-13,Bessey
 Setophaga coronata/auduboni,4,-103.20196,42.639263,2017-10-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,12,-103.01622,42.707165,2012-07-18,Pine Ridge / Oglala
-Setophaga coronata/auduboni,8,-103.57169,42.698480000000004,2018-09-17,Pine Ridge / Oglala
+Setophaga coronata/auduboni,8,-103.57169,42.69848,2018-09-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,8,-102.99853,42.67913,2016-05-24,Pine Ridge / Oglala
 Setophaga coronata/auduboni,16,-103.01622,42.707165,2020-09-09,Pine Ridge / Oglala
 Setophaga coronata/auduboni,8,-103.023254,42.709038,2015-09-08,Pine Ridge / Oglala
@@ -45453,7 +45453,7 @@ Setophaga coronata/auduboni,4,-102.93012,42.71934,2021-05-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.58481,42.85706,1982-07-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.02326,42.70902,2021-09-08,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-101.1218,42.78554,2021-06-25,McKelvie
-Setophaga coronata/auduboni,6,-103.57169,42.698480000000004,2021-01-16,Pine Ridge / Oglala
+Setophaga coronata/auduboni,6,-103.57169,42.69848,2021-01-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-100.298355,41.899227,2016-05-10,Bessey
 Setophaga coronata/auduboni,5,-103.01436,42.71574,2014-09-05,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.57466,42.86376,2020-06-21,Pine Ridge / Oglala
@@ -46082,7 +46082,7 @@ Setophaga coronata/auduboni,6,-102.953224,42.726734,2020-06-23,Pine Ridge / Ogla
 Setophaga coronata/auduboni,6,-102.93447,42.71319,2021-08-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-103.44521,42.906013,2021-12-04,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.58481,42.85706,2020-07-16,Pine Ridge / Oglala
-Setophaga coronata/auduboni,15,-103.57169,42.698480000000004,2018-06-23,Pine Ridge / Oglala
+Setophaga coronata/auduboni,15,-103.57169,42.69848,2018-06-23,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.540054,42.91559,2012-06-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.01622,42.707165,2020-03-29,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-103.0042,42.74487,2014-08-27,Pine Ridge / Oglala
@@ -46131,7 +46131,7 @@ Setophaga coronata/auduboni,11,-100.38071,41.85729,2020-12-28,Bessey
 Setophaga coronata/auduboni,3,-102.998024,42.6778,2021-07-12,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-103.023254,42.709038,2016-10-07,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-103.012,42.70647,2014-09-30,Pine Ridge / Oglala
-Setophaga coronata/auduboni,14,-103.57271,42.814113999999996,2021-04-03,Pine Ridge / Oglala
+Setophaga coronata/auduboni,14,-103.57271,42.814114,2021-04-03,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.55484,42.801807,2019-05-14,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.0042,42.74487,2021-05-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,13,-103.01622,42.707165,2018-09-20,Pine Ridge / Oglala
@@ -46164,7 +46164,7 @@ Setophaga coronata/auduboni,13,-103.0042,42.74487,2020-05-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,2,-103.540054,42.91559,2019-08-04,Pine Ridge / Oglala
 Setophaga coronata/auduboni,11,-102.97976,42.725883,2019-05-07,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.03779,42.71529,2016-07-09,Pine Ridge / Oglala
-Setophaga coronata/auduboni,18,-103.01032,42.709815999999996,2020-09-19,Pine Ridge / Oglala
+Setophaga coronata/auduboni,18,-103.01032,42.709816,2020-09-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,14,-100.38071,41.85729,2019-06-16,Bessey
 Setophaga coronata/auduboni,4,-102.96074,42.683697,2017-11-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,5,-101.153786,42.689453,2017-06-01,McKelvie
@@ -46183,7 +46183,7 @@ Setophaga coronata/auduboni,11,-103.01622,42.707165,2018-09-13,Pine Ridge / Ogla
 Setophaga coronata/auduboni,50,-100.298355,41.899227,2015-05-13,Bessey
 Setophaga coronata/auduboni,26,-103.01622,42.707165,2020-09-09,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.57369,42.900314,2018-05-15,Pine Ridge / Oglala
-Setophaga coronata/auduboni,3,-103.53743,42.845363999999996,2020-11-28,Pine Ridge / Oglala
+Setophaga coronata/auduboni,3,-103.53743,42.845364,2020-11-28,Pine Ridge / Oglala
 Setophaga coronata/auduboni,20,-103.01622,42.707165,2010-09-17,Pine Ridge / Oglala
 Setophaga coronata/auduboni,12,-103.49842,42.910927,2021-06-22,Pine Ridge / Oglala
 Setophaga coronata/auduboni,8,-103.023254,42.709038,2015-09-13,Pine Ridge / Oglala
@@ -46209,7 +46209,7 @@ Setophaga coronata/auduboni,8,-103.01622,42.707165,2018-09-02,Pine Ridge / Oglal
 Setophaga coronata/auduboni,1,-102.92507,42.814796,2004-05-12,Pine Ridge / Oglala
 Setophaga coronata/auduboni,14,-100.298355,41.899227,2020-07-10,Bessey
 Setophaga coronata/auduboni,3,-100.29804,41.901394,2020-09-16,Bessey
-Setophaga coronata/auduboni,4,-103.57169,42.698480000000004,2020-08-16,Pine Ridge / Oglala
+Setophaga coronata/auduboni,4,-103.57169,42.69848,2020-08-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.400085,42.803673,2020-05-15,Pine Ridge / Oglala
 Setophaga coronata/auduboni,14,-103.01622,42.707165,2010-09-27,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-103.20196,42.639263,2016-09-09,Pine Ridge / Oglala
@@ -46231,7 +46231,7 @@ Setophaga coronata/auduboni,12,-103.00389,42.69581,2016-08-21,Pine Ridge / Oglal
 Setophaga coronata/auduboni,NA,-103.018728,42.7069,2018-05-16,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.581279,42.919094,2023-06-10,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.011809,42.654027,2018-07-14,Pine Ridge / Oglala
-Setophaga coronata/auduboni,4,-103.57169,42.698480000000004,2021-05-27,Pine Ridge / Oglala
+Setophaga coronata/auduboni,4,-103.57169,42.69848,2021-05-27,Pine Ridge / Oglala
 Setophaga coronata/auduboni,17,-103.2617,42.64141,2016-09-25,Pine Ridge / Oglala
 Setophaga coronata/auduboni,6,-100.38071,41.85729,2020-05-30,Bessey
 Setophaga coronata/auduboni,15,-103.01622,42.707165,2013-09-24,Pine Ridge / Oglala
@@ -46297,7 +46297,7 @@ Setophaga coronata/auduboni,2,-103.0042,42.74487,2021-08-27,Pine Ridge / Oglala
 Setophaga coronata/auduboni,3,-103.06713,42.667267,2021-07-04,Pine Ridge / Oglala
 Setophaga coronata/auduboni,16,-103.44718,42.908665,2017-05-26,Pine Ridge / Oglala
 Setophaga coronata/auduboni,61,-103.01622,42.707165,2018-09-01,Pine Ridge / Oglala
-Setophaga coronata/auduboni,17,-103.57169,42.698480000000004,2017-10-01,Pine Ridge / Oglala
+Setophaga coronata/auduboni,17,-103.57169,42.69848,2017-10-01,Pine Ridge / Oglala
 Setophaga coronata/auduboni,1,-100.38071,41.85729,2021-10-09,Bessey
 Setophaga coronata/auduboni,4,-103.3164,42.631763,1999-06-26,Pine Ridge / Oglala
 Setophaga coronata/auduboni,12,-103.0042,42.74487,2021-05-15,Pine Ridge / Oglala
@@ -46367,7 +46367,7 @@ Setophaga coronata/auduboni,10,-103.023254,42.709038,2015-09-25,Pine Ridge / Ogl
 Setophaga coronata/auduboni,NA,-103.023172,42.709148,2022-08-27,Pine Ridge / Oglala
 Setophaga coronata/auduboni,22,-103.55487,42.80179,2019-05-09,Pine Ridge / Oglala
 Setophaga coronata/auduboni,4,-103.3164,42.631763,2006-06-15,Pine Ridge / Oglala
-Setophaga coronata/auduboni,8,-103.07470000000001,42.6743,2019-06-19,Pine Ridge / Oglala
+Setophaga coronata/auduboni,8,-103.0747,42.6743,2019-06-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-100.51138,41.971043,2012-04-08,Bessey
 Setophaga coronata/auduboni,NA,-103.009023,42.708928,2017-11-12,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-100.297399,41.902224,2021-08-28,Bessey
@@ -46378,7 +46378,7 @@ Setophaga coronata/auduboni,NA,-103.006435,42.754326,1969-06-30,Pine Ridge / Ogl
 Setophaga coronata/auduboni,NA,-102.91522,42.770119,1955-06-20,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-102.91522,42.770119,1955-06-19,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-102.91522,42.770119,1955-06-18,Pine Ridge / Oglala
-Setophaga coronata/auduboni,NA,-103.3172,42.631100000000004,2007-06-03,Pine Ridge / Oglala
+Setophaga coronata/auduboni,NA,-103.3172,42.6311,2007-06-03,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-102.9172,42.7511,2007-06-04,Pine Ridge / Oglala
 Setophaga coronata/auduboni,NA,-103.01,42.7566,2007-06-03,Pine Ridge / Oglala
 Setophaga coronata/auduboni,7,-103.01622,42.707165,2020-10-07,Pine Ridge / Oglala

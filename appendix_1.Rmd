@@ -1,5 +1,5 @@
 ---
-title: "Appendix 1: Code for 'An update to the Birds of the Nebraska National Forest'"
+title: "Appendix 1: Code for '121 years of change: The birds of Nebraska National Forest'"
 output: github_document
 ---
 
@@ -99,7 +99,7 @@ gbif$species[which(gbif$species%like%"villosus")] <- "Leuconotopicus villosus"
 write_csv(gbif,paste0(filepath,"reduced_gbif.csv"))
 ```
 
-We are also going to import and reformat eBird data. Note that for *Junco*, we are only using populations predesignated to subspecies since roughly 57% of western *Junco* are *hyemalis* in Nebraska; thus, we can't make broad assumptions. To contrast, 98% in eastern Nebraska are *hyemalis*.
+We are also going to import and reformat eBird data. Note that for *Junco*, we are only using populations predesignated to subspecies since roughly 57% of western *Junco* are *hyemalis* in Nebraska; thus, we can't make broad assumptions. To contrast, 98% in eastern Nebraska are *hyemalis*. (Silcock and Jorgensen 2023)
 
 ```{r,eval=F}
 # reformat eBird data
@@ -409,10 +409,14 @@ pr_og$Pine_Ridge[which(!is.na(pr_og$Pine_Ridge))] <- "Confirmed"
 bessey <- ne_nf_gbif %>% 
   select(SciName,district) %>%
   filter(district == "Bessey")%>%
-  rename("Bessey" = district) %>%
+  rename("GBIF 2023" = district) %>%
   unique()
 
-bessey$Bessey[which(!is.na(bessey$Bessey))] <- "Confirmed"
+bessey2 <- ne_nf_gbif %>% 
+  select(SciName,district) %>%
+  filter(district == "Bessey")%>%
+  rename("Bessey" = district) %>%
+  unique()
 
 mckelvie <- ne_nf_gbif %>% 
   select(SciName,district) %>%
@@ -425,11 +429,49 @@ mckelvie$McKelvie[which(!is.na(mckelvie$McKelvie))] <- "Confirmed"
 comp_years <- zimmer %>%
   full_join(ford,by = "SciName") %>%
   full_join(bray,by = "SciName") %>%
-  full_join(bessey,by = "SciName")%>%
-  full_join(mckelvie,by = "SciName")%>%
+  full_join(bessey,by = "SciName") %>%
+  full_join(bessey2,by = "SciName") %>%
+  full_join(mckelvie,by = "SciName") %>%
   full_join(pr_og,by = "SciName")
 
-write_csv(comp_years,paste0(filepath,"all_sites_compare.csv"))
+# make Bessey the full list
+comp_years$`GBIF 2023`[!is.na(comp_years$`GBIF 2023`)] <- "Confirmed"
+comp_years$Bessey[which(comp_years$`GBIF 2023`=="Confirmed")] <- "Confirmed"
+comp_years$Bessey[which(comp_years$Zimmer_1913=="Confirmed")] <- "Confirmed"
+comp_years$Bessey[which(comp_years$Ford_1957=="Confirmed")] <- "Confirmed"
+comp_years$Bessey[which(comp_years$Bray_1993=="Confirmed")] <- "Confirmed"
+comp_years$Bessey[which(comp_years$Bray_1993=="Hypothetical"&is.na(comp_years$Bessey))] <- "Hypothetical"
+
+# change bad scinames
+comp_years$SciName[which(comp_years$SciName=="Empidonax occidentalis")] <- 
+  "Empidonax difficilis"
+comp_years$SciName[which(comp_years$SciName=="Coccothraustes vespertinus")] <- 
+  "Hesperiphona vespertina"
+
+scinums <- read_csv(paste0(filepath,"scinums.csv")) %>%
+  rename("SciName" = `Scientific Name`)
+
+comp_years_full <- comp_years %>%
+  left_join(scinums,by = "SciName")
+
+# replace British names
+comp_years_full$SciName <- gsub(pattern = "grey",replacement = "gray",
+                                x = comp_years_full$SciName)
+comp_years_full$SciName <- gsub(pattern = "Grey",replacement = "Gray",
+                                x = comp_years_full$SciName)
+# other changes to naming done in spreadsheet
+
+comp_years_full <- comp_years_full[order(comp_years_full$IOC),]
+comp_years_full <- comp_years_full %>%
+  select(IOC,`English name`,SciName,Zimmer_1913,Ford_1957,Bray_1993,
+         `GBIF 2023`,Bessey,McKelvie,Pine_Ridge) %>%
+  rename("Scientific name" = SciName,
+         "Zimmer 1913" = Zimmer_1913,
+         "Ford 1957" = Ford_1957,
+         "Bray 1993" = Bray_1993,
+         "Pine Ridge / Oglala" = Pine_Ridge)
+
+write_csv(comp_years_full,paste0(filepath,"all_sites_compare.csv"))
 ```
 
 # Figures
@@ -470,6 +512,11 @@ for(i in 1:length(county)){
   }
   text(center,labels=name,halo=T)
 }
+
+# state map to compare
+
+plot(county,col="lightgray")
+plot(ne_nf2,col="black",add=T)
 ```
 
 ```{r}
@@ -494,3 +541,27 @@ count_cropper(counties = c("Cherry"))
 # area of Bessey
 count_cropper(counties = c("Thomas","Blaine"))
 ```
+
+Check the locality of the Prairie Warbler.
+
+```{r}
+praw <- c(41.905982,-100.319638)
+
+plot(ne_nf2,xlim=c(-100.31960,-100.31964),
+     ylim=c(41.90595,41.90599))
+points(y=praw[1],x=praw[2],pch=20)
+```
+
+```{r}
+praw <- as.data.frame(praw)
+praw_coord <- matrix(data = c(-100.31964,41.90598),
+                     nrow = 1,ncol=2) %>%
+  vect(type="points",atts=NULL,crs=crs(ne_nf2))
+
+# distance in meters
+# function seems to be malfunctioning? m and km give same output...
+
+terra::distance(x=ne_nf2,
+         y=praw_coord,unit="m")
+```
+
