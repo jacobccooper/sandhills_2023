@@ -11,7 +11,7 @@ library(tidyverse)
     ## ✔ forcats   1.0.0     ✔ stringr   1.5.0
     ## ✔ ggplot2   3.4.2     ✔ tibble    3.2.1
     ## ✔ lubridate 1.9.2     ✔ tidyr     1.3.0
-    ## ✔ purrr     1.0.1     
+    ## ✔ purrr     1.0.2     
     ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
@@ -53,6 +53,24 @@ library(data.table)
     ## The following object is masked from 'package:purrr':
     ## 
     ##     transpose
+
+``` r
+library(rnaturalearth)
+```
+
+    ## The legacy packages maptools, rgdal, and rgeos, underpinning the sp package,
+    ## which was just loaded, will retire in October 2023.
+    ## Please refer to R-spatial evolution reports for details, especially
+    ## https://r-spatial.org/r/2023/05/15/evolution4.html.
+    ## It may be desirable to make the sf package available;
+    ## package maintainers should consider adding sf to Suggests:.
+    ## The sp package is now running under evolution status 2
+    ##      (status 2 uses the sf package in place of rgdal)
+    ## Support for Spatial objects (`sp`) will be deprecated in {rnaturalearth} and will be removed in a future release of the package. Please use `sf` objects with {rnaturalearth}. For example: `ne_download(returnclass = 'sf')`
+
+``` r
+# also requires rnaturalearthhires
+```
 
 ``` r
 gbif <- read.delim(paste0(filepath,"0104629-230530130749713.csv"),sep = "\t")
@@ -7685,24 +7703,27 @@ ne_nf <- nf[which(nf$FORESTNAME==ne_nf)]
 ne_crs <- crs(ne_nf)
 
 # get a map of Nebraska Counties
-county <- vect("~/Dropbox/GIS/Nebraska/County_Boundaries/BND_CountyBoundary_DOT.shp") %>%
-  project(ne_crs)
+county <- ne_download(scale = "large",type = "admin_2_counties",
+                      returnclass = "sf") %>% vect() %>% project(ne_crs)
+
+# get Nebraska
+county_ne <- county[county$ISO_3166_2=="US-31"]
 
 # crop forest to Nebraska only for map
 # small sliver polygon at border, but ok
-ne_nf2 <- crop(ne_nf,county)
+ne_nf2 <- crop(ne_nf,county_ne)
 
 # county shapefile 
 
 plot(ne_nf2,xlab="Longitude",ylab="Latitude")
-plot(county,add=T)
+plot(county_ne,add=T)
 plot(ne_nf2,col="gray",add=T)
-for(i in 1:length(county)){
-  cr <- county[i]
+for(i in 1:length(county_ne)){
+  cr <- county_ne[i]
   center <- centroids(cr)
-  name <- cr$Cnty_Name
+  name <- cr$NAME
   if(name=="Morrill"|name=="Garden"){
-    lab <- county[which(county$Cnty_Name=="Scotts Bluff")]%>%
+    lab <- county_ne[which(county_ne$NAME=="Scotts Bluff")]%>%
       centroids()%>%
       geom()%>%
       as.data.frame()
@@ -7719,7 +7740,7 @@ for(i in 1:length(county)){
 ``` r
 # state map to compare
 
-plot(county,col="lightgray")
+plot(county_ne,col="lightgray")
 plot(ne_nf2,col="black",add=T)
 ```
 
@@ -7734,7 +7755,7 @@ plot(ne_nf2,col="black",add=T)
 # bessy in Thomas, Blaine
 
 count_cropper <- function(counties){
-  cr <- county[contains(counties,vars = county$Cnty_Name)]
+  cr <- county[contains(counties,vars = county$NAME)]
   cr_crop <- crop(ne_nf2,cr)
   plot(cr_crop)
   return(expanse(cr_crop,unit="km"))
@@ -7746,7 +7767,7 @@ count_cropper(counties = c("Dawes","Sioux"))
 
 ![](appendix_1_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
-    ## [1] 1436.955
+    ## [1] 1433.013
 
 ``` r
 # area of McKelvie

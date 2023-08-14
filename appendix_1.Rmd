@@ -12,6 +12,8 @@ library(tidyverse)
 library(lubridate)
 library(terra)
 library(data.table)
+library(rnaturalearth)
+# also requires rnaturalearthhires
 ```
 
 
@@ -485,24 +487,27 @@ ne_nf <- nf[which(nf$FORESTNAME==ne_nf)]
 ne_crs <- crs(ne_nf)
 
 # get a map of Nebraska Counties
-county <- vect("~/Dropbox/GIS/Nebraska/County_Boundaries/BND_CountyBoundary_DOT.shp") %>%
-  project(ne_crs)
+county <- ne_download(scale = "large",type = "admin_2_counties",
+                      returnclass = "sf") %>% vect() %>% project(ne_crs)
+
+# get Nebraska
+county_ne <- county[county$ISO_3166_2=="US-31"]
 
 # crop forest to Nebraska only for map
 # small sliver polygon at border, but ok
-ne_nf2 <- crop(ne_nf,county)
+ne_nf2 <- crop(ne_nf,county_ne)
 
 # county shapefile 
 
 plot(ne_nf2,xlab="Longitude",ylab="Latitude")
-plot(county,add=T)
+plot(county_ne,add=T)
 plot(ne_nf2,col="gray",add=T)
-for(i in 1:length(county)){
-  cr <- county[i]
+for(i in 1:length(county_ne)){
+  cr <- county_ne[i]
   center <- centroids(cr)
-  name <- cr$Cnty_Name
+  name <- cr$NAME
   if(name=="Morrill"|name=="Garden"){
-    lab <- county[which(county$Cnty_Name=="Scotts Bluff")]%>%
+    lab <- county_ne[which(county_ne$NAME=="Scotts Bluff")]%>%
       centroids()%>%
       geom()%>%
       as.data.frame()
@@ -515,7 +520,7 @@ for(i in 1:length(county)){
 
 # state map to compare
 
-plot(county,col="lightgray")
+plot(county_ne,col="lightgray")
 plot(ne_nf2,col="black",add=T)
 ```
 
@@ -528,7 +533,7 @@ plot(ne_nf2,col="black",add=T)
 # bessy in Thomas, Blaine
 
 count_cropper <- function(counties){
-  cr <- county[contains(counties,vars = county$Cnty_Name)]
+  cr <- county[contains(counties,vars = county$NAME)]
   cr_crop <- crop(ne_nf2,cr)
   plot(cr_crop)
   return(expanse(cr_crop,unit="km"))
