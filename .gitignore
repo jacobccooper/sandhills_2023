@@ -56,9 +56,13 @@ ebd_US-NE_relJun-2023/
 S_USA.AdministrativeForest
 *.csv
 Appendix2.ods
-Apendix2-Complete-List.ods
 *.odt
 LICENSE*
 praw*
 state_map.png
+forest_counties.png
+tables.ods
+test.txt
+Appendix-2_Complete-List.ods
+Table1.ods
 
