@@ -48,8 +48,17 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 
-# big files
+# big files and additional files
 0104629-230530130749713.csv
 reduced_gbif.csv
 reduced_ebird.csv
 ebd_US-NE_relJun-2023/
+S_USA.AdministrativeForest
+*.csv
+Appendix2.ods
+Apendix2-Complete-List.ods
+*.odt
+LICENSE*
+praw*
+state_map.png
+
